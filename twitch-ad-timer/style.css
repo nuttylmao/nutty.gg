@@ -1,0 +1,86 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#statusContainer {
+	text-transform: uppercase;
+	font-family: 'Metropolis';
+	font-style: italic;
+	font-weight: bold;
+	font-size: 30px;
+	width: 400px;
+	max-width: fit-content;
+	text-align: center;
+	background-color: #D12025;
+	color: white;
+	padding: 10px;
+	border-radius: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#hugeTittiesContainer {
+	font-family: 'Metropolis';
+	font-weight: bold;
+	background-color: rgba(0, 0, 0, .4);
+	padding: 12px;
+	border-radius: 10px;
+	position: absolute;
+	margin: 50px;
+	opacity: 0;
+	display: table;
+}
+
+#timerBar {
+	width: 0px;
+	background-color: #ffcc00;
+	position: absolute;
+}
+
+#adLabel {
+	font-size: 20px;
+	font-weight: bold;
+	max-width: fit-content;
+	text-align: center;
+	display: inline-block;
+	background-color: #F9BE2A;
+	color: #1C1B22;
+	padding: 10px;
+	border-radius: 10px;
+	display: table-cell;
+}
+
+#timerLabel {
+	font-size: 20px;
+	max-width: fit-content;
+	text-align: center;
+	display: inline-block;
+	color: white;
+	padding: 10px 0px 10px 10px;
+	display: table-cell;
+}
+
+#midRollContainer {
+	font-family: 'Metropolis';
+	font-size: 20px;
+	max-width: fit-content;
+	text-align: center;
+	display: inline-block;
+	background-color: #000000CC;
+	color: #FFFFFF;
+	padding: 10px 20px;
+	border-radius: 10px;
+	display: table-cell;
+	position: absolute;
+	bottom: 15%;
+	right: -100%;
+}
+
+#midRollCountdownContainer {
+	font-size: 40px;
+	font-weight: bold;
+	margin: 10px 0px 0px 0px;
+}
