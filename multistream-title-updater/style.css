@@ -1,0 +1,201 @@
+/* @import url('https://fonts.googleapis.com/css?family={{googleFont}}:100,200,300,400,500,600,700,800,900'); */
+
+* {
+	margin: 0;
+	padding: 0;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+	color: rgb(235, 235, 235);
+}
+
+body {
+	background-color: #1f1f1f;
+}
+
+#refreshContainer {
+	font-family: 'Metropolis';
+	font-style: italic;
+	font-weight: bold;
+	font-size: 30px;
+	width: 400px;
+	max-width: fit-content;
+	text-align: center;
+	background-color: #2FB774;
+	opacity: 0;
+	color: white;
+	padding: 10px;
+	border-radius: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#instructionsContainer {
+	background-color: rgb(59, 59, 59);
+	font-size: 12px;
+	font-weight: bold;
+	border-radius: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	z-index: 2;
+}
+
+.hyperlinks {
+	color: rgb(79, 92, 212);
+}
+
+#mainContainer
+{
+	text-transform: uppercase;
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 20px;
+	font-size: 12px;
+}
+
+.disabled
+{
+	pointer-events: none;
+	opacity: 0.3;
+}
+
+#title
+{
+    flex-grow: 1;
+	font-weight: 600;
+}
+
+#connectionStatusIcon
+{
+	height: 16px;
+}
+
+#infoIcon
+{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    overflow: hidden;
+    outline: none;
+	opacity: 0.5;
+	height: 16px;
+}
+
+#infoIcon:hover
+{
+	opacity: 1;
+    cursor: pointer;
+}
+
+.textBox
+{
+	padding: 5px 15px;
+	border-radius:20px;
+	background:rgba(255,255,255,.1);
+	border-width: 0;
+	width: 100%;
+    box-sizing: border-box;
+}
+
+.straightUpIloveCum
+{
+    display: flex;
+	margin: 0px 0px;
+	align-items: center;
+}
+
+.button 
+{
+	border: none;
+	padding: 5px 15px;
+	border-radius:25px;
+}
+
+.button:hover
+{
+	box-shadow: 0 0px 10px 0 rgb(255, 255, 255, 0.3);
+	cursor: pointer;
+}
+
+.submitButton
+{
+	background:rgba(17, 97, 238, 0.2);
+}
+
+.submitButton:hover{  
+  background-color: rgba(17, 97, 238, 1);
+}
+
+#refreshButton
+{
+	background:rgba(255,255,255,.1);
+	margin: 0px 0px 0px 10px;
+}
+
+#refreshButton:hover{  
+	background:rgba(255,255,255,.5);
+}
+
+#fieldsContainer
+{
+	width: 100%;
+}
+
+.broadcastBox
+{
+    display: flex;
+	align-items: center;
+	margin: 10px 0px;
+}
+
+.platformTitle
+{
+    flex-grow: 1;
+}
+
+.platformSubmitButton
+{
+    width: 100px;
+	margin: 0px 0px 0px 10px;
+}
+
+#platformIconButton
+{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    overflow: hidden;
+    outline: none;
+	opacity: 0.5;
+	height: 24px;
+}
+
+#platformIconButton:hover
+{
+	opacity: 1;
+    cursor: pointer;
+}
+
+.twitch
+{
+	background: rgb(110, 85, 171, 0.5);
+}
+
+.twitch:hover
+{
+	background: rgb(110, 85, 171, 1);
+}
+
+.youtube
+{
+	background: rgb(255, 3, 3, 0.5);
+}
+
+.youtube:hover
+{
+	background: rgb(255, 3, 3, 1);
+}

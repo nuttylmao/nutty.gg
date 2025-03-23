@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<head>
+	<title>Configure</title>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="#" />
+	<link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+	<div id="mainContainer">
+		<div id="connectBox">
+			<img src="logo.png" width="60%">
+			<label>
+				<br><br>
+				<button onclick="RequestToken()">Connect</button>
+				<br><br>
+				<button id="instructionsButton" onclick="OpenInstructions()">Instructions</button>
+			</label>
+		</div>
+		<div id="authorizationBox">
+			<label id="authorizationCode">
+				2305
+			</label>
+			<label id="authorizationComplete">
+				<img src="logo.png" width="60%">
+				<br><br>
+				<span style="font-weight: 500; font-size: 30px;">Authorization complete</span>
+				<br><br>
+				You now owe me money for all of my hard work.
+			</label>
+			<button id="copyURLButton" onclick="CopyToURL()" disabled="true">Awaiting approval</button>
+			<br><br>
+			<button id="donateButton" onclick="OpenDonationPage()" style="display: none;">Donate out of guilt</button>
+		</div>
+		<div id="errorBox">
+			<label style="font-size: 30px; font-weight: 600;">Error <span id="errorCode">69</span></label>
+			<br>
+			<span id="errorMessage">You died lmao. You died lmao. You died lmao. You died lmao. You died lmao. You died lmao.You died lmao. You died lmao.</span>
+			<br><br>
+			
+			<button id="closeErrorBox" onclick="CloseErrorBox()">Okay</button>
+		</div>
+	</div>
+</body>
+
+<script src="./script.js"></script>

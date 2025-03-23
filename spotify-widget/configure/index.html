@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<head>
+	<title>Configure</title>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="#" />
+	<link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+	<div id="mainContainer">
+		<div id="connectBox">
+			<div style="text-align: center;">
+				<img src="logo.webp" width="60%">
+			</div>
+			<label>
+				<br>
+				<span style="font-weight: 500;">Client ID</span>
+				<br>
+				<input type="text" id="client_id_box">
+				<br><br>
+				<span style="font-weight: 500;">Client Secret</span>
+				<br>
+				<input type="password" id="client_secret_box">
+
+				<br><br>
+
+				<button id="authorizeButton" onclick="RequestAuthorization()">Authorize</button>
+				<br><br>
+				<button id="instructionsButton" onclick="OpenInstructions()">Instructions</button>
+			</label>
+		</div>
+		<div id="authorizationBox">
+			<label id="authorizationComplete">
+				<img src="logo.webp" width="60%">
+				<br>
+				<br>
+				<span style="font-weight: 500; font-size: 30px;">Authorization complete</span>
+				<br><br>
+				You now owe me money for all of my hard work.
+			</label>
+			<button id="copyURLButton" onclick="CopyToURL()">Click to copy URL</button>
+			<br><br>
+			<button id="donateButton" onclick="OpenDonationPage()">Donate out of guilt</button>
+		</div>
+	</div>
+</body>
+
+<script src="./script.js"></script>

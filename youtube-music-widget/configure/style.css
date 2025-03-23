@@ -1,0 +1,115 @@
+* {
+	--corner-radius: 10px;
+	--padding: 20px;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+	margin: 0px;
+	color: white;
+	font-size: 24px;
+}
+
+#mainContainer {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	margin: 0px;
+	background-color: #282828;
+}
+
+#errorBox {
+	background-color: #6d0b0b;
+	border-radius: var(--corner-radius);
+	padding: calc(var(--padding)) calc(var(--padding)*2);
+	position: absolute;
+	left: 50%;
+	top: 50%;	
+	transform: translateX(-50%) translateY(-50%);
+	filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 1));
+	display: none;
+}
+
+#connectBox{
+	background-color: #181818;
+	border-radius: var(--corner-radius);
+	padding: calc(var(--padding)*3) calc(var(--padding)*3);
+	position: absolute;
+	left: 50%;
+	top: 50%;	
+	transform: translateX(-50%) translateY(-50%);
+	filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 1));
+	width: 400px;
+	text-align: center;
+}
+
+#authorizationBox {
+	background-color: #252525;
+	border-radius: var(--corner-radius);
+	padding: calc(var(--padding)*3) calc(var(--padding)*3);
+	position: absolute;
+	left: 50%;
+	top: 50%;	
+	transform: translateX(-50%) translateY(-50%);
+	filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 1));
+	width: 400px;
+	display: none;
+}
+
+#authorizationCode {
+	display: block;
+	text-align: center;
+	font-size: 80px;
+	font-weight: 700;
+	padding-left: 30px;
+	padding-bottom: 40px;
+	letter-spacing: 30px;
+	color: #f44336;
+}
+
+#authorizationComplete {
+	display: block;
+	text-align: center;
+	padding-bottom: 40px;
+	display: none;
+}
+
+button {
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+	font-size: 24px;
+	font-weight: 500;
+	background-color: #f44336;
+	color: white;
+	opacity: 0.8;
+	border-width: 0;
+	border-radius: var(--corner-radius);
+	padding: calc(var(--padding)/2) var(--padding);
+	width: 100%;
+}
+
+button:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+
+#instructionsButton, #donateButton {
+	background-color: #2e2e2e;	
+}
+
+#copyURLButton {
+	background-color: #ffffff;
+	color: #181818;
+	width: 100%;
+	transition: all 0.2s ease;
+}
+
+#copyURLButton:disabled {
+	background-color: #636363;
+	opacity: 0.8;
+	cursor: inherit;
+}
+
+#closeErrorBox {
+	background-color: #ffffff;
+	color: #181818;
+}

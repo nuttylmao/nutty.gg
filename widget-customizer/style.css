@@ -1,0 +1,269 @@
+* {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  color: white;
+}
+
+body {
+  background-color: #181818;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+  /* Width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: #2c2c2c;
+  /* Color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #9f9f9f;
+  /* Color of the scroll thumb */
+  border-radius: 4px;
+  /* Roundness of the scroll thumb */
+  border: none;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d1d1;
+  /* Color of the scroll thumb on hover */
+}
+
+#pinned-header {
+  position: sticky;
+  top: 0;
+  margin: 40px auto;
+  padding: 10px 0;
+  z-index: 100;
+  background: #181818af;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#widget-url {
+  font-size: 1em;
+  width: 100%;
+  margin: 10px 0px;
+  padding: 10px 10px;
+}
+
+#settings-container {
+  margin: 0px auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 5px;
+}
+
+#settings-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.setting-group {
+  margin-bottom: 20px;
+  /* border: 1px solid #ddd; */
+  padding: 15px;
+  border-radius: 5px;
+}
+
+h2 {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #93cdfd;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  /* border-bottom: 1px solid #eee; */
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-item label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.setting-item p {
+  font-size: 0.9em;
+  font-weight: 300;
+  /* color: #666; */
+  opacity: 0.6;
+  margin-bottom: 0;
+}
+
+.setting-item-content {
+  display: flex;
+  align-items: center;
+}
+
+input[type="text"],
+select,
+input[type="number"] {
+  width: 250px;
+  padding: 5px;
+
+  margin: 10px 0px;
+  padding: 10px 10px;
+  background-color: #ffffff05;
+  border-width: 0px;
+  color: white;
+  border-radius: 0.5em;
+  
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+#widget-url:hover {
+  cursor: pointer;
+}
+
+.setting-item-content option {
+  color: black;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+}
+
+.setting-item-content input[type="color"] {
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  /* padding: 2px; */
+  /* border: 1px solid #ccc; */
+  /* border-radius: 4px; */
+
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Switch styling */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #2196F3;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+button {
+  font-weight: 500;
+  background-color: #2e2e2e;
+  color: white;
+  opacity: 0.8;
+  margin: 5px 0px;
+  border-width: 0;
+  border-radius: 0.5em;
+  padding: 10px 20px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+#mommy-milkers {
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #181818af;
+  backdrop-filter: blur(10px); /* Adjust blur radius as needed */
+  z-index: 9999; /* Ensure it's on top */
+  /* Add any other styles for the overlay content */
+  transition: all 0.2s ease-in-out;
+  opacity: 0;
+}
+
+#load-url {
+  width: 100%;
+}
+
+#load-settings-container {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: calc(100% - 75px);
+  border-radius: 0.5em;
+  padding: 1em;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+  background: #181818af;
+  /* background: rgba(255, 0, 0, 0.637); */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transform: translate(-50%, -50%);
+}
+
+#load-settings {
+  background-color: #2196F3;
+}

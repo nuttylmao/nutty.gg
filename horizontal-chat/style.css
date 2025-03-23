@@ -1,0 +1,303 @@
+* {
+	margin: 0;
+	padding: 0;
+	--margin: 0px;
+	--border-radius: 20px;
+}
+
+html {
+	width: 100vw;
+	height: 100vh;
+	scroll-behavior: smooth;
+	/* background: rgba(0, 0, 0, 0.884); */
+	font-size: 18px;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+	color: white;
+	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+	overflow-wrap: break-word;
+}
+
+#statusContainer {
+	font-weight: 500;
+	font-size: 30px;
+	text-align: center;
+	background-color: #D12025;
+	color: white;
+	padding: 10px;
+	border-radius: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#mainContainer {
+	position: absolute;
+	height: calc(100% - 2 * var(--margin));
+	width: calc(100% - 2 * var(--margin));
+	margin: var(--margin);
+}
+
+#messageList {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	text-justify: right;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+#alertBox {
+	position: absolute;
+	bottom: 0;
+	right: 50%;
+	transform: translateX(50%);
+	overflow: hidden;
+	white-space: nowrap;
+	
+	font-weight: 700;
+	line-height: 1.7em;
+	width: 100%;
+	text-align: center;
+	bottom: calc(-1 * var(--margin) - 2em);
+}
+
+@keyframes showAlertBox {
+	0% {
+		bottom: calc(-1 * var(--margin) - 2em);
+	}
+	100% {
+		bottom: 0px;
+	}
+}
+
+@keyframes hideAlertBox {
+	0% {
+		bottom: 0px;
+	}
+	100% {
+		bottom: calc(-1 * var(--margin) - 2em);
+	}
+}
+
+li {
+	list-style: none;
+	overflow: hidden;
+	width: 0px;
+	transition: all 1s ease-in-out;
+}
+
+.slide-fade li {
+	transition: all 1s ease-out;
+	opacity: 1;
+}
+
+.slide-fade li.show {
+	opacity: 1;
+}
+
+#IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList {
+    /* margin-top: 10px; */
+	background: #2FB774;
+	display: inline;
+	opacity: 0;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.avatar {
+	height: 1em;
+	margin: 1px;
+	transform: translate(0px, 0.25em);
+	border-radius: 50%
+}
+
+.timestamp,
+.pronouns {
+	background: #adadad46;
+	/* border-radius: var(--border-radius); */
+	border-radius: 1em;
+	font-size: 0.7em;
+	/* padding: 5px 15px; */
+	padding: 0.15em 0.5em;
+
+}
+
+.bits {
+	background: #adadad46;
+	border-radius: calc(var(--border-radius) / 2);
+	font-size: 0.7em;
+	padding: 5px 10px;
+}
+
+.platform,
+.badge,
+.emote {
+	height: 1em;
+	margin: 1px;
+	transform: translate(0px, 0.25em);
+}
+
+#badgeList {
+	margin: 0px 5px;
+}
+
+#username,
+#title {
+	font-weight: 700;
+}
+
+.title {
+	font-weight: 700;
+}
+
+#message {
+	font-weight: 700;
+	line-height: 1.7em;
+	margin: 0px 5px;
+}
+
+/* .firstMessage {
+	display: none;
+	font-size: 0.7em;
+} */
+
+/* .firstMessageHighlight {
+	background: #adadad46;
+	padding: 20px 40px;
+	border-radius: var(--border-radius);
+} */
+
+/* .reply {
+	display: none;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 0.7em;
+	opacity: 0.5;
+} */
+
+/* .card {
+	background: #adadad46;
+	padding: 20px 40px;
+	border-radius: var(--border-radius);
+} */
+
+/* .youtube-super-sticker {
+	display: block;
+} */
+
+/* .sticker-img {
+	height: 5em;
+} */
+
+/*****************/
+/** CARD COLORS **/
+/*****************/
+
+.announcementBlue {
+	background: linear-gradient(#03d3d7BF, #8d49feBF) !important;
+}
+
+.announcementGreen {
+	background: linear-gradient(#01da86BF, #55bee4BF) !important;
+}
+
+.announcementOrange {
+	background: linear-gradient(#feb419BF, #e1df00BF) !important;
+}
+
+.announcementPurple {
+	background: linear-gradient(#9548ffBF, #fc74e6BF) !important;
+}
+
+.twitch {
+	background: linear-gradient(#6d5ca1bf, #9146ffBF) !important;
+}
+
+.youtube {
+	background: linear-gradient(#FF6C60BF, #FF0707BF) !important;
+}
+
+.streamlabs {
+	background: linear-gradient(#73dabbbf, #397765bf) !important;
+}
+
+.streamelements {
+	background: linear-gradient(#263b8abf, #0a112abf) !important;
+}
+
+/****************/
+/** ANIMATIONS **/
+/****************/
+
+.statusConnected {
+	animation-name: statusConnected;
+	animation-duration: 2s;
+	animation-fill-mode: forwards;
+}
+
+.statusDisconnected {
+	animation-name: statusDisconnected;
+	animation-duration: 0.5s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes statusConnected {
+	0% {
+		opacity: 1;
+		background-color: #2FB774;
+	}
+
+	100% {
+		opacity: 0;
+		background-color: #2FB774;
+	}
+}
+
+@keyframes statusDisconnected {
+	0% {
+		background-color: #D12025;
+	}
+
+	100% {
+		background-color: #D12025;
+	}
+}
+
+/*
+#message {
+	display: none;
+}
+
+#username {
+	display: none;
+}
+
+#colon-separator {
+	display: none;
+}
+
+#avatar {
+	display: none;
+}
+
+#platform {
+	display: none;
+}
+
+#badgeList {
+	display: none;
+}
+
+#timestamp {
+	display: none;
+}
+
+#pronouns {
+	display: none;
+}
+*/
