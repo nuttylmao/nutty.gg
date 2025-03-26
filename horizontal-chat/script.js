@@ -48,6 +48,7 @@ const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
+const showTipeeestreamDonations = GetBooleanParam("showTipeeestreamDonations", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -209,6 +210,11 @@ client.on('Kofi.Resubscription', (response) => {
 client.on('Kofi.ShopOrder', (response) => {
 	console.debug(response.data);
 	KofiShopOrder(response.data);
+})
+
+client.on('TipeeeStream.Donation', (response) => {
+	console.debug(response.data);
+	TipeeeStreamDonation(response.data);
 })
 
 
@@ -772,6 +778,24 @@ function KofiShopOrder(data) {
 		message = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
 
 	ShowAlert(message, 'kofi');
+}
+
+function TipeeeStreamDonation(data) {
+	if (!showTipeeestreamDonations)
+		return;
+
+	const user = data.username;
+	const amount = data.amount;
+	const currency = data.currency;
+	const tipeeeStreamIcon = `<img src="icons/platforms/tipeeeStream.png" class="platform"/>`;
+
+	let message = "";
+	if (currency == "USD")
+		message = `${tipeeeStreamIcon} ${user} donated $${amount}`;
+	else
+		message = `${tipeeeStreamIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
+
+	ShowAlert(message, 'tipeeeStream');
 }
 
 

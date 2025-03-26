@@ -47,6 +47,7 @@ const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
+const showTipeeestreamDonations = GetBooleanParam("showTipeeestreamDonations", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -223,6 +224,11 @@ client.on('Kofi.Resubscription', (response) => {
 client.on('Kofi.ShopOrder', (response) => {
 	console.debug(response.data);
 	KofiShopOrder(response.data);
+})
+
+client.on('TipeeeStream.Donation', (response) => {
+	console.debug(response.data);
+	TipeeeStreamDonation(response.data);
 })
 
 
@@ -1269,6 +1275,45 @@ function KofiShopOrder(data) {
 		titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi ($${amount})`;
 	else
 		titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
+
+	if (message != null)
+		contentDiv.innerHTML = `${message}`;
+
+	AddMessageItem(instance, data.id);
+}
+
+function TipeeeStreamDonation(data) {
+	if (!showTipeeestreamDonations)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('tipeeeStream');
+
+	// Set the text
+	const user = data.username;
+	const amount = data.amount;
+	const currency = data.currency;
+	const message = data.message;
+	const tipeeeStreamIcon = `<img src="icons/platforms/tipeeeStream.png" class="platform"/>`;
+
+	if (currency == "USD")
+		titleDiv.innerHTML = `${tipeeeStreamIcon} ${user} donated $${amount}`;
+	else
+		titleDiv.innerHTML = `${tipeeeStreamIcon} ${user} donated ${currency} ${amount}`;
 
 	if (message != null)
 		contentDiv.innerHTML = `${message}`;
