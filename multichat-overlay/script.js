@@ -1270,12 +1270,16 @@ function KofiShopOrder(data) {
 	const message = data.message;
 	const itemTotal = data.items.length;
 	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+	let formattedAmount = "";
 
-	if (currency == "USD")
-		titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi ($${amount})`;
+	if (amount == 0)
+		formattedAmount = ""
+	else if (currency == "USD")
+		formattedAmount = `($${amount})`;
 	else
-		titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
+		formattedAmount = `(${currency} ${amount})`;
 
+	titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi ${formattedAmount}`;
 	if (message != null)
 		contentDiv.innerHTML = `${message}`;
 
