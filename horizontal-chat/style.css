@@ -62,12 +62,23 @@ html {
 	line-height: 1.7em;
 	width: 100%;
 	text-align: center;
-	bottom: calc(-1 * var(--margin) - 2em);
+}
+
+#background {
+	position: absolute;
+	bottom: 0;
+	right: 50%;
+	transform: translateX(50%);
+	width: 100%;
+	height: 1.7em;
+	background: var(--background);
+	bottom: calc(-1 * var(--margin));
+	z-index: -100;
 }
 
 @keyframes showAlertBox {
 	0% {
-		bottom: calc(-1 * var(--margin) - 2em);
+		bottom: calc(-1 * var(--margin) - 1.7em);
 	}
 	100% {
 		bottom: 0px;
@@ -79,7 +90,7 @@ html {
 		bottom: 0px;
 	}
 	100% {
-		bottom: calc(-1 * var(--margin) - 2em);
+		bottom: calc(-1 * var(--margin) - 1.7em);
 	}
 }
 

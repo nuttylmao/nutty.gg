@@ -26,6 +26,8 @@ const showUsername = GetBooleanParam("showUsername", true);
 const showMessage = GetBooleanParam("showMessage", true);
 const font = urlParams.get("font") || "";
 const fontSize = urlParams.get("fontSize") || "18";
+const background = urlParams.get("background") || "#000000";
+const opacity = urlParams.get("opacity") || "0.5";
 
 const hideAfter = GetIntParam("hideAfter") || 0;
 const excludeCommands = GetBooleanParam("excludeCommands", true);
@@ -48,6 +50,14 @@ const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
+
+// Set the background color
+const opacity255 = Math.round(parseFloat(opacity) * 255);
+let hexOpacity = opacity255.toString(16);
+if (hexOpacity.length < 2) {
+	hexOpacity = "0" + hexOpacity;
+}
+document.documentElement.style.setProperty('--background', `${background}${hexOpacity}`);
 
 // Get a list of chatters to ignore
 const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLowerCase()) || [];
