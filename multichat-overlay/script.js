@@ -64,7 +64,6 @@ document.body.style.background = `${background}${hexOpacity}`;
 const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLowerCase()) || [];
 
 // Set the scroll direction
-
 switch (scrollDirection)
 {
 	case 1:
