@@ -793,7 +793,7 @@ function TipeeeStreamDonation(data) {
 	if (currency == "USD")
 		message = `${tipeeeStreamIcon} ${user} donated $${amount}`;
 	else
-		message = `${tipeeeStreamIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
+		message = `${tipeeeStreamIcon} ${user} donated ${currency} ${amount}`;
 
 	ShowAlert(message, 'tipeeeStream');
 }
