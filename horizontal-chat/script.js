@@ -34,6 +34,7 @@ const ignoreChatters = urlParams.get("ignoreChatters") || "";
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
+const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
@@ -106,6 +107,11 @@ client.on('Twitch.GiftSub', (response) => {
 client.on('Twitch.GiftBomb', (response) => {
 	console.debug(response.data);
 	TwitchGiftBomb(response.data);
+})
+
+client.on('Twitch.RewardRedemption', (response) => {
+	console.debug(response.data);
+	TwitchRewardRedemption(response.data);
 })
 
 client.on('Twitch.Raid', (response) => {
@@ -392,6 +398,21 @@ async function TwitchGiftBomb(data) {
 	const subTier = data.subTier;
 
 	let message = `🎁 ${username} gifted ${gifts} Tier ${subTier} subs!`;
+
+	ShowAlert(message, 'twitch');
+}
+
+async function TwitchRewardRedemption(data) {
+	if (!showTwitchChannelPointRedemptions)
+		return;
+
+	const username = data.user_name;
+	const rewardName = data.reward.title;
+	const cost = data.reward.cost;
+	const userInput = data.user_input;
+	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
+
+	let message = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
 
 	ShowAlert(message, 'twitch');
 }
