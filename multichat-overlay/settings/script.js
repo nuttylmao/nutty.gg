@@ -1,5 +1,5 @@
 let settingsContainer = document.getElementById('settings-container');
-settingsContainer.src = `https://widgets.nutty.gg/widget-customizer?settingsJson=${window.location.href}/settings.json`
+settingsContainer.src = `../../widget-customizer?settingsJson=${window.location.href}/settings.json`
 console.log(settingsContainer.src);
 
 function reloadWidget(data) {

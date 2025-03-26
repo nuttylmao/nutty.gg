@@ -46,6 +46,7 @@ const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
+const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -184,6 +185,11 @@ client.on('StreamElements.Tip', (response) => {
 	StreamElementsTip(response.data);
 })
 
+client.on('Patreon.PledgeCreated', (response) => {
+	console.debug(response.data);
+	PatreonPledgeCreated(response.data);
+})
+
 
 
 /////////////////////
@@ -199,7 +205,7 @@ async function TwitchChatMessage(data) {
 		return;
 
 	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.message.username))
+	if (ignoreUserList.includes(data.message.username.toLowerCase()))
 		return;
 
 	// Get a reference to the template
@@ -500,7 +506,7 @@ function YouTubeMessage(data) {
 		return;
 
 	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.user.name))
+	if (ignoreUserList.includes(data.user.name.toLowerCase()))
 		return;
 
 	// Get a reference to the template
@@ -664,6 +670,19 @@ function StreamElementsTip(data) {
 	let message = `🪙 ${donater} donated ${currency}${formattedAmount}`;
 
 	ShowAlert(message, 'streamelements');
+}
+
+function PatreonPledgeCreated(data) {
+	if (!showPatreonMemberships)
+		return;
+
+	const user = data.attributes.full_name;
+	const amount = (data.attributes.will_pay_amount_cents/100).toFixed(2);
+	const patreonIcon = `<img src="icons/platforms/patreon.png" class="platform"/>`;
+
+	let message = `${patreonIcon} ${user} joined Patreon ($${amount})`;
+
+	ShowAlert(message, 'patreon');
 }
 
 

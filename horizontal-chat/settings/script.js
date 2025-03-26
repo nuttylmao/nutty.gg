@@ -1,5 +1,4 @@
 let settingsContainer = document.getElementById('settings-container');
-//settingsContainer.src = `https://nuttylmao.github.io/widget-customizer?settingsJson=${window.location.href}/settings.json`
 settingsContainer.src = `../../widget-customizer?settingsJson=${window.location.href}/settings.json`
 console.log(settingsContainer.src);
 
