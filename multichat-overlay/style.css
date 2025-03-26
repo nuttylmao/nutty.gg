@@ -3,6 +3,7 @@
 	padding: 0;
 	--margin: 40px;
 	--border-radius: 20px;
+	/* --line-spacing: 1.7em; */
 }
 
 html {
@@ -148,7 +149,7 @@ li {
 
 #message {
 	font-weight: 400;
-	line-height: 1.7em;
+	line-height: var(--line-spacing);
 }
 
 #card {

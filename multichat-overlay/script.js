@@ -22,6 +22,7 @@ const showUsername = GetBooleanParam("showUsername", true);
 const showMessage = GetBooleanParam("showMessage", true);
 const font = urlParams.get("font") || "";
 const fontSize = urlParams.get("fontSize") || "30";
+const lineSpacing = urlParams.get("lineSpacing") || "1.7";
 const background = urlParams.get("background") || "#000000";
 const opacity = urlParams.get("opacity") || "0.85";
 
@@ -47,6 +48,9 @@ const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
+
+// Set line spacing
+document.documentElement.style.setProperty('--line-spacing', `${lineSpacing}em`);
 
 // Set the background color
 const opacity255 = Math.round(parseFloat(opacity) * 255);

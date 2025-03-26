@@ -75,6 +75,16 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "lineSpacing",
+			"label": "Line Spacing",
+			"description": "",
+			"type": "number",
+			"min": 0,
+			"defaultValue": 1.7,
+			"step": ".1",
+			"group": "Appearance"
+		},
+		{
 			"id": "background",
 			"label": "Background",
 			"description": "",
