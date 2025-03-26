@@ -294,6 +294,14 @@
 			"group": "Which donation messages do you want to see?"
 		},
 		{
+			"id": "showFourthwallAlerts",
+			"label": "Fourthwall Alerts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation messages do you want to see?"
+		},
+		{
 			"id": "address",
 			"label": "Address",
 			"description": "Streamer.bot Websocket Server Address",

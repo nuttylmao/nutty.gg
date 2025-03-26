@@ -48,6 +48,7 @@ const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
+const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -229,6 +230,36 @@ client.on('Kofi.ShopOrder', (response) => {
 client.on('TipeeeStream.Donation', (response) => {
 	console.debug(response.data);
 	TipeeeStreamDonation(response.data);
+})
+
+client.on('Fourthwall.GiftPurchase', (response) => {
+	console.debug(response.data);
+	FourthwallGiftPurchase(response.data);
+})
+
+client.on('Fourthwall.OrderPlaced', (response) => {
+	console.debug(response.data);
+	FourthwallOrderPlaced(response.data);
+})
+
+client.on('Fourthwall.Donation', (response) => {
+	console.debug(response.data);
+	FourthwallDonation(response.data);
+})
+
+client.on('Fourthwall.SubscriptionPurchased', (response) => {
+	console.debug(response.data);
+	FourthwallSubscriptionPurchased(response.data);
+})
+
+client.on('Fourthwall.GiftDrawStarted', (response) => {
+	console.debug(response.data);
+	FourthwallGiftDrawStarted(response.data);
+})
+
+client.on('Fourthwall.GiftDrawEnd', (response) => {
+	console.debug(response.data);
+	FourthwallGiftDrawEnd(response.data);
 })
 
 
@@ -1323,6 +1354,42 @@ function TipeeeStreamDonation(data) {
 		contentDiv.innerHTML = `${message}`;
 
 	AddMessageItem(instance, data.id);
+}
+
+function FourthwallGiftPurchase(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallOrderPlaced(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallDonation(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallSubscriptionPurchased(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallGiftDrawStarted(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallGiftDrawEnd(data) {
+	if (!showFourthwallAlerts)
+		return;
+
 }
 
 
