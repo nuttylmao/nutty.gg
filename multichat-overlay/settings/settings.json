@@ -206,6 +206,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchChannelPointRedemptions",
+			"label": "Channel Point Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showTwitchRaids",
 			"label": "Raids",
 			"description": "",

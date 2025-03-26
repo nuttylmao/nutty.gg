@@ -35,6 +35,7 @@ const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel") || 20
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
+const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
@@ -130,6 +131,11 @@ client.on('Twitch.ReSub', (response) => {
 client.on('Twitch.GiftSub', (response) => {
 	console.debug(response.data);
 	TwitchGiftSub(response.data);
+})
+
+client.on('Twitch.RewardRedemption', (response) => {
+	console.debug(response.data);
+	TwitchRewardRedemption(response.data);
 })
 
 client.on('Twitch.Raid', (response) => {
@@ -622,6 +628,50 @@ async function TwitchGiftSub(data) {
 	titleDiv.innerText = `${username} gifted a Tier ${subTier.charAt(0)} subscription to ${recipient}`;
 	if (cumlativeTotal > 0)
 		contentDiv.innerText = `They've gifted ${cumlativeTotal} subs in total!`;
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function TwitchRewardRedemption(data) {
+	if (!showTwitchChannelPointRedemptions)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.user_login;
+		const avatarURL = await GetAvatar(username);
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Set the text
+	const username = data.user_name;
+	const rewardName = data.reward.title;
+	const cost = data.reward.cost;
+	const userInput = data.user_input;
+	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
+
+	titleDiv.innerHTML = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
+	contentDiv.innerText = `${userInput}`;
 
 	AddMessageItem(instance, data.messageId);
 }
