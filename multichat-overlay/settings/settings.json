@@ -278,6 +278,14 @@
 			"group": "Which donation messages do you want to see?"
 		},
 		{
+			"id": "showKofiDonations",
+			"label": "Ko-fi Donations",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation messages do you want to see?"
+		},
+		{
 			"id": "address",
 			"label": "Address",
 			"description": "Streamer.bot Websocket Server Address",

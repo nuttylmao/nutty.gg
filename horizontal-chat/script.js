@@ -47,6 +47,7 @@ const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
+const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -188,6 +189,26 @@ client.on('StreamElements.Tip', (response) => {
 client.on('Patreon.PledgeCreated', (response) => {
 	console.debug(response.data);
 	PatreonPledgeCreated(response.data);
+})
+
+client.on('Kofi.Donation', (response) => {
+	console.debug(response.data);
+	KofiDonation(response.data);
+})
+
+client.on('Kofi.Subscription', (response) => {
+	console.debug(response.data);
+	KofiSubscription(response.data);
+})
+
+client.on('Kofi.Resubscription', (response) => {
+	console.debug(response.data);
+	KofiResubscription(response.data);
+})
+
+client.on('Kofi.ShopOrder', (response) => {
+	console.debug(response.data);
+	KofiShopOrder(response.data);
 })
 
 
@@ -683,6 +704,74 @@ function PatreonPledgeCreated(data) {
 	let message = `${patreonIcon} ${user} joined Patreon ($${amount})`;
 
 	ShowAlert(message, 'patreon');
+}
+
+function KofiDonation(data) {
+	if (!showKofiDonations)
+		return;
+
+	const user = data.from;
+	const amount = data.amount;
+	const currency = data.currency;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	let message = "";
+	if (currency == "USD")
+		message = `${kofiIcon} ${user} donated $${amount}`;
+	else
+		message = `${kofiIcon} ${user} donated ${currency} ${amount}`;
+
+	ShowAlert(message, 'kofi');
+}
+
+function KofiSubscription(data) {
+	if (!showKofiDonations)
+		return;
+
+	const user = data.from;
+	const amount = data.amount;
+	const currency = data.currency;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	let message = "";
+	if (currency == "USD")
+		message = `${kofiIcon} ${user} subscribed ($${amount})`;
+	else
+		message = `${kofiIcon} ${user} subscribed (${currency} ${amount})`;
+
+	ShowAlert(message, 'kofi');
+}
+
+function KofiResubscription(data) {
+	if (!showKofiDonations)
+		return;
+
+	const user = data.from;
+	const tier = data.tier;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	let message = `${kofiIcon} ${user} subscribed (${tier})`;
+
+	ShowAlert(message, 'kofi');
+}
+
+function KofiShopOrder(data) {
+	if (!showKofiDonations)
+		return;
+
+	const user = data.from;
+	const amount = data.amount;
+	const currency = data.currency;
+	const itemTotal = data.items.length;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	let message = "";
+	if (currency == "USD")
+		message = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi ($${amount})`;
+	else
+		message = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
+
+	ShowAlert(message, 'kofi');
 }
 
 

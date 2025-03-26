@@ -46,6 +46,7 @@ const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
+const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -202,6 +203,26 @@ client.on('StreamElements.Tip', (response) => {
 client.on('Patreon.PledgeCreated', (response) => {
 	console.debug(response.data);
 	PatreonPledgeCreated(response.data);
+})
+
+client.on('Kofi.Donation', (response) => {
+	console.debug(response.data);
+	KofiDonation(response.data);
+})
+
+client.on('Kofi.Subscription', (response) => {
+	console.debug(response.data);
+	KofiSubscription(response.data);
+})
+
+client.on('Kofi.Resubscription', (response) => {
+	console.debug(response.data);
+	KofiResubscription(response.data);
+})
+
+client.on('Kofi.ShopOrder', (response) => {
+	console.debug(response.data);
+	KofiShopOrder(response.data);
 })
 
 
@@ -1103,8 +1124,8 @@ async function StreamElementsTip(data) {
 	AddMessageItem(instance, data.id);
 }
 
-function PatreonPledgeCreated(data) {
-	if (!showPatreonMemberships)
+function KofiDonation(data) {
+	if (!showKofiDonations)
 		return;
 
 	// Get a reference to the template
@@ -1122,14 +1143,135 @@ function PatreonPledgeCreated(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.classList.add('patreon');
+	cardDiv.classList.add('kofi');
 
 	// Set the text
-	const user = data.attributes.full_name;
-	const amount = (data.attributes.will_pay_amount_cents/100).toFixed(2);
-	const patreonIcon = `<img src="icons/platforms/patreon.png" class="platform"/>`;
+	const user = data.from;
+	const amount = data.amount;
+	const currency = data.currency;
+	const message = data.message;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
 
-	titleDiv.innerHTML = `${patreonIcon} ${user} joined Patreon ($${amount})`;
+	if (currency == "USD")
+		titleDiv.innerHTML = `${kofiIcon} ${user} donated $${amount}`;
+	else
+		titleDiv.innerHTML = `${kofiIcon} ${user} donated ${currency} ${amount}`;
+	
+	if (message != null)
+		contentDiv.innerHTML = `${message}`;
+
+	AddMessageItem(instance, data.id);
+}
+
+function KofiSubscription(data) {
+	if (!showKofiDonations)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kofi');
+
+	// Set the text
+	const user = data.from;
+	const amount = data.amount;
+	const currency = data.currency;
+	const message = data.message;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	if (currency == "USD")
+		titleDiv.innerHTML = `${kofiIcon} ${user} subscribed ($${amount})`;
+	else
+		titleDiv.innerHTML = `${kofiIcon} ${user} subscribed (${currency} ${amount})`;
+	
+	if (message != null)
+		contentDiv.innerHTML = `${message}`;
+
+	AddMessageItem(instance, data.id);
+}
+
+function KofiResubscription(data) {
+	if (!showKofiDonations)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kofi');
+
+	// Set the text
+	const user = data.from;
+	const tier = data.tier;
+	const message = data.message;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	titleDiv.innerHTML = `${kofiIcon} ${user} subscribed (${tier})`;
+	if (message != null)
+		contentDiv.innerHTML = `${message}`;
+
+	AddMessageItem(instance, data.id);
+}
+
+function KofiShopOrder(data) {
+	if (!showKofiDonations)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kofi');
+
+	// Set the text
+	const user = data.from;
+	const amount = data.amount;
+	const currency = data.currency;
+	const message = data.message;
+	const itemTotal = data.items.length;
+	const kofiIcon = `<img src="icons/platforms/kofi.png" class="platform"/>`;
+
+	if (currency == "USD")
+		titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi ($${amount})`;
+	else
+		titleDiv.innerHTML = `${kofiIcon} ${user} ordered ${itemTotal} item(s) on Ko-fi (${currency} ${amount})`;
+
+	if (message != null)
+		contentDiv.innerHTML = `${message}`;
 
 	AddMessageItem(instance, data.id);
 }
