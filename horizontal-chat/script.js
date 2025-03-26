@@ -48,7 +48,7 @@ const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
-const showTipeeestreamDonations = GetBooleanParam("showTipeeestreamDonations", true);
+const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -781,7 +781,7 @@ function KofiShopOrder(data) {
 }
 
 function TipeeeStreamDonation(data) {
-	if (!showTipeeestreamDonations)
+	if (!showTipeeeStreamDonations)
 		return;
 
 	const user = data.username;
