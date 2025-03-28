@@ -232,8 +232,11 @@ li {
 }
 
 .fourthwall {
-	/* background: linear-gradient(#405eb3, #0d3cb9) !important; */
-	background: #adadad46 !important;
+	background: linear-gradient(#405eb3, #0d3cb9) !important;
+}
+
+.blank {
+	background: #adadad00 !important;
 }
 
 /****************/

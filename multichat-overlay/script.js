@@ -1375,7 +1375,7 @@ function FourthwallOrderPlaced(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.classList.add('fourthwall');
+	cardDiv.classList.add('blank');
 	titleDiv.classList.add('centerThatShitHomie');
 	contentDiv.classList.add('centerThatShitHomie');
 
@@ -1412,12 +1412,13 @@ function FourthwallOrderPlaced(data) {
 	else
 		contents = ` (${orderTotal} ${currency})`;
 
-		console.log(contents);
-
 	titleDiv.innerHTML = contents;
 
-	if (message != null)
+	// Add the custom message from the user
+	if (message.trim() != "")
 		contentDiv.innerHTML = `${message}`;
+	else
+		contentDiv.style.display = 'none'
 
 	AddMessageItem(instance, data.id);
 }
