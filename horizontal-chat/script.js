@@ -218,11 +218,6 @@ client.on('TipeeeStream.Donation', (response) => {
 	TipeeeStreamDonation(response.data);
 })
 
-client.on('Fourthwall.GiftPurchase', (response) => {
-	console.debug(response.data);
-	FourthwallGiftPurchase(response.data);
-})
-
 client.on('Fourthwall.OrderPlaced', (response) => {
 	console.debug(response.data);
 	FourthwallOrderPlaced(response.data);
@@ -236,6 +231,11 @@ client.on('Fourthwall.Donation', (response) => {
 client.on('Fourthwall.SubscriptionPurchased', (response) => {
 	console.debug(response.data);
 	FourthwallSubscriptionPurchased(response.data);
+})
+
+client.on('Fourthwall.GiftPurchase', (response) => {
+	console.debug(response.data);
+	FourthwallGiftPurchase(response.data);
 })
 
 client.on('Fourthwall.GiftDrawStarted', (response) => {
@@ -832,12 +832,6 @@ function TipeeeStreamDonation(data) {
 	ShowAlert(message, 'tipeeeStream');
 }
 
-function FourthwallGiftPurchase(data) {
-	if (!showFourthwallAlerts)
-		return;
-
-}
-
 function FourthwallOrderPlaced(data) {
 	if (!showFourthwallAlerts)
 		return;
@@ -851,6 +845,12 @@ function FourthwallDonation(data) {
 }
 
 function FourthwallSubscriptionPurchased(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallGiftPurchase(data) {
 	if (!showFourthwallAlerts)
 		return;
 

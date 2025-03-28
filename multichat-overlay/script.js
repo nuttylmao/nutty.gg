@@ -232,11 +232,6 @@ client.on('TipeeeStream.Donation', (response) => {
 	TipeeeStreamDonation(response.data);
 })
 
-client.on('Fourthwall.GiftPurchase', (response) => {
-	console.debug(response.data);
-	FourthwallGiftPurchase(response.data);
-})
-
 client.on('Fourthwall.OrderPlaced', (response) => {
 	console.debug(response.data);
 	FourthwallOrderPlaced(response.data);
@@ -250,6 +245,11 @@ client.on('Fourthwall.Donation', (response) => {
 client.on('Fourthwall.SubscriptionPurchased', (response) => {
 	console.debug(response.data);
 	FourthwallSubscriptionPurchased(response.data);
+})
+
+client.on('Fourthwall.GiftPurchase', (response) => {
+	console.debug(response.data);
+	FourthwallGiftPurchase(response.data);
 })
 
 client.on('Fourthwall.GiftDrawStarted', (response) => {
@@ -1356,16 +1356,70 @@ function TipeeeStreamDonation(data) {
 	AddMessageItem(instance, data.id);
 }
 
-function FourthwallGiftPurchase(data) {
-	if (!showFourthwallAlerts)
-		return;
-
-}
-
 function FourthwallOrderPlaced(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('fourthwall');
+	titleDiv.classList.add('centerThatShitHomie');
+	contentDiv.classList.add('centerThatShitHomie');
+
+	// Set the text
+	let user = data.username;
+	const orderTotal = data.total;
+	const currency = data.currency;
+	const item = data.variants[0].name;
+	const itemsOrdered = data.variants.length;
+	const message = DecodeHTMLString(data.statmessageus);
+	const itemImageUrl = data.variants[0].image;
+	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
+	
+	let contents = "";
+
+	contents += fourthwallProductImage;
+
+	contents += "<br><br>"
+
+	// If there user did not provide a username, just say "Someone"
+	if (user == undefined)
+		user = "Someone"
+
+	// If the user ordered more than one item, write how many items they ordered
+	contents += `${user} ordered ${item}`;
+	if (itemsOrdered > 1)
+		contents += ` and ${itemsOrdered - 1} other item(s)!`
+
+	// If the user spent money, put the order total
+	if (orderTotal == 0)
+		contents += ``;
+	else if (currency == "USD")
+		contents = ` ($${orderTotal})`;
+	else
+		contents = ` (${orderTotal} ${currency})`;
+
+		console.log(contents);
+
+	titleDiv.innerHTML = contents;
+
+	if (message != null)
+		contentDiv.innerHTML = `${message}`;
+
+	AddMessageItem(instance, data.id);
 }
 
 function FourthwallDonation(data) {
@@ -1375,6 +1429,13 @@ function FourthwallDonation(data) {
 }
 
 function FourthwallSubscriptionPurchased(data) {
+	if (!showFourthwallAlerts)
+		return;
+
+}
+
+function FourthwallGiftPurchase(data) {
+	console.log(data);
 	if (!showFourthwallAlerts)
 		return;
 
@@ -1536,6 +1597,12 @@ function AddMessageItem(element, elementID, platform, userId) {
 		}
 
 	}, 100);
+}
+
+function DecodeHTMLString(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }
 
 // I used Gemini for this shit so if it doesn't work, blame Google

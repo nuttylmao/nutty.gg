@@ -125,6 +125,18 @@ li {
 	transform: translate(0px, 0.25em);
 }
 
+.productImage {
+	height: 10em;
+	border-radius: 0.25em;
+	transform: translate(0px, 0.25em);
+}
+
+.centerThatShitHomie {
+	display: inline-block;
+	width: 100%;
+	text-align: center;
+}
+
 #badgeList {
 	margin: 0px 5px;
 }
@@ -221,6 +233,7 @@ li {
 
 .fourthwall {
 	background: linear-gradient(#405eb3, #0d3cb9) !important;
+	/* background: linear-gradient(#241b75, #080442) !important; */
 }
 
 /****************/
