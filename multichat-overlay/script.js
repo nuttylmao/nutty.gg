@@ -1191,7 +1191,7 @@ function KofiDonation(data) {
 	if (currency == "USD")
 		titleDiv.innerHTML = `${kofiIcon} ${user} donated $${amount}`;
 	else
-		titleDiv.innerHTML = `${kofiIcon} ${user} donated ${currency}${amount}`;
+		titleDiv.innerHTML = `${kofiIcon} ${user} donated ${currency} ${amount}`;
 
 	if (message != null)
 		contentDiv.innerHTML = `${message}`;
@@ -1452,13 +1452,13 @@ function FourthwallDonation(data) {
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<span style="background: #0042ff; padding: 0px 0.5em">${user}</span> donated`;
+	contents += `${user} donated`;
 
 	// If the user spent money, put the order total
 	if (currency == "USD")
 		contents += ` $${amount}`;
 	else
-		contents += ` ${currency}${amount}`;
+		contents += ` ${currency} ${amount}`;
 
 	titleDiv.innerHTML = contents;
 
@@ -1500,13 +1500,13 @@ function FourthwallSubscriptionPurchased(data) {
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<span style="background: #0042ff; padding: 0px 0.5em">${user}</span> subscribed`;
+	contents += `${user} subscribed`;
 
 	// If the user spent money, put the order total
 	if (currency == "USD")
 		contents += ` ($${amount})`;
 	else
-		contents += ` (${currency}${amount})`;
+		contents += ` (${currency} ${amount})`;
 
 	titleDiv.innerHTML = contents;
 	contentDiv.style.display = 'none'
@@ -1605,7 +1605,7 @@ function FourthwallGiftDrawStarted(data) {
 	contentDiv.classList.add('centerThatShitHomie');
 
 	// Set the text
-	let durationSeconds = data.durationSeconds;
+	const durationSeconds = data.durationSeconds;
 	const itemName = data.offer.name;
 
 	let contents = "";
@@ -1642,10 +1642,6 @@ function FourthwallGiftDrawEnded(data) {
 	cardDiv.classList.add('fourthwall');
 	titleDiv.classList.add('centerThatShitHomie');
 	contentDiv.classList.add('centerThatShitHomie');
-
-	// Set the text
-	let durationSeconds = data.durationSeconds;
-	const itemName = data.offer.name;
 
 	let contents = "";
 

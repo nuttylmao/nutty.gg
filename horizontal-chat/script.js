@@ -243,9 +243,9 @@ client.on('Fourthwall.GiftDrawStarted', (response) => {
 	FourthwallGiftDrawStarted(response.data);
 })
 
-client.on('Fourthwall.GiftDrawEnd', (response) => {
+client.on('Fourthwall.GiftDrawEnded', (response) => {
 	console.debug(response.data);
-	FourthwallGiftDrawEnd(response.data);
+	FourthwallGiftDrawEnded(response.data);
 })
 
 
@@ -836,36 +836,126 @@ function FourthwallOrderPlaced(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	let user = data.username;
+	const orderTotal = data.total;
+	const currency = data.currency;
+	const item = data.variants[0].name;
+	const itemsOrdered = data.variants.length;
+
+	let message = "";
+
+	// If there user did not provide a username, just say "Someone"
+	if (user == undefined)
+		user = "Someone"
+
+	// If the user ordered more than one item, write how many items they ordered
+	message += `${user} ordered ${item}`;
+	if (itemsOrdered > 1)
+		message += ` and ${itemsOrdered - 1} other item(s)!`
+
+	// If the user spent money, put the order total
+	if (orderTotal == 0)
+		message += ``;
+	else if (currency == "USD")
+		message += ` ($${orderTotal})`;
+	else
+		message += ` (${orderTotal} ${currency})`;
+
+	ShowAlert(message, 'fourthwall');
 }
 
 function FourthwallDonation(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	let user = data.username;
+	const amount = data.amount;
+	const currency = data.currency;
+
+	let message = "";
+	if (currency == "USD")
+		message = `${user} donated $${amount}`;
+	else
+		message = `${user} donated ${currency} ${amount}`;
+
+	ShowAlert(message, 'fourthwall');
 }
 
 function FourthwallSubscriptionPurchased(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	let user = data.nickname;
+	const amount = data.amount;
+	const currency = data.currency;
+
+	let message = "";
+	if (currency == "USD")
+		message = `${user} subscribed $${amount}`;
+	else
+		message = `${user} donsubscribedated ${currency} ${amount}`;
+
+	ShowAlert(message, 'fourthwall');
 }
 
 function FourthwallGiftPurchase(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	let user = data.username;
+	const total = data.total;
+	const currency = data.currency;
+	const gifts = data.gifts.length;
+	const itemName = data.offer.name;
+
+	let message = "";
+
+	// If the user ordered more than one item, write how many items they ordered
+	message += `${user} gifted`;
+
+	// If there is more than one gifted item, display the number of gifts
+	if (gifts > 1)
+		message += ` ${gifts} x `;
+
+	// The name of the item to be given away
+	message += ` ${itemName}`;
+
+	// If the user spent money, put the order total
+	if (currency == "USD")
+		message += ` ($${total})`;
+	else
+		message += ` (${currency}${total})`;
+
+	ShowAlert(message, 'fourthwall');
 }
 
 function FourthwallGiftDrawStarted(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	const durationSeconds = data.durationSeconds;
+	const itemName = data.offer.name;
+
+	let message = "";
+	message += `${user} gifted`;
+
+	// If the user ordered more than one item, write how many items they ordered
+	message += `🎁 ${itemName} Giveaway! • Type !join in the next ${durationSeconds} seconds for your chance to win!`;
+
+	ShowAlert(message, 'fourthwall');
 }
 
-function FourthwallGiftDrawEnd(data) {
+function FourthwallGiftDrawEnded(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	let message = `🥳 GIVEAWAY ENDED 🥳`;
+
+	ShowAlert(message, 'fourthwall');
+
+	message = `Congratulations ${GetWinnersList(data.gifts)}!`;
+
+	ShowAlert(message, 'fourthwall');
 }
 
 
@@ -1073,6 +1163,23 @@ function ShowAlert(message, background = null, duration = animationDuration) {
 			}
 		}, 500);
 	}, duration); // Remove after 5 seconds
+}
+
+function GetWinnersList(gifts) {
+	const winners = gifts.map(gift => gift.winner);
+	const numWinners = winners.length;
+
+	if (numWinners === 0) {
+		return "";
+	} else if (numWinners === 1) {
+		return winners[0];
+	} else if (numWinners === 2) {
+		return `${winners[0]} and ${winners[1]}`;
+	} else {
+		const lastWinner = winners.pop();
+		const secondLastWinner = winners.pop();
+		return `${winners.join(", ")}, ${secondLastWinner} and ${lastWinner}`;
+	}
 }
 
 

@@ -242,19 +242,23 @@ li {
 }
 
 .patreon {
-	background: linear-gradient(#c76633, #fd5e0a) !important;
+	background: linear-gradient(#c76633bf, #fd5e0abf) !important;
 }
 
 .kofi {
-	background: linear-gradient(#54c7ee, #08c2ff) !important;
+	background: linear-gradient(#54c7eebf, #08c2ffbf) !important;
 }
 
 .tipeeeStream {
-	background: linear-gradient(#120e23, #5d192a) !important;
+	background: linear-gradient(#120e23bf, #5d192abf) !important;
 }
 
 .fourthwall {
-	background: linear-gradient(#405eb3, #0d3cb9) !important;
+	background: linear-gradient(#466edbbf, #1c56f5bf) !important;
+}
+
+.blank {
+	background: #adadad00 !important;
 }
 
 /****************/
