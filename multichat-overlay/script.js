@@ -1611,10 +1611,11 @@ function FourthwallGiftDrawStarted(data) {
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<h2>${itemName} Giveaway!</h2>`;
+	contents += `<h3>🎁 ${itemName} Giveaway!</h3>`;
 
 	titleDiv.innerHTML = contents;
 	contentDiv.innerHTML = `Type !join in the next ${durationSeconds} seconds for your chance to win!`;
+	//contentDiv.style.display = `none`;
 
 	AddMessageItem(instance, data.id);
 }
@@ -1649,11 +1650,12 @@ function FourthwallGiftDrawEnded(data) {
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<h2>GIVEAWAY ENDED</h2>`;
-	contents += `Congratulations ${GetWinnersList(data.gifts)}!`
+	contents += `<h3>🥳 GIVEAWAY ENDED 🥳</h3>`;
+	//contents += `Congratulations ${GetWinnersList(data.gifts)}!`
 
 	titleDiv.innerHTML = contents;
-	contentDiv.innerHTML = `Click the link to redeem your ${itemName}!`;
+	contentDiv.innerHTML = `Congratulations ${GetWinnersList(data.gifts)}!`;
+	//contentDiv.style.display = `none`;
 
 	AddMessageItem(instance, data.id);
 }
