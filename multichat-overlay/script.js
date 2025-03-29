@@ -69,8 +69,7 @@ document.body.style.background = `${background}${hexOpacity}`;
 const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLowerCase()) || [];
 
 // Set the scroll direction
-switch (scrollDirection)
-{
+switch (scrollDirection) {
 	case 1:
 		document.getElementById('messageList').classList.add('normalScrollDirection');
 		break;
@@ -78,7 +77,7 @@ switch (scrollDirection)
 		document.getElementById('messageList').classList.add('reverseScrollDirection');
 		break;
 }
-	
+
 
 
 
@@ -257,9 +256,9 @@ client.on('Fourthwall.GiftDrawStarted', (response) => {
 	FourthwallGiftDrawStarted(response.data);
 })
 
-client.on('Fourthwall.GiftDrawEnd', (response) => {
+client.on('Fourthwall.GiftDrawEnded', (response) => {
 	console.debug(response.data);
-	FourthwallGiftDrawEnd(response.data);
+	FourthwallGiftDrawEnded(response.data);
 })
 
 
@@ -802,7 +801,7 @@ function TwitchChatMessageDeleted(data) {
 	messagesToRemove.forEach(item => {
 		item.style.opacity = 0;
 		item.style.height = 0;
-		setTimeout(function() {
+		setTimeout(function () {
 			messageList.removeChild(item);
 		}, 1000);
 	});
@@ -1192,8 +1191,8 @@ function KofiDonation(data) {
 	if (currency == "USD")
 		titleDiv.innerHTML = `${kofiIcon} ${user} donated $${amount}`;
 	else
-		titleDiv.innerHTML = `${kofiIcon} ${user} donated ${currency} ${amount}`;
-	
+		titleDiv.innerHTML = `${kofiIcon} ${user} donated ${currency}${amount}`;
+
 	if (message != null)
 		contentDiv.innerHTML = `${message}`;
 
@@ -1232,7 +1231,7 @@ function KofiSubscription(data) {
 		titleDiv.innerHTML = `${kofiIcon} ${user} subscribed ($${amount})`;
 	else
 		titleDiv.innerHTML = `${kofiIcon} ${user} subscribed (${currency} ${amount})`;
-	
+
 	if (message != null)
 		contentDiv.innerHTML = `${message}`;
 
@@ -1388,12 +1387,12 @@ function FourthwallOrderPlaced(data) {
 	const message = DecodeHTMLString(data.statmessageus);
 	const itemImageUrl = data.variants[0].image;
 	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
-	
+
 	let contents = "";
 
 	contents += fourthwallProductImage;
 
-	contents += "<br><br>"
+	contents += "<br><br>";
 
 	// If there user did not provide a username, just say "Someone"
 	if (user == undefined)
@@ -1408,9 +1407,9 @@ function FourthwallOrderPlaced(data) {
 	if (orderTotal == 0)
 		contents += ``;
 	else if (currency == "USD")
-		contents = ` ($${orderTotal})`;
+		contents += ` ($${orderTotal})`;
 	else
-		contents = ` (${orderTotal} ${currency})`;
+		contents += ` (${orderTotal} ${currency})`;
 
 	titleDiv.innerHTML = contents;
 
@@ -1427,12 +1426,92 @@ function FourthwallDonation(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('fourthwall');
+
+	// Set the text
+	let user = data.username;
+	const amount = data.amount;
+	const currency = data.currency;
+	const message = data.message;
+
+	let contents = "";
+
+	// If the user ordered more than one item, write how many items they ordered
+	contents += `<span style="background: #0042ff; padding: 0px 0.5em">${user}</span> donated`;
+
+	// If the user spent money, put the order total
+	if (currency == "USD")
+		contents += ` $${amount}`;
+	else
+		contents += ` ${currency}${amount}`;
+
+	titleDiv.innerHTML = contents;
+
+	// Add the custom message from the user
+	if (message.trim() != "")
+		contentDiv.innerHTML = `${message}`;
+	else
+		contentDiv.style.display = 'none'
+
+	AddMessageItem(instance, data.id);
 }
 
 function FourthwallSubscriptionPurchased(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('fourthwall');
+
+	// Set the text
+	let user = data.nickname;
+	const amount = data.amount;
+	const currency = data.currency;
+
+	let contents = "";
+
+	// If the user ordered more than one item, write how many items they ordered
+	contents += `<span style="background: #0042ff; padding: 0px 0.5em">${user}</span> subscribed`;
+
+	// If the user spent money, put the order total
+	if (currency == "USD")
+		contents += ` ($${amount})`;
+	else
+		contents += ` (${currency}${amount})`;
+
+	titleDiv.innerHTML = contents;
+	contentDiv.style.display = 'none'
+
+	AddMessageItem(instance, data.id);
 }
 
 function FourthwallGiftPurchase(data) {
@@ -1440,18 +1519,143 @@ function FourthwallGiftPurchase(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('blank');
+	titleDiv.classList.add('centerThatShitHomie');
+	contentDiv.classList.add('centerThatShitHomie');
+
+	// Set the text
+	let user = data.username;
+	const total = data.total;
+	const currency = data.currency;
+	const gifts = data.gifts.length;
+	const itemName = data.offer.name;
+	const itemImageUrl = data.offer.imageUrl;
+	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
+	const message = DecodeHTMLString(data.statmessageus);
+
+	let contents = "";
+
+	contents += fourthwallProductImage;
+
+	contents += "<br><br>";
+
+	// If the user ordered more than one item, write how many items they ordered
+	contents += `${user} gifted`;
+
+	// If there is more than one gifted item, display the number of gifts
+	if (gifts > 1)
+		contents += ` ${gifts} x `;
+
+	// The name of the item to be given away
+	contents += ` ${itemName}`;
+
+	// If the user spent money, put the order total
+	if (currency == "USD")
+		contents += ` ($${total})`;
+	else
+		contents += ` (${currency}${total})`;
+
+	titleDiv.innerHTML = contents;
+
+	// Add the custom message from the user
+	if (message.trim() != "")
+		contentDiv.innerHTML = `${message}`;
+	else
+		contentDiv.style.display = 'none'
+
+	AddMessageItem(instance, data.id);
 }
 
 function FourthwallGiftDrawStarted(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('fourthwall');
+	titleDiv.classList.add('centerThatShitHomie');
+	contentDiv.classList.add('centerThatShitHomie');
+
+	// Set the text
+	let durationSeconds = data.durationSeconds;
+	const itemName = data.offer.name;
+
+	let contents = "";
+
+	// If the user ordered more than one item, write how many items they ordered
+	contents += `<h2>${itemName} Giveaway!</h2>`;
+
+	titleDiv.innerHTML = contents;
+	contentDiv.innerHTML = `Type !join in the next ${durationSeconds} seconds for your chance to win!`;
+
+	AddMessageItem(instance, data.id);
 }
 
-function FourthwallGiftDrawEnd(data) {
+function FourthwallGiftDrawEnded(data) {
 	if (!showFourthwallAlerts)
 		return;
 
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('fourthwall');
+	titleDiv.classList.add('centerThatShitHomie');
+	contentDiv.classList.add('centerThatShitHomie');
+
+	// Set the text
+	let durationSeconds = data.durationSeconds;
+	const itemName = data.offer.name;
+
+	let contents = "";
+
+	// If the user ordered more than one item, write how many items they ordered
+	contents += `<h2>GIVEAWAY ENDED</h2>`;
+	contents += `Congratulations ${GetWinnersList(data.gifts)}!`
+
+	titleDiv.innerHTML = contents;
+	contentDiv.innerHTML = `Click the link to redeem your ${itemName}!`;
+
+	AddMessageItem(instance, data.id);
 }
 
 
@@ -1586,12 +1790,11 @@ function AddMessageItem(element, elementID, platform, userId) {
 		}
 
 		tempDiv.innerHTML = '';
-		
-		if (hideAfter > 0)
-		{
+
+		if (hideAfter > 0) {
 			setTimeout(function () {
 				lineItem.style.opacity = 0;
-				setTimeout(function() {
+				setTimeout(function () {
 					messageList.removeChild(lineItem);
 				}, 1000);
 			}, hideAfter * 1000);
@@ -1601,9 +1804,9 @@ function AddMessageItem(element, elementID, platform, userId) {
 }
 
 function DecodeHTMLString(html) {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
+	var txt = document.createElement("textarea");
+	txt.innerHTML = html;
+	return txt.value;
 }
 
 // I used Gemini for this shit so if it doesn't work, blame Google
@@ -1669,6 +1872,23 @@ function GetPermissionLevel(data, platform) {
 				return 15;
 			else
 				return 10;
+	}
+}
+
+function GetWinnersList(gifts) {
+	const winners = gifts.map(gift => gift.winner);
+	const numWinners = winners.length;
+
+	if (numWinners === 0) {
+		return "";
+	} else if (numWinners === 1) {
+		return winners[0];
+	} else if (numWinners === 2) {
+		return `${winners[0]} and ${winners[1]}`;
+	} else {
+		const lastWinner = winners.pop();
+		const secondLastWinner = winners.pop();
+		return `${winners.join(", ")}, ${secondLastWinner} and ${lastWinner}`;
 	}
 }
 
