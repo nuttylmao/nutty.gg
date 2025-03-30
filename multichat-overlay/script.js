@@ -26,17 +26,18 @@ const lineSpacing = urlParams.get("lineSpacing") || "1.7";
 const background = urlParams.get("background") || "#000000";
 const opacity = urlParams.get("opacity") || "0.85";
 
-const hideAfter = GetIntParam("hideAfter") || 0;
+const hideAfter = GetIntParam("hideAfter", 0);
 const excludeCommands = GetBooleanParam("excludeCommands", true);
 const ignoreChatters = urlParams.get("ignoreChatters") || "";
-const scrollDirection = GetIntParam("scrollDirection") || 1;
-const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel") || 20;
+const scrollDirection = GetIntParam("scrollDirection", 1);
+const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
+const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
@@ -290,6 +291,8 @@ async function TwitchChatMessage(data) {
 	// Get divs
 	const messageContainerDiv = instance.querySelector("#messageContainer");
 	const firstMessageDiv = instance.querySelector("#firstMessage");
+	const sharedChatDiv = instance.querySelector("#sharedChat");
+	const sharedChatChannelDiv = instance.querySelector("#sharedChatChannel");
 	const replyDiv = instance.querySelector("#reply");
 	const replyUserDiv = instance.querySelector("#replyUser");
 	const replyMsgDiv = instance.querySelector("#replyMsg");
@@ -306,7 +309,24 @@ async function TwitchChatMessage(data) {
 	const firstMessage = data.message.firstMessage;
 	if (firstMessage && showMessage) {
 		firstMessageDiv.style.display = 'block';
-		messageContainerDiv.classList.add("firstMessageHighlight");
+		messageContainerDiv.classList.add("highlightMessage");
+	}
+
+	// Set Shared Chat
+	console.log(showTwitchSharedChat);
+	const isSharedChat = data.isSharedChat;
+	if (isSharedChat) {
+		if (showTwitchSharedChat > 1) {
+			if (!data.sharedChat.primarySource)
+			{
+				const sharedChatChannel = data.sharedChat.sourceRoom.name;
+				sharedChatDiv.style.display = 'block';
+				sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
+				messageContainerDiv.classList.add("highlightMessage");
+			}
+		}
+		else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
+			return;
 	}
 
 	// Set Reply Message
@@ -1691,13 +1711,15 @@ function GetBooleanParam(paramName, defaultValue) {
 	}
 }
 
-function GetIntParam(paramName) {
+function GetIntParam(paramName, defaultValue) {
 	const urlParams = new URLSearchParams(window.location.search);
 	const paramValue = urlParams.get(paramName);
 
 	if (paramValue === null) {
-		return null; // or undefined, or a default value, depending on your needs
+		return defaultValue; // or undefined, or a default value, depending on your needs
 	}
+
+	console.log(paramValue);
 
 	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
 

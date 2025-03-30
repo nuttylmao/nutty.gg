@@ -81,13 +81,14 @@ li {
 	opacity: 0;
 }
 
-#firstMessage {
+#firstMessage,
+#sharedChat {
 	display: none;
 	font-weight: 500;
 	font-size: 0.7em;
 }
 
-.firstMessageHighlight {
+.highlightMessage {
 	background: #adadad46;
 	padding: 20px 40px;
 	border-radius: var(--border-radius);

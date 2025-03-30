@@ -222,6 +222,28 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchSharedChat",
+			"label": "Shared Chat Messages",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value":  2,
+					"label": "Show & Highlight"
+				},
+				{
+					"value": 1,
+					"label": "Show but do not highlight"
+				},
+				{
+					"value": 0,
+					"label": "Do not show"
+				}
+			],
+			"defaultValue": 2,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeMessages",
 			"label": "Chat Messages",
 			"description": "",

@@ -160,6 +160,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchSharedChat",
+			"label": "Shared Chat Messages",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeMessages",
 			"label": "Chat Messages",
 			"description": "",

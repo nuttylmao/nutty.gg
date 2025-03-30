@@ -29,7 +29,7 @@ const fontSize = urlParams.get("fontSize") || "18";
 const background = urlParams.get("background") || "#000000";
 const opacity = urlParams.get("opacity") || "0.5";
 
-const hideAfter = GetIntParam("hideAfter") || 0;
+const hideAfter = GetIntParam("hideAfter", 0);
 const excludeCommands = GetBooleanParam("excludeCommands", true);
 const ignoreChatters = urlParams.get("ignoreChatters") || "";
 
@@ -38,6 +38,7 @@ const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true)
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
+const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
 
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
@@ -284,6 +285,15 @@ async function TwitchChatMessage(data) {
 	const pronounsDiv = instance.querySelector("#pronouns");
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
+
+	// Set Shared Chat
+	// If the message is from Shared Chat AND the user indicated that they do NOT
+	// want shared chat messages, don't show it on screen
+	const isSharedChat = data.isSharedChat;
+	if (isSharedChat && !showTwitchSharedChat) {
+		if (!data.sharedChat.primarySource)
+			return;
+	}
 
 	// Set timestamp
 	if (showTimestamps) {
@@ -993,12 +1003,12 @@ function GetBooleanParam(paramName, defaultValue) {
 	}
 }
 
-function GetIntParam(paramName) {
+function GetIntParam(paramName, defaultValue) {
 	const urlParams = new URLSearchParams(window.location.search);
 	const paramValue = urlParams.get(paramName);
 
 	if (paramValue === null) {
-		return null; // or undefined, or a default value, depending on your needs
+		return defaultValue; // or undefined, or a default value, depending on your needs
 	}
 
 	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
