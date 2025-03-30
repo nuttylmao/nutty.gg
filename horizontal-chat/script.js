@@ -1061,11 +1061,13 @@ async function GetPronouns(platform, username) {
 function AddMessageItem(element, elementID, platform, userId) {
 	// Calculate the height of the div before inserting
 	const tempDiv = document.getElementById('IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList');
-	tempDiv.appendChild(element);
+	const tempDivTwoElectricBoogaloo = document.createElement('div');
+	tempDivTwoElectricBoogaloo.style.display = 'inline';
+	tempDivTwoElectricBoogaloo.appendChild(element);
+	tempDiv.appendChild(tempDivTwoElectricBoogaloo);
 
 	setTimeout(function () {
-		const calculatedWidth = tempDiv.offsetWidth + "px";
-		//console.log(calculatedWidth);
+		const calculatedWidth = tempDivTwoElectricBoogaloo.offsetWidth + "px";
 
 		// Create a new line item to add to the message list later
 		var lineItem = document.createElement('li');
@@ -1074,9 +1076,7 @@ function AddMessageItem(element, elementID, platform, userId) {
 		lineItem.dataset.userId = userId;
 
 		// Move the element from the temp div to the new line item
-		while (tempDiv.firstChild) {
-			lineItem.appendChild(tempDiv.firstChild);
-		}
+		lineItem.appendChild(tempDiv.firstElementChild);
 
 		// Add the line item to the list and animate it
 		// We need to manually set the height as straight CSS can't animate on "height: auto"
@@ -1090,8 +1090,6 @@ function AddMessageItem(element, elementID, platform, userId) {
 		while (messageList.clientWidth > 10 * window.innerWidth) {
 			messageList.removeChild(messageList.firstChild);
 		}
-
-		tempDiv.innerHTML = '';
 		
 		if (hideAfter > 0)
 		{

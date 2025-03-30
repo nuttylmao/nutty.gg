@@ -1786,10 +1786,12 @@ function IsImageUrl(url) {
 function AddMessageItem(element, elementID, platform, userId) {
 	// Calculate the height of the div before inserting
 	const tempDiv = document.getElementById('IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList');
-	tempDiv.appendChild(element);
+	const tempDivTwoElectricBoogaloo = document.createElement('div');
+	tempDivTwoElectricBoogaloo.appendChild(element);
+	tempDiv.appendChild(tempDivTwoElectricBoogaloo);
 
 	setTimeout(function () {
-		const calculatedHeight = tempDiv.clientHeight + "px";
+		const calculatedHeight = tempDivTwoElectricBoogaloo.offsetHeight + "px";
 
 		// Create a new line item to add to the message list later
 		var lineItem = document.createElement('li');
@@ -1802,9 +1804,7 @@ function AddMessageItem(element, elementID, platform, userId) {
 			lineItem.classList.add('reverseLineItemDirection');
 
 		// Move the element from the temp div to the new line item
-		while (tempDiv.firstChild) {
-			lineItem.appendChild(tempDiv.firstChild);
-		}
+		lineItem.appendChild(tempDiv.firstElementChild);
 
 		// Add the line item to the list and animate it
 		// We need to manually set the height as straight CSS can't animate on "height: auto"
@@ -1819,8 +1819,6 @@ function AddMessageItem(element, elementID, platform, userId) {
 			messageList.removeChild(messageList.firstChild);
 		}
 
-		tempDiv.innerHTML = '';
-
 		if (hideAfter > 0) {
 			setTimeout(function () {
 				lineItem.style.opacity = 0;
@@ -1830,7 +1828,7 @@ function AddMessageItem(element, elementID, platform, userId) {
 			}, hideAfter * 1000);
 		}
 
-	}, 100);
+	}, 200);
 }
 
 function DecodeHTMLString(html) {
@@ -1986,126 +1984,3 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
-
-// let data = `{
-//     "bits": 1,
-//     "cheerEmotes": [
-//         {
-//             "bits": 1,
-//             "color": "#979797",
-//             "type": "CheerEmote",
-//             "name": "Cheer",
-//             "startIndex": 0,
-//             "endIndex": 5,
-//             "imageUrl": "https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/4.gif"
-//         }
-//     ],
-//     "message": {
-//         "internal": false,
-//         "msgId": "ac304b97-35fd-4623-9ab3-2e68f24e770a",
-//         "userId": "24586202",
-//         "username": "cookievscookie",
-//         "role": 1,
-//         "subscriber": true,
-//         "subscriptionTier": "1000",
-//         "displayName": "CookieVsCookie",
-//         "color": "#DEC27A",
-//         "channel": "nutty",
-//         "message": "Cheer1 wasting all of my money 1 bit at time",
-//         "isHighlighted": false,
-//         "isMe": false,
-//         "isCustomReward": false,
-//         "isAnonymous": false,
-//         "isReply": false,
-//         "bits": 1,
-//         "firstMessage": false,
-//         "returningChatter": false,
-//         "hasBits": true,
-//         "emotes": [],
-//         "cheerEmotes": [
-//             {
-//                 "bits": 1,
-//                 "color": "#979797",
-//                 "type": "CheerEmote",
-//                 "name": "Cheer",
-//                 "startIndex": 0,
-//                 "endIndex": 5,
-//                 "imageUrl": "https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/4.gif"
-//             }
-//         ],
-//         "badges": [
-//             {
-//                 "name": "subscriber",
-//                 "version": "3",
-//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/c2d0acb4-a706-43a1-9d2b-0458cde2ba93/3",
-//                 "info": "4"
-//             },
-//             {
-//                 "name": "share-the-love",
-//                 "version": "1",
-//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/2de71f4f-b152-4308-a426-127a4cf8003a/3",
-//                 "info": ""
-//             }
-//         ],
-//         "monthsSubscribed": 4,
-//         "isTest": false,
-//         "sharedChat": false,
-//         "sourceBadges": []
-//     },
-//     "user": {
-//         "role": 1,
-//         "badges": [
-//             {
-//                 "name": "subscriber",
-//                 "version": "3",
-//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/c2d0acb4-a706-43a1-9d2b-0458cde2ba93/3",
-//                 "info": "4"
-//             },
-//             {
-//                 "name": "share-the-love",
-//                 "version": "1",
-//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/2de71f4f-b152-4308-a426-127a4cf8003a/3",
-//                 "info": ""
-//             }
-//         ],
-//         "color": "#DEC27A",
-//         "subscribed": true,
-//         "subscriptionTier": "1000",
-//         "monthsSubscribed": 4,
-//         "id": "24586202",
-//         "login": "cookievscookie",
-//         "name": "CookieVsCookie",
-//         "type": "twitch"
-//     },
-//     "messageId": "ac304b97-35fd-4623-9ab3-2e68f24e770a",
-//     "meta": {
-//         "internal": false,
-//         "firstMessage": false,
-//         "returningChatter": false,
-//         "isHighlighted": false,
-//         "isMe": false,
-//         "isCustomReward": false,
-//         "isTest": false
-//     },
-//     "anonymous": false,
-//     "text": "Cheer1 wasting all of my money 1 bit at time",
-//     "emotes": [],
-//     "parts": [
-//         {
-//             "bits": 1,
-//             "color": "#979797",
-//             "imageUrl": "https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/4.gif",
-//             "type": "cheer",
-//             "text": "Cheer"
-//         },
-//         {
-//             "type": "text",
-//             "text": " wasting all of my money 1 bit at time"
-//         }
-//     ],
-//     "isReply": false,
-//     "isSharedChat": false,
-//     "isTest": false
-// }`;
-
-// TwitchChatMessage(JSON.parse(data));

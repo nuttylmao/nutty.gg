@@ -5,6 +5,10 @@
 	--border-radius: 20px;
 }
 
+body {
+	overflow: hidden;
+}
+
 html {
 	width: 100vw;
 	height: 100vh;
@@ -57,7 +61,7 @@ html {
 	transform: translateX(50%);
 	overflow: hidden;
 	white-space: nowrap;
-	
+
 	font-weight: 700;
 	line-height: 1.7em;
 	width: 100%;
@@ -80,6 +84,7 @@ html {
 	0% {
 		bottom: calc(-1 * var(--margin) - 1.7em);
 	}
+
 	100% {
 		bottom: 0px;
 	}
@@ -89,6 +94,7 @@ html {
 	0% {
 		bottom: 0px;
 	}
+
 	100% {
 		bottom: calc(-1 * var(--margin) - 1.7em);
 	}
@@ -111,7 +117,7 @@ li {
 }
 
 #IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList {
-    /* margin-top: 10px; */
+	/* margin-top: 10px; */
 	background: #2FB774;
 	display: inline;
 	opacity: 0;
