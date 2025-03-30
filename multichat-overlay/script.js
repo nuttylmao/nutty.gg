@@ -1811,7 +1811,11 @@ function AddMessageItem(element, elementID, platform, userId) {
 		messageList.appendChild(lineItem);
 		setTimeout(function () {
 			lineItem.className = lineItem.className + " show";
-			lineItem.style.height = calculatedHeight;
+			lineItem.style.maxHeight = calculatedHeight;
+			// After it's done animating, remove the height constraint in case the div needs to get bigger
+			setTimeout(function () {
+				lineItem.style.maxHeight = "none";
+			}, 1000);
 		}, 10);
 
 		// Remove old messages that have gone off screen to save memory

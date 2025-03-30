@@ -61,7 +61,7 @@ html {
 li {
 	list-style: none;
 	overflow: hidden;
-	height: 0;
+	max-height: 0;
 	margin: 10px 0px 0px 0px;
 	transition: all 1s ease-in-out;
 }

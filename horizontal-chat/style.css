@@ -103,7 +103,7 @@ html {
 li {
 	list-style: none;
 	overflow: hidden;
-	width: 0px;
+	max-width: 0px;
 	transition: all 1s ease-in-out;
 }
 
