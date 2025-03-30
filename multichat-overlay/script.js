@@ -50,6 +50,8 @@ const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 
+const furryMode = GetBooleanParam("furryMode", false);
+
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
@@ -338,9 +340,13 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the message data
-	const message = data.message.message;
+	let message = data.message.message;
 	const messageColor = data.message.color;
 	const role = data.message.role;
+
+	// Set furry mode
+	if (furryMode)
+		message = TranslateToFurry(message);
 
 	// Set message text
 	if (showMessage) {
@@ -879,6 +885,10 @@ function YouTubeMessage(data) {
 	if (showMessage) {
 		messageDiv.innerText = data.message;
 	}
+
+	// Set furry mode
+	if (furryMode)
+		messageDiv.innerText = TranslateToFurry(data.message);
 
 
 	// Render platform
@@ -1889,6 +1899,45 @@ function GetWinnersList(gifts) {
 		return `${winners.join(", ")}, ${secondLastWinner} and ${lastWinner}`;
 	}
 }
+
+function TranslateToFurry(sentence) {
+	const words = sentence.toLowerCase().split(/\b/);
+  
+	const furryWords = words.map(word => {
+	  if (/\w+/.test(word)) {
+		let newWord = word;
+  
+		// Common substitutions
+		newWord = newWord.replace(/l/g, 'w');
+		newWord = newWord.replace(/r/g, 'w');
+		newWord = newWord.replace(/th/g, 'f');
+		newWord = newWord.replace(/you/g, 'yous');
+		newWord = newWord.replace(/my/g, 'mah');
+		newWord = newWord.replace(/me/g, 'meh');
+		newWord = newWord.replace(/am/g, 'am');
+		newWord = newWord.replace(/is/g, 'is');
+		newWord = newWord.replace(/are/g, 'are');
+		newWord = newWord.replace(/very/g, 'vewy');
+		newWord = newWord.replace(/pretty/g, 'pwetty');
+		newWord = newWord.replace(/little/g, 'wittle');
+		newWord = newWord.replace(/nice/g, 'nyce');
+  
+		// Random additions
+		if (Math.random() < 0.15) {
+		  newWord += ' nya~';
+		} else if (Math.random() < 0.1) {
+		  newWord += ' >w<';
+		} else if (Math.random() < 0.05) {
+		  newWord += ' owo';
+		}
+  
+		return newWord;
+	  }
+	  return word;
+	});
+  
+	return furryWords.join('');
+  }
 
 
 

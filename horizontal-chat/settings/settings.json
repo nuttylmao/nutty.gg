@@ -240,6 +240,14 @@
 			"group": "Which donation messages do you want to see?"
 		},
 		{
+			"id": "furryMode",
+			"label": "Furry Mode",
+			"description": "Meow",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Very Important Stuff"
+		},
+		{
 			"id": "address",
 			"label": "Address",
 			"description": "Streamer.bot Websocket Server Address",
