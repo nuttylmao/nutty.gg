@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveButton = document.getElementById('save-settings');
 
   fetch(settingsJson)
-  //fetch('settings.json')
+  //fetch('../multichat-overlay/settings/settings.json')
     .then(response => response.json())
     .then(data => {
       const groupedSettings = {};
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (setting.description) {
             const description = document.createElement('p');
-            description.textContent = setting.description;
+            description.innerHTML = setting.description;
             labelDescriptionDiv.appendChild(description);
           }
 

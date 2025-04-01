@@ -91,12 +91,17 @@ h2 {
   display: block;
 }
 
-.setting-item p {
+.setting-item p,
+.setting-item a {
   font-size: 0.9em;
   font-weight: 300;
   /* color: #666; */
   opacity: 0.6;
   margin-bottom: 0;
+}
+
+a {
+  font-weight: 500 !important;
 }
 
 .setting-item-content {
