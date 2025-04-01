@@ -1,5 +1,5 @@
 let settingsContainer = document.getElementById('settings-container');
-settingsContainer.src = `../../utilities/settings-page-builder?settingsJson=${window.location.href}/settings.json`
+settingsContainer.src = `../../.utilities/settings-page-builder?settingsJson=${window.location.href}/settings.json`
 console.log(settingsContainer.src);
 
 function reloadWidget(data) {
