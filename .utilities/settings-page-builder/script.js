@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const settingsContent = document.getElementById('settings-content');
   const saveButton = document.getElementById('save-settings');
 
-  //fetch(settingsJson)
-  fetch('../../multichat-overlay/settings/settings.json')
+  fetch(settingsJson)
+  //fetch('../../multichat-overlay/settings/settings.json')
     .then(response => response.json())
     .then(data => {
       const groupedSettings = {};
