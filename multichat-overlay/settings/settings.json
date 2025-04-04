@@ -152,7 +152,7 @@
 			"label": "In-line Chat",
 			"description": "Remove the line space after the username",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
 			"group": "General"
 		},
 		{
