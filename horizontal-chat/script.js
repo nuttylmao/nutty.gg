@@ -308,7 +308,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set pronouns
-	const pronouns = await GetPronouns('twitch', 'caffeinedaydream');
+	const pronouns = await GetPronouns('twitch', data.message.username);
 	if (pronouns && showPronouns) {
 		pronounsDiv.classList.add("pronouns");
 		pronounsDiv.innerText = pronouns;
