@@ -30,6 +30,7 @@ const hideAfter = GetIntParam("hideAfter", 0);
 const excludeCommands = GetBooleanParam("excludeCommands", true);
 const ignoreChatters = urlParams.get("ignoreChatters") || "";
 const scrollDirection = GetIntParam("scrollDirection", 1);
+const inlineChat = GetBooleanParam("inlineChat", false);
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
@@ -376,6 +377,13 @@ async function TwitchChatMessage(data) {
 	// Set the "action" color
 	if (data.message.isMe)
 		messageDiv.style.color = messageColor;
+
+	// Remove the line break
+	if (inlineChat)
+	{
+		instance.querySelector("#colon-separator").style.display = `inline`;
+		instance.querySelector("#line-space").style.display = `none`;
+	}
 
 	// Render platform
 	if (showPlatform) {
@@ -910,6 +918,12 @@ function YouTubeMessage(data) {
 	if (furryMode)
 		messageDiv.innerText = TranslateToFurry(data.message);
 
+	// Remove the line break
+	if (inlineChat)
+	{
+		instance.querySelector("#colon-separator").style.display = `inline`;
+		instance.querySelector("#line-space").style.display = `none`;
+	}
 
 	// Render platform
 	if (showPlatform) {

@@ -148,6 +148,14 @@
 			"group": "General"
 		},
 		{
+			"id": "inlineChat",
+			"label": "In-line Chat",
+			"description": "Remove the line space after the username",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
 			"id": "imageEmbedPermissionLevel",
 			"label": "Embed Images",
 			"description": "Automatically embed images for these users",
