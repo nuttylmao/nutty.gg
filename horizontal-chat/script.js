@@ -9,6 +9,7 @@ const sbServerAddress = urlParams.get("address") || "127.0.0.1";
 const sbServerPort = urlParams.get("port") || "8080";
 const minimumRole = 2;							// 1 - Viewer, 2 - VIP, 3 - Moderator, 4 - Broadcaster
 const avatarMap = new Map();
+const pronounMap = new Map();
 const animationDuration = 8000;
 let widgetLocked = false;						// Needed to lock animation from overlapping
 let alertQueue = [];
@@ -1048,14 +1049,23 @@ async function GetAvatar(username) {
 }
 
 async function GetPronouns(platform, username) {
-	const response = await client.getUserPronouns(platform, username);
-	const userFound = response.pronoun.userFound;
-	const pronouns = `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}`;
-
-	if (userFound)
-		return `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}`;
-	else
-		return '';
+	if (pronounMap.has(username)) {
+		console.debug(`Pronouns found for ${username}. Retrieving from hash map.`)
+		return pronounMap.get(username);
+	}
+	else {
+		console.debug(`No pronouns found for ${username}. Retrieving from alejo.io.`)
+		const response = await client.getUserPronouns(platform, username);
+		const userFound = response.pronoun.userFound;
+		const pronouns = `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}`;
+		
+		pronounMap.set(username, pronouns);
+	
+		if (userFound)
+			return pronouns;
+		else
+			return '';
+	}
 }
 
 function AddMessageItem(element, elementID, platform, userId) {
