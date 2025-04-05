@@ -1,0 +1,206 @@
+* {
+	margin: 0;
+	padding: 0;
+	--margin: 40px;
+	/* --border-radius: 20px; */
+	font-size: 30px;
+	/* --line-spacing: 1.7em; */
+}
+
+body {
+	overflow: hidden;
+}
+
+html {
+	width: 100vw;
+	height: 100vh;
+	scroll-behavior: smooth;
+	/* background: #000000d9; */
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+	color: white;
+	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+	overflow-wrap: break-word;
+}
+
+#statusContainer {
+	font-weight: 500;
+	font-size: 30px;
+	text-align: center;
+	background-color: #D12025;
+	color: white;
+	padding: 10px;
+	border-radius: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#mainContainer {
+	display: block;
+	position: absolute;
+	width: 100%;
+	padding: var(--margin);
+	box-sizing: border-box;
+}
+
+#alertBox {
+	display: flex;
+	padding: 0.5em;
+	border-radius: 0.75em;
+	filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 1));
+	position: relative;
+	align-items: center;
+	overflow: hidden;
+	/* text-align: center; */
+}
+
+/* #alertBox::before {
+	content: "";
+	position: absolute;
+	top: -50px;
+	right: -50px;
+	bottom: -50px;
+	left: -50px;
+	background-image: url('https://static-cdn.jtvnw.net/jtv_user_pictures/272e643e-4d43-415f-9ee1-18916e825411-profile_image-300x300.png');
+	background-color: rgba(0, 0, 0, 0.6);
+	background-size: cover;
+	background-position: center;
+	background-blend-mode: multiply;	
+	filter: blur(25px);
+	z-index: -1;
+} */
+
+#avatar {
+	display: inline;
+	max-width: 100%;
+	height: 4em;
+	filter: drop-shadow(0px 0px 7px rgba(0, 0, 0, 0.5));
+	object-fit: cover;
+	margin-right: 0.75em;
+}
+
+#contents {
+	flex-grow: 1;
+}
+
+#username {
+	font-size: 1.2em;
+	font-weight: 600;
+}
+
+#description {
+	font-size: 1em;
+	font-weight: 400;
+}
+
+#attribute {
+	font-size: 0.8em;
+	font-weight: 400;
+}
+
+.profilePic {	
+	border-radius: 50%;
+}
+
+.square {	
+	border-radius: 0.5em;
+}
+
+/*****************/
+/** CARD COLORS **/
+/*****************/
+
+.announcementBlue {
+	background: linear-gradient(#03d3d7BF, #8d49feBF) !important;
+}
+
+.announcementGreen {
+	background: linear-gradient(#01da86BF, #55bee4BF) !important;
+}
+
+.announcementOrange {
+	background: linear-gradient(#feb419BF, #e1df00BF) !important;
+}
+
+.announcementPurple {
+	background: linear-gradient(#9548ffBF, #fc74e6BF) !important;
+}
+
+.twitch {
+	background: linear-gradient(#6d5ca1bf, #9146ffBF) !important;
+}
+
+.youtube {
+	background: linear-gradient(#FF6C60BF, #FF0707BF) !important;
+}
+
+.streamlabs {
+	background: linear-gradient(#73dabbbf, #397765bf) !important;
+}
+
+.streamelements {
+	background: linear-gradient(#263b8abf, #0a112abf) !important;
+}
+
+.patreon {
+	background: linear-gradient(#c76633bf, #fd5e0abf) !important;
+}
+
+.kofi {
+	background: linear-gradient(#54c7eebf, #08c2ffbf) !important;
+}
+
+.tipeeeStream {
+	background: linear-gradient(#120e23bf, #5d192abf) !important;
+}
+
+.fourthwall {
+	background: linear-gradient(#466edbbf, #1c56f5bf) !important;
+}
+
+.blank {
+	background: #adadad00 !important;
+}
+
+.highlightMessage {
+	background: #adadad46;
+}
+
+/****************/
+/** ANIMATIONS **/
+/****************/
+
+.statusConnected {
+	animation-name: statusConnected;
+	animation-duration: 2s;
+	animation-fill-mode: forwards;
+}
+
+.statusDisconnected {
+	animation-name: statusDisconnected;
+	animation-duration: 0.5s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes statusConnected {
+	0% {
+		opacity: 1;
+		background-color: #2FB774;
+	}
+
+	100% {
+		opacity: 0;
+		background-color: #2FB774;
+	}
+}
+
+@keyframes statusDisconnected {
+	0% {
+		background-color: #D12025;
+	}
+
+	100% {
+		background-color: #D12025;
+	}
+}
