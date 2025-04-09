@@ -14,6 +14,11 @@ const avatarElement = document.getElementById('avatar');
 const usernameLabel = document.getElementById('username');
 const descriptionLabel = document.getElementById('description');
 const attributeLabel = document.getElementById('attribute');
+const theContentThatShowsFirstInsteadOfSecond = document.getElementById('theContentThatShowsFirstInsteadOfSecond');
+const messageLabel = document.getElementById('message');
+
+let widgetLocked = false;						// Needed to lock animation from overlapping
+let alertQueue = [];
 
 /////////////
 // OPTIONS //
@@ -57,6 +62,8 @@ const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
+
+const animationSpeed = GetIntParam("showTwitchSharedChat", 8000);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
@@ -247,15 +254,12 @@ async function TwitchSub(data) {
 	const isPrime = data.is_prime;
 
 	// Render avatars
-	if (showAvatar) {
-		const avatarURL = await GetAvatar(username);
-		avatarElement.src = avatarURL;
-	}
+	const avatarURL = await GetAvatar(username);
 
 	if (!isPrime)
-		UpdateAlertBox('twitch', `${username}`, `subscribed with Tier ${subTier.charAt(0)}`);
+		UpdateAlertBox('twitch', avatarURL, `${username}`, `subscribed with Tier ${subTier.charAt(0)}`);
 	else
-		UpdateAlertBox('twitch', `${username}`, `used their Prime Sub`);
+		UpdateAlertBox('twitch', avatarURL, `${username}`, `used their Prime Sub`);
 }
 
 async function TwitchResub(data) {
@@ -270,14 +274,12 @@ async function TwitchResub(data) {
 	const message = data.text;
 
 	// Render avatars
-	if (showAvatar) {
-		const avatarURL = await GetAvatar(username);
-		avatarElement.src = avatarURL;
-	}
+	const avatarURL = await GetAvatar(username);
 
 	if (!isPrime)
 		UpdateAlertBox(
 			'twitch',
+			avatarURL,
 			`${username}`,
 			`resubscribed with Tier ${subTier.charAt(0)}`,
 			`${cumulativeMonths} months`,
@@ -286,13 +288,12 @@ async function TwitchResub(data) {
 	else
 		UpdateAlertBox(
 			'twitch',
+			avatarURL,
 			`${username}`,
 			`used their Prime Sub`,
 			`${cumulativeMonths} months`,
 			message
 		);
-
-	AddMessageItem(instance, data.messageId);
 }
 
 async function TwitchGiftSub(data) {
@@ -306,10 +307,7 @@ async function TwitchGiftSub(data) {
 	const cumlativeTotal = data.cumlativeTotal;
 
 	// Render avatars
-	if (showAvatar) {
-		const avatarURL = await GetAvatar(username);
-		avatarElement.src = avatarURL;
-	}
+	const avatarURL = await GetAvatar(username);
 	
 	let messageText = '';
 	if (cumlativeTotal > 0)
@@ -317,6 +315,7 @@ async function TwitchGiftSub(data) {
 
 	UpdateAlertBox(
 		'twitch',
+		avatarURL,
 		`${username}`,
 		`gifted a Tier ${subTier.charAt(0)} subscription`,
 		`to ${recipient}`,
@@ -335,14 +334,11 @@ async function TwitchRewardRedemption(data) {
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform" style="height: 1em"/>`;
 
 	// Render avatars
-	if (showAvatar) {
-		const username = data.user_login;
-		const avatarURL = await GetAvatar(username);
-		avatarElement.src = avatarURL;
-	}
+	const avatarURL = await GetAvatar(data.user_login);
 
 	UpdateAlertBox(
 		'twitch',
+		avatarURL,
 		`${username} redeemed`,
 		`${rewardName} ${channelPointIcon} ${cost}`,
 		'',
@@ -355,11 +351,7 @@ async function TwitchRaid(data) {
 		return;
 
 	// Render avatars
-	if (showAvatar) {
-		const username = data.from_broadcaster_user_login;
-		const avatarURL = await GetAvatar(username);
-		avatarElement.src = avatarURL;
-	}
+	const avatarURL = await GetAvatar(data.from_broadcaster_user_login);
 
 	// Set the text
 	const username = data.from_broadcaster_user_login;
@@ -367,6 +359,7 @@ async function TwitchRaid(data) {
 
 	UpdateAlertBox(
 		'twitch',
+		avatarURL,
 		`${username}`,
 		`is raiding with a party of ${viewers}`,
 		'',
@@ -379,12 +372,11 @@ function YouTubeSuperChat(data) {
 		return;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = data.user.profileImageUrl;
-	}
+	const avatarURL = data.user.profileImageUrl;
 
 	UpdateAlertBox(
 		'youtube',
+		avatarURL,
 		`🪙 ${data.user.name}`,
 		`sent a Super Chat (${data.amount})`,
 		'',
@@ -397,12 +389,11 @@ function YouTubeSuperSticker(data) {
 		return;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = FindFirstImageUrl(data);
-	}
+	const avatarURL = FindFirstImageUrl(data);
 
 	UpdateAlertBox(
 		'youtube',
+		avatarURL,
 		`${data.user.name}`,
 		`sent a Super Sticker (${data.amount})`,
 		'',
@@ -415,12 +406,11 @@ function YouTubeNewSponsor(data) {
 		return;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = data.user.profileImageUrl;
-	}
+	const avatarURL = data.user.profileImageUrl;
 
 	UpdateAlertBox(
 		'youtube',
+		avatarURL,
 		`⭐ New ${data.levelName}`,
 		`Welcome ${data.user.name}!`,
 		'',
@@ -433,12 +423,11 @@ function YouTubeGiftMembershipReceived(data) {
 		return;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = data.user.profileImageUrl;
-	}
+	const avatarURL = data.user.profileImageUrl;
 
 	UpdateAlertBox(
 		'youtube',
+		avatarURL,
 		`${data.gifter.name}`,
 		`gifted a membership`,
 		`to ${data.user.name} (${data.tier})!`,
@@ -455,14 +444,10 @@ async function StreamlabsDonation(data) {
 	const formattedAmount = data.formattedAmount;
 	const currency = data.currency;
 	const message = data.message;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'streamlabs',
+		'',
 		`${donater}`,
 		`donated ${currency}${formattedAmount}`,
 		``,
@@ -479,18 +464,35 @@ async function StreamElementsTip(data) {
 	const formattedAmount = `$${data.amount}`;
 	const currency = data.currency;
 	const message = data.message;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'streamelements',
+		''
 		`${donater}`,
 		`donated ${currency}${formattedAmount}`,
 		``,
 		message
+	);
+}
+
+function PatreonPledgeCreated(data) {
+	if (!showPatreonMemberships)
+		return;
+
+	const user = data.attributes.full_name;
+	const amount = (data.attributes.will_pay_amount_cents/100).toFixed(2);
+	const patreonIcon = `<img src="icons/platforms/patreon.png" class="platform"/>`;
+	
+	// Render avatars
+	const avatarURL = 'icons/platforms/patreon.png';
+	
+	UpdateAlertBox(
+		'patreon',
+		avatarURL,
+		`${user}`,
+		`joined Patreon ($${amount})`,
+		``,
+		``
 	);
 }
 
@@ -505,13 +507,12 @@ function KofiDonation(data) {
 	const message = data.message;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = "icons/platforms/kofi.png";
-	}
+	const avatarURL = 'icons/platforms/kofi.png';
 
 	if (currency == "USD")
 		UpdateAlertBox(
 			'kofi',
+			avatarURL,
 			`${user}`,
 			`donated $${amount}`,
 			``,
@@ -538,13 +539,12 @@ function KofiSubscription(data) {
 	const message = data.message;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = "icons/platforms/kofi.png";
-	}
+	const avatarURL = 'icons/platforms/kofi.png';
 
 	if (currency == "USD")
 		UpdateAlertBox(
 			'kofi',
+			avatarURL,
 			`${user}`,
 			`subscribed ($${amount})`,
 			``,
@@ -570,12 +570,11 @@ function KofiResubscription(data) {
 	const message = data.message;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = "icons/platforms/kofi.png";
-	}
+	const avatarURL = 'icons/platforms/kofi.png';
 
 	UpdateAlertBox(
 		'kofi',
+		avatarURL,
 		`${user}`,
 		`subscribed (${tier})`,
 		``,
@@ -603,12 +602,11 @@ function KofiShopOrder(data) {
 		formattedAmount = `${currency} ${amount}`;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = "icons/platforms/kofi.png";
-	}
+	const avatarURL = 'icons/platforms/kofi.png';
 
 	UpdateAlertBox(
 		'kofi',
+		avatarURL,
 		`${user}`,
 		`ordered ${itemTotal} item(s) on Ko-fi `,
 		`${formattedAmount}`,
@@ -627,13 +625,12 @@ function TipeeeStreamDonation(data) {
 	const message = data.message;
 	
 	// Render avatars
-	if (showAvatar) {
-		avatar.src = "icons/platforms/tipeeeStream.png";
-	}
+	const avatarURL = 'icons/platforms/tipeeeStream.png';
 
 	if (currency == "USD")
 		UpdateAlertBox(
 			'tipeeeStream',
+			avatarURL,
 			`${user}`,
 			`donated $${amount}`,
 			``,
@@ -642,6 +639,7 @@ function TipeeeStreamDonation(data) {
 	else
 		UpdateAlertBox(
 			'tipeeeStream',
+			avatarURL,
 			`${user}`,
 			`donated ${currency} ${amount}`,
 			``,
@@ -665,11 +663,6 @@ function FourthwallOrderPlaced(data) {
 	// If there user did not provide a username, just say "Someone"
 	if (user == undefined)
 		user = "Someone";
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = itemImageUrl;
-	}
 
 	let attributeText = ""
 
@@ -687,6 +680,7 @@ function FourthwallOrderPlaced(data) {
 
 	UpdateAlertBox(
 		'fourthwall',
+		itemImageUrl,
 		`${user}`,
 		`ordered ${item}`,
 		attributeText,
@@ -711,14 +705,10 @@ function FourthwallDonation(data) {
 		formattedAmount += ` $${amount}`;
 	else
 		formattedAmount += ` ${currency} ${amount}`;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'fourthwall',
+		'',
 		`${user}`,
 		`donated ${formattedAmount}`,
 		'',
@@ -742,14 +732,10 @@ function FourthwallSubscriptionPurchased(data) {
 		formattedAmount += ` ($${amount})`;
 	else
 		formattedAmount += ` (${currency} ${amount})`;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'fourthwall',
+		'',
 		`${user}`,
 		`subscribed ${formattedAmount}`,
 		'',
@@ -786,14 +772,10 @@ function FourthwallGiftPurchase(data) {
 		attributesText = `$${total}`;
 	else
 		attributesText = `${currency}${total}`;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = itemImageUrl;
-	}
 
 	UpdateAlertBox(
 		'fourthwall',
+		itemImageUrl,
 		`${user}`,
 		`gifted ${contents}`,
 		attributesText,
@@ -808,14 +790,10 @@ function FourthwallGiftDrawStarted(data) {
 	// Set the text
 	const durationSeconds = data.durationSeconds;
 	const itemName = data.offer.name;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'fourthwall',
+		'',
 		`<span style="font-size: 1.2em">🎁 ${itemName} Giveaway!</span>`,
 		`Type !join in the next ${durationSeconds} seconds for your chance to win!`,
 		'',
@@ -1118,14 +1096,70 @@ function GetWinnersList(gifts) {
 // 	return furryWords.join('');
 // }
 
-function UpdateAlertBox(platform, usernameText, descriptionText, attributeText, message) {
+function UpdateAlertBox(platform, avatarURL, usernameText, descriptionText, attributeText, message) {
+	// Check if the widget is in the middle of an animation
+	// If any alerts are requested while the animation is playing, it should be added to the alert queue
+	if (widgetLocked) {
+		console.debug("Animation is progress, added alert to queue");
+		let data = { platform: platform, avatarURL: avatarURL, usernameText: usernameText, descriptionText: descriptionText, attributeText: attributeText, message: message };
+		alertQueue.push(data);
+		return;
+	}
+
+	// Start the animation
+	widgetLocked = true;
+
 	// Set the card background colors
 	alertBox.classList = '';
 	alertBox.classList.add(platform);
 
+	// Render avatars
+	if (showAvatar) {
+		avatarElement.src = avatarURL;
+	}
+
+	// Set labels
 	usernameLabel.innerHTML = usernameText != null ? usernameText : '';
 	descriptionLabel.innerHTML = descriptionText != null ? descriptionText : '';
 	attributeLabel.innerHTML = attributeText != null ? attributeText : '';
+	messageLabel.innerHTML = message != null ? `${message}` : '';
+	messageLabel.style.opacity = 0;
+
+	alertBox.style.height = theContentThatShowsFirstInsteadOfSecond.offsetHeight + 40 + "px";
+	alertBox.style.animation = 'slideInFromTop 0.5s ease-out forwards';
+
+	// (1) Set timeout (5 seconds)
+	// (2) Set the message label
+	// (3) Calculate the height of message label
+	// (4) Set the height of alertBox
+	//		(a) Add in the CSS animation when this is working
+
+	setTimeout(() => {
+
+		alertBox.style.transition = 'all 0.5s ease-in-out';
+		alertBox.style.height = messageLabel.offsetHeight + 40 + "px";
+		theContentThatShowsFirstInsteadOfSecond.style.opacity = 0;
+		messageLabel.style.opacity = 1;
+
+		setTimeout(() => {
+			alertBox.style.animation = 'slideBackUp 0.5s ease-out forwards';
+
+			setTimeout(() => {
+				alertBox.style.transition = '';
+				theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
+				messageLabel.style.opacity = 0;
+				alertBox.style.height = '0px';
+				widgetLocked = false;
+				if (alertQueue.length > 0) {
+					console.debug("Pulling next alert from the queue");
+					let data = alertQueue.shift();
+					UpdateAlertBox(data.platform, data.avatarURL, data.usernameText, data.descriptionText, data.attributeText, data.message)
+				}
+			}, 1000);
+		}, messageLabel.innerText.trim() != '' ? animationSpeed : 0);
+
+	}, animationSpeed);
+
 }
 
 
