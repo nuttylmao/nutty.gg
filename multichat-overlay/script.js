@@ -1205,6 +1205,36 @@ async function StreamElementsTip(data) {
 	AddMessageItem(instance, data.id);
 }
 
+function PatreonPledgeCreated(data) {
+	if (!showPatreonMemberships)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('patreon');
+
+	const user = data.attributes.full_name;
+	const amount = (data.attributes.will_pay_amount_cents/100).toFixed(2);
+	const patreonIcon = `<img src="icons/platforms/patreon.png" class="platform"/>`;
+	
+	titleDiv.innerHTML = `${patreonIcon} ${user} joined Patreon ($${amount})`;
+
+	AddMessageItem(instance, data.id);
+}
+
 function KofiDonation(data) {
 	if (!showKofiDonations)
 		return;
