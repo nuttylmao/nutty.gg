@@ -151,11 +151,16 @@ li {
 }
 
 .platform,
-.badge,
-.emote {
+.badge {
 	height: 1em;
 	margin: 1px;
 	transform: translate(0px, 0.25em);
+}
+
+.emote {
+	height: 1.5em;
+	margin: 1px;
+	transform: translate(0px, 0.4em);
 }
 
 #badgeList {
