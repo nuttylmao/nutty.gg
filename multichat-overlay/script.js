@@ -1811,14 +1811,11 @@ async function GetPronouns(platform, username) {
 		console.debug(`No pronouns found for ${username}. Retrieving from alejo.io.`)
 		const response = await client.getUserPronouns(platform, username);
 		const userFound = response.pronoun.userFound;
-		const pronouns = `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}`;
+		const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
 		
 		pronounMap.set(username, pronouns);
 	
-		if (userFound)
-			return pronouns;
-		else
-			return '';
+		return pronouns;
 	}
 }
 
