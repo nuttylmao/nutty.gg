@@ -277,7 +277,6 @@ async function TwitchChatMessage(data) {
 	const instance = template.content.cloneNode(true);
 
 	// Get divs
-	const messageContainer = instance.querySelector(".messageContainer");
 	const userInfoDiv = instance.querySelector("#userInfo");
 	const avatarDiv = instance.querySelector("#avatar");
 	const timestampDiv = instance.querySelector("#timestamp");
@@ -1165,6 +1164,7 @@ function ShowAlert(message, background = null, duration = animationDuration) {
 
 	// Get divs
 	const messageListDiv = document.querySelector("#messageList");
+	const backgroundDiv = document.querySelector("#background");
 	const alertBoxDiv = document.querySelector("#alertBox");
 
 	// Set the message text
@@ -1176,11 +1176,13 @@ function ShowAlert(message, background = null, duration = animationDuration) {
 	// Start the animation
 	widgetLocked = true;
 	messageListDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
+	backgroundDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
 	alertBoxDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
 
 	// To stop the animation (remove the animation property):
 	setTimeout(() => {
 		messageListDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
+		backgroundDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
 		alertBoxDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
 		setTimeout(() => {
 			alertBoxDiv.classList = '';
