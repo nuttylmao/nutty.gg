@@ -319,8 +319,7 @@ async function TwitchChatMessage(data) {
 	const isSharedChat = data.isSharedChat;
 	if (isSharedChat) {
 		if (showTwitchSharedChat > 1) {
-			if (!data.sharedChat.primarySource)
-			{
+			if (!data.sharedChat.primarySource) {
 				const sharedChatChannel = data.sharedChat.sourceRoom.name;
 				sharedChatDiv.style.display = 'block';
 				sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
@@ -380,8 +379,7 @@ async function TwitchChatMessage(data) {
 		messageDiv.style.color = messageColor;
 
 	// Remove the line break
-	if (inlineChat)
-	{
+	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
 	}
@@ -406,7 +404,21 @@ async function TwitchChatMessage(data) {
 	// Render emotes
 	for (i in data.emotes) {
 		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
+		const emoteName = EscapeRegExp(data.emotes[i].name);
+
+		let regexPattern = emoteName;
+
+		// Check if the emote name consists only of word characters (alphanumeric and underscore)
+		if (/^\w+$/.test(emoteName)) {
+			regexPattern = `\\b${emoteName}\\b`;
+		}
+		else {
+			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+			regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+		}
+
+		const regex = new RegExp(regexPattern, 'g');
+		messageDiv.innerHTML = messageDiv.innerHTML.replace(regex, emoteElement);
 	}
 
 	// Render cheermotes
@@ -585,7 +597,21 @@ async function TwitchAnnouncement(data) {
 	for (i in data.parts) {
 		if (data.parts[i].type == `emote`) {
 			const emoteElement = `<img src="${data.parts[i].imageUrl}" class="emote"/>`;
-			content.querySelector("#message").innerHTML = content.querySelector("#message").innerHTML.replace(new RegExp(`\\b${data.parts[i].text}\\b`), emoteElement);
+			const emoteName = EscapeRegExp(data.parts[i].text);
+	
+			let regexPattern = emoteName;
+	
+			// Check if the emote name consists only of word characters (alphanumeric and underscore)
+			if (/^\w+$/.test(emoteName)) {
+				regexPattern = `\\b${emoteName}\\b`;
+			}
+			else {
+				// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+				regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+			}
+	
+			const regex = new RegExp(regexPattern, 'g');
+			content.querySelector("#message").innerHTML = content.querySelector("#message").innerHTML.replace(regex, emoteElement);
 		}
 	}
 
@@ -920,8 +946,7 @@ function YouTubeMessage(data) {
 		messageDiv.innerText = TranslateToFurry(data.message);
 
 	// Remove the line break
-	if (inlineChat)
-	{
+	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
 	}
@@ -1227,9 +1252,9 @@ function PatreonPledgeCreated(data) {
 	cardDiv.classList.add('patreon');
 
 	const user = data.attributes.full_name;
-	const amount = (data.attributes.will_pay_amount_cents/100).toFixed(2);
+	const amount = (data.attributes.will_pay_amount_cents / 100).toFixed(2);
 	const patreonIcon = `<img src="icons/platforms/patreon.png" class="platform"/>`;
-	
+
 	titleDiv.innerHTML = `${patreonIcon} ${user} joined Patreon ($${amount})`;
 
 	AddMessageItem(instance, data.id);
@@ -1812,9 +1837,9 @@ async function GetPronouns(platform, username) {
 		const response = await client.getUserPronouns(platform, username);
 		const userFound = response.pronoun.userFound;
 		const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
-		
+
 		pronounMap.set(username, pronouns);
-	
+
 		return pronouns;
 	}
 }
@@ -1977,42 +2002,46 @@ function GetWinnersList(gifts) {
 
 function TranslateToFurry(sentence) {
 	const words = sentence.toLowerCase().split(/\b/);
-  
+
 	const furryWords = words.map(word => {
-	  if (/\w+/.test(word)) {
-		let newWord = word;
-  
-		// Common substitutions
-		newWord = newWord.replace(/l/g, 'w');
-		newWord = newWord.replace(/r/g, 'w');
-		newWord = newWord.replace(/th/g, 'f');
-		newWord = newWord.replace(/you/g, 'yous');
-		newWord = newWord.replace(/my/g, 'mah');
-		newWord = newWord.replace(/me/g, 'meh');
-		newWord = newWord.replace(/am/g, 'am');
-		newWord = newWord.replace(/is/g, 'is');
-		newWord = newWord.replace(/are/g, 'are');
-		newWord = newWord.replace(/very/g, 'vewy');
-		newWord = newWord.replace(/pretty/g, 'pwetty');
-		newWord = newWord.replace(/little/g, 'wittle');
-		newWord = newWord.replace(/nice/g, 'nyce');
-  
-		// Random additions
-		if (Math.random() < 0.15) {
-		  newWord += ' nya~';
-		} else if (Math.random() < 0.1) {
-		  newWord += ' >w<';
-		} else if (Math.random() < 0.05) {
-		  newWord += ' owo';
+		if (/\w+/.test(word)) {
+			let newWord = word;
+
+			// Common substitutions
+			newWord = newWord.replace(/l/g, 'w');
+			newWord = newWord.replace(/r/g, 'w');
+			newWord = newWord.replace(/th/g, 'f');
+			newWord = newWord.replace(/you/g, 'yous');
+			newWord = newWord.replace(/my/g, 'mah');
+			newWord = newWord.replace(/me/g, 'meh');
+			newWord = newWord.replace(/am/g, 'am');
+			newWord = newWord.replace(/is/g, 'is');
+			newWord = newWord.replace(/are/g, 'are');
+			newWord = newWord.replace(/very/g, 'vewy');
+			newWord = newWord.replace(/pretty/g, 'pwetty');
+			newWord = newWord.replace(/little/g, 'wittle');
+			newWord = newWord.replace(/nice/g, 'nyce');
+
+			// Random additions
+			if (Math.random() < 0.15) {
+				newWord += ' nya~';
+			} else if (Math.random() < 0.1) {
+				newWord += ' >w<';
+			} else if (Math.random() < 0.05) {
+				newWord += ' owo';
+			}
+
+			return newWord;
 		}
-  
-		return newWord;
-	  }
-	  return word;
+		return word;
 	});
-  
+
 	return furryWords.join('');
-  }
+}
+
+function EscapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
 
 
 

@@ -336,7 +336,7 @@ async function TwitchChatMessage(data) {
 		const platformElements = `<img src="icons/platforms/twitch.png" class="platform"/>`;
 		platformDiv.innerHTML = platformElements;
 	}
-	
+
 
 	// Render badges
 	if (showBadges) {
@@ -352,7 +352,21 @@ async function TwitchChatMessage(data) {
 	// Render emotes
 	for (i in data.emotes) {
 		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
+		const emoteName = EscapeRegExp(data.emotes[i].name);
+
+		let regexPattern = emoteName;
+
+		// Check if the emote name consists only of word characters (alphanumeric and underscore)
+		if (/^\w+$/.test(emoteName)) {
+			regexPattern = `\\b${emoteName}\\b`;
+		}
+		else {
+			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+			regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+		}
+
+		const regex = new RegExp(regexPattern, 'g');
+		messageDiv.innerHTML = messageDiv.innerHTML.replace(regex, emoteElement);
 	}
 
 	// Render cheermotes
@@ -417,7 +431,21 @@ async function TwitchAnnouncement(data) {
 	for (i in data.parts) {
 		if (data.parts[i].type == `emote`) {
 			const emoteElement = `<img src="${data.parts[i].imageUrl}" class="emote"/>`;
-			message = message.replace(new RegExp(`\\b${data.parts[i].text}\\b`), emoteElement);
+			const emoteName = EscapeRegExp(data.parts[i].text);
+	
+			let regexPattern = emoteName;
+	
+			// Check if the emote name consists only of word characters (alphanumeric and underscore)
+			if (/^\w+$/.test(emoteName)) {
+				regexPattern = `\\b${emoteName}\\b`;
+			}
+			else {
+				// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+				regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+			}
+	
+			const regex = new RegExp(regexPattern, 'g');
+			message = message.replace(regex, emoteElement);
 		}
 	}
 
@@ -482,7 +510,7 @@ async function TwitchGiftSub(data) {
 async function TwitchGiftBomb(data) {
 	if (!showTwitchSubs)
 		return;
-	
+
 	const username = data.displayName;
 	const gifts = data.gifts;
 	const subTier = data.subTier;
@@ -755,7 +783,7 @@ function PatreonPledgeCreated(data) {
 		return;
 
 	const user = data.attributes.full_name;
-	const amount = (data.attributes.will_pay_amount_cents/100).toFixed(2);
+	const amount = (data.attributes.will_pay_amount_cents / 100).toFixed(2);
 	const patreonIcon = `<img src="icons/platforms/patreon.png" class="platform"/>`;
 
 	let message = `${patreonIcon} ${user} joined Patreon ($${amount})`;
@@ -1057,9 +1085,9 @@ async function GetPronouns(platform, username) {
 		const response = await client.getUserPronouns(platform, username);
 		const userFound = response.pronoun.userFound;
 		const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
-		
+
 		pronounMap.set(username, pronouns);
-	
+
 		return pronouns;
 	}
 }
@@ -1100,12 +1128,11 @@ function AddMessageItem(element, elementID, platform, userId) {
 		while (messageList.clientWidth > 10 * window.innerWidth) {
 			messageList.removeChild(messageList.firstChild);
 		}
-		
-		if (hideAfter > 0)
-		{
+
+		if (hideAfter > 0) {
 			setTimeout(function () {
 				lineItem.style.opacity = 0;
-				setTimeout(function() {
+				setTimeout(function () {
 					messageList.removeChild(lineItem);
 				}, 1000);
 			}, hideAfter * 1000);
@@ -1215,42 +1242,46 @@ function GetWinnersList(gifts) {
 
 function TranslateToFurry(sentence) {
 	const words = sentence.toLowerCase().split(/\b/);
-  
+
 	const furryWords = words.map(word => {
-	  if (/\w+/.test(word)) {
-		let newWord = word;
-  
-		// Common substitutions
-		newWord = newWord.replace(/l/g, 'w');
-		newWord = newWord.replace(/r/g, 'w');
-		newWord = newWord.replace(/th/g, 'f');
-		newWord = newWord.replace(/you/g, 'yous');
-		newWord = newWord.replace(/my/g, 'mah');
-		newWord = newWord.replace(/me/g, 'meh');
-		newWord = newWord.replace(/am/g, 'am');
-		newWord = newWord.replace(/is/g, 'is');
-		newWord = newWord.replace(/are/g, 'are');
-		newWord = newWord.replace(/very/g, 'vewy');
-		newWord = newWord.replace(/pretty/g, 'pwetty');
-		newWord = newWord.replace(/little/g, 'wittle');
-		newWord = newWord.replace(/nice/g, 'nyce');
-  
-		// Random additions
-		if (Math.random() < 0.15) {
-		  newWord += ' nya~';
-		} else if (Math.random() < 0.1) {
-		  newWord += ' >w<';
-		} else if (Math.random() < 0.05) {
-		  newWord += ' owo';
+		if (/\w+/.test(word)) {
+			let newWord = word;
+
+			// Common substitutions
+			newWord = newWord.replace(/l/g, 'w');
+			newWord = newWord.replace(/r/g, 'w');
+			newWord = newWord.replace(/th/g, 'f');
+			newWord = newWord.replace(/you/g, 'yous');
+			newWord = newWord.replace(/my/g, 'mah');
+			newWord = newWord.replace(/me/g, 'meh');
+			newWord = newWord.replace(/am/g, 'am');
+			newWord = newWord.replace(/is/g, 'is');
+			newWord = newWord.replace(/are/g, 'are');
+			newWord = newWord.replace(/very/g, 'vewy');
+			newWord = newWord.replace(/pretty/g, 'pwetty');
+			newWord = newWord.replace(/little/g, 'wittle');
+			newWord = newWord.replace(/nice/g, 'nyce');
+
+			// Random additions
+			if (Math.random() < 0.15) {
+				newWord += ' nya~';
+			} else if (Math.random() < 0.1) {
+				newWord += ' >w<';
+			} else if (Math.random() < 0.05) {
+				newWord += ' owo';
+			}
+
+			return newWord;
 		}
-  
-		return newWord;
-	  }
-	  return word;
+		return word;
 	});
-  
+
 	return furryWords.join('');
-  }
+}
+
+function EscapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
 
 
 
