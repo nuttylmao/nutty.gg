@@ -174,22 +174,6 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
-			"id": "showTwitchCheers",
-			"label": "Cheers",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": true,
-			"group": "Which Twitch alerts do you want to see?"
-		},
-		{
-			"id": "showTwitchSubs",
-			"label": "New Subscribers",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": true,
-			"group": "Which Twitch alerts do you want to see?"
-		},
-		{
 			"id": "showTwitchSubs",
 			"label": "New Subscribers",
 			"description": "",
