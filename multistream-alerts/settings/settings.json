@@ -148,6 +148,142 @@
 			],
 			"defaultValue": "align-to-bottom",
 			"group": "General"
+		},
+		{
+			"id": "showTwitchFollows",
+			"label": "New Follows",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchCheers",
+			"label": "Cheers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchCheers",
+			"label": "Cheers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchChannelPointRedemptions",
+			"label": "Channel Point Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchRaids",
+			"label": "Raids",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showYouTubeSuperChats",
+			"label": "Super Chats",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "showYouTubeSuperStickers",
+			"label": "Super Stickers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "showYouTubeMemberships",
+			"label": "Memberships",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "showStreamlabsDonations",
+			"label": "Streamlabs Tips",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/streamlabs\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "showStreamElementsTips",
+			"label": "StreamElements Tips",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/streamelements\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "showPatreonMemberships",
+			"label": "Patreon Memberships",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/patreon\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "showKofiDonations",
+			"label": "Ko-fi Donations",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/ko-fi\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "showKofiDonations",
+			"label": "Ko-fi Donations",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/ko-fi\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "showTipeeeStreamDonations",
+			"label": "TipeeeStream Donations",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/tipeee-stream\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "showFourthwallAlerts",
+			"label": "Fourthwall Alerts",
+			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/fourthwall\" target=\"_blank\">Click to connect</a>",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which donation alerts do you want to see?"
 		}
 	]
 }
