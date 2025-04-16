@@ -68,7 +68,7 @@
 			"type": "number",
 			"min": 1,
 			"max": 120,
-			"defaultValue": 0,
+			"defaultValue": 8,
 			"group": "General"
 		},
 		{
