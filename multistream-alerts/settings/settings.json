@@ -254,14 +254,6 @@
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
-			"id": "showKofiDonations",
-			"label": "Ko-fi Donations",
-			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/ko-fi\" target=\"_blank\">Click to connect</a>",
-			"type": "checkbox",
-			"defaultValue": true,
-			"group": "Which donation alerts do you want to see?"
-		},
-		{
 			"id": "showTipeeeStreamDonations",
 			"label": "TipeeeStream Donations",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/tipeee-stream\" target=\"_blank\">Click to connect</a>",
