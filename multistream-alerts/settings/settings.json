@@ -150,6 +150,14 @@
 			"group": "General"
 		},
 		{
+			"id": "showMesesages",
+			"label": "Show Messages",
+			"description": "Such as donation messages, subscriber messages etc.",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
 			"id": "showTwitchFollows",
 			"label": "New Follows",
 			"description": "",
