@@ -27,14 +27,6 @@
 			"group": "Appearance"
 		},
 		{
-			"id": "showAvatar",
-			"label": "Show Avatar",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": true,
-			"group": "Appearance"
-		},
-		{
 			"id": "useCustomBackground",
 			"label": "Use Custom Background",
 			"description": "",
