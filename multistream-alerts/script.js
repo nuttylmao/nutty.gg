@@ -11,10 +11,14 @@ const avatarMap = new Map();
 
 const alertBox = document.getElementById('alertBox');
 const avatarElement = document.getElementById('avatar');
+const avatarSmallElement = document.getElementById('avatarButItsSmallerThanTheOneFromBeforeForPrettinessPurposes');
 const usernameLabel = document.getElementById('username');
+const usernameTheSecondLabel = document.getElementById('usernameTheSecond');
 const descriptionLabel = document.getElementById('description');
 const attributeLabel = document.getElementById('attribute');
 const theContentThatShowsFirstInsteadOfSecond = document.getElementById('theContentThatShowsFirstInsteadOfSecond');
+const theContentThatShowsLastInsteadOfFirst = document.getElementById('theContentThatShowsLastInsteadOfFirst');
+
 const messageLabel = document.getElementById('message');
 
 let widgetLocked = false;						// Needed to lock animation from overlapping
@@ -63,7 +67,7 @@ const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 
-const animationSpeed = GetIntParam("showTwitchSharedChat", 8000);
+const animationSpeed = GetIntParam("animationSpeed", 8000);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
@@ -257,9 +261,25 @@ async function TwitchSub(data) {
 	const avatarURL = await GetAvatar(username);
 
 	if (!isPrime)
-		UpdateAlertBox('twitch', avatarURL, `${username}`, `subscribed with Tier ${subTier.charAt(0)}`);
+		UpdateAlertBox(
+			'twitch',
+			avatarURL,
+			`${username}`,
+			`subscribed with Tier ${subTier.charAt(0)}`,
+			'',
+			username,
+			''
+		);
 	else
-		UpdateAlertBox('twitch', avatarURL, `${username}`, `used their Prime Sub`);
+		UpdateAlertBox(
+			'twitch',
+			avatarURL,
+			`${username}`,
+			`used their Prime Sub`,
+			'',
+			username,
+			''
+		);
 }
 
 async function TwitchResub(data) {
@@ -283,6 +303,7 @@ async function TwitchResub(data) {
 			`${username}`,
 			`resubscribed with Tier ${subTier.charAt(0)}`,
 			`${cumulativeMonths} months`,
+			username,
 			message
 		);
 	else
@@ -292,6 +313,7 @@ async function TwitchResub(data) {
 			`${username}`,
 			`used their Prime Sub`,
 			`${cumulativeMonths} months`,
+			username,
 			message
 		);
 }
@@ -319,6 +341,7 @@ async function TwitchGiftSub(data) {
 		`${username}`,
 		`gifted a Tier ${subTier.charAt(0)} subscription`,
 		`to ${recipient}`,
+		username,
 		messageText
 	);
 }
@@ -342,6 +365,7 @@ async function TwitchRewardRedemption(data) {
 		`${username} redeemed`,
 		`${rewardName} ${channelPointIcon} ${cost}`,
 		'',
+		username,
 		userInput
 	);
 }
@@ -363,6 +387,7 @@ async function TwitchRaid(data) {
 		`${username}`,
 		`is raiding with a party of ${viewers}`,
 		'',
+		username,
 		''
 	);
 }
@@ -377,9 +402,10 @@ function YouTubeSuperChat(data) {
 	UpdateAlertBox(
 		'youtube',
 		avatarURL,
-		`🪙 ${data.user.name}`,
+		`${data.user.name}`,
 		`sent a Super Chat (${data.amount})`,
 		'',
+		data.user.name,
 		data.message
 	);
 }
@@ -397,6 +423,7 @@ function YouTubeSuperSticker(data) {
 		`${data.user.name}`,
 		`sent a Super Sticker (${data.amount})`,
 		'',
+		data.user.name,
 		''
 	);
 }
@@ -414,6 +441,7 @@ function YouTubeNewSponsor(data) {
 		`⭐ New ${data.levelName}`,
 		`Welcome ${data.user.name}!`,
 		'',
+		data.user.name,
 		''
 	);
 }
@@ -431,6 +459,7 @@ function YouTubeGiftMembershipReceived(data) {
 		`${data.gifter.name}`,
 		`gifted a membership`,
 		`to ${data.user.name} (${data.tier})!`,
+		data.gifter.name,
 		''
 	);
 }
@@ -451,6 +480,7 @@ async function StreamlabsDonation(data) {
 		`${donater}`,
 		`donated ${currency}${formattedAmount}`,
 		``,
+		donater,
 		message
 	);
 }
@@ -471,6 +501,7 @@ async function StreamElementsTip(data) {
 		`${donater}`,
 		`donated ${currency}${formattedAmount}`,
 		``,
+		donater,
 		message
 	);
 }
@@ -492,6 +523,7 @@ function PatreonPledgeCreated(data) {
 		`${user}`,
 		`joined Patreon ($${amount})`,
 		``,
+		user,
 		``
 	);
 }
@@ -516,6 +548,7 @@ function KofiDonation(data) {
 			`${user}`,
 			`donated $${amount}`,
 			``,
+			user,
 			message
 		);
 	else
@@ -524,6 +557,7 @@ function KofiDonation(data) {
 			`${user}`,
 			`donated ${currency} ${amount}`,
 			``,
+			user,
 			message
 		);
 }
@@ -548,6 +582,7 @@ function KofiSubscription(data) {
 			`${user}`,
 			`subscribed ($${amount})`,
 			``,
+			user,
 			message
 		);
 	else
@@ -556,6 +591,7 @@ function KofiSubscription(data) {
 			`${user}`,
 			`subscribed (${currency} ${amount})`,
 			``,
+			user,
 			message
 		);
 }
@@ -578,6 +614,7 @@ function KofiResubscription(data) {
 		`${user}`,
 		`subscribed (${tier})`,
 		``,
+		user,
 		message
 	);
 }
@@ -610,6 +647,7 @@ function KofiShopOrder(data) {
 		`${user}`,
 		`ordered ${itemTotal} item(s) on Ko-fi `,
 		`${formattedAmount}`,
+		user,
 		message
 	);
 }
@@ -634,6 +672,7 @@ function TipeeeStreamDonation(data) {
 			`${user}`,
 			`donated $${amount}`,
 			``,
+			user,
 			message
 		);
 	else
@@ -643,6 +682,7 @@ function TipeeeStreamDonation(data) {
 			`${user}`,
 			`donated ${currency} ${amount}`,
 			``,
+			user,
 			message
 		);
 }
@@ -684,6 +724,7 @@ function FourthwallOrderPlaced(data) {
 		`${user}`,
 		`ordered ${item}`,
 		attributeText,
+		user,
 		message
 	);
 }
@@ -712,6 +753,7 @@ function FourthwallDonation(data) {
 		`${user}`,
 		`donated ${formattedAmount}`,
 		'',
+		user,
 		message
 	);
 }
@@ -739,6 +781,7 @@ function FourthwallSubscriptionPurchased(data) {
 		`${user}`,
 		`subscribed ${formattedAmount}`,
 		'',
+		user,
 		''
 	);
 }
@@ -779,6 +822,7 @@ function FourthwallGiftPurchase(data) {
 		`${user}`,
 		`gifted ${contents}`,
 		attributesText,
+		user,
 		message
 	);
 }
@@ -797,6 +841,7 @@ function FourthwallGiftDrawStarted(data) {
 		`<span style="font-size: 1.2em">🎁 ${itemName} Giveaway!</span>`,
 		`Type !join in the next ${durationSeconds} seconds for your chance to win!`,
 		'',
+		'',
 		''
 	);
 }
@@ -814,6 +859,7 @@ function FourthwallGiftDrawEnded(data) {
 		'fourthwall',
 		`<span style="font-size: 1.2em">🥳 GIVEAWAY ENDED 🥳</span>`,
 		`Congratulations ${GetWinnersList(data.gifts)}!`,
+		'',
 		'',
 		''
 	);
@@ -1096,12 +1142,12 @@ function GetWinnersList(gifts) {
 // 	return furryWords.join('');
 // }
 
-function UpdateAlertBox(platform, avatarURL, usernameText, descriptionText, attributeText, message) {
+function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message) {
 	// Check if the widget is in the middle of an animation
 	// If any alerts are requested while the animation is playing, it should be added to the alert queue
 	if (widgetLocked) {
 		console.debug("Animation is progress, added alert to queue");
-		let data = { platform: platform, avatarURL: avatarURL, usernameText: usernameText, descriptionText: descriptionText, attributeText: attributeText, message: message };
+		let data = { platform: platform, avatarURL: avatarURL, headerText: headerText, descriptionText: descriptionText, attributeText: attributeText, message: message };
 		alertQueue.push(data);
 		return;
 	}
@@ -1116,14 +1162,16 @@ function UpdateAlertBox(platform, avatarURL, usernameText, descriptionText, attr
 	// Render avatars
 	if (showAvatar) {
 		avatarElement.src = avatarURL;
+		avatarSmallElement.src = avatarURL;
 	}
 
 	// Set labels
-	usernameLabel.innerHTML = usernameText != null ? usernameText : '';
+	usernameLabel.innerHTML = headerText != null ? headerText : '';
+	usernameTheSecondLabel.innerHTML = username != null ? username : '';
 	descriptionLabel.innerHTML = descriptionText != null ? descriptionText : '';
 	attributeLabel.innerHTML = attributeText != null ? attributeText : '';
 	messageLabel.innerHTML = message != null ? `${message}` : '';
-	messageLabel.style.opacity = 0;
+	theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
 
 	alertBox.style.height = theContentThatShowsFirstInsteadOfSecond.offsetHeight + 40 + "px";
 	alertBox.style.animation = 'slideInFromTop 0.5s ease-out forwards';
@@ -1133,13 +1181,11 @@ function UpdateAlertBox(platform, avatarURL, usernameText, descriptionText, attr
 	// (3) Calculate the height of message label
 	// (4) Set the height of alertBox
 	//		(a) Add in the CSS animation when this is working
-
 	setTimeout(() => {
-
 		alertBox.style.transition = 'all 0.5s ease-in-out';
-		alertBox.style.height = messageLabel.offsetHeight + 40 + "px";
+		alertBox.style.height = theContentThatShowsLastInsteadOfFirst.offsetHeight + 40 + "px";
 		theContentThatShowsFirstInsteadOfSecond.style.opacity = 0;
-		messageLabel.style.opacity = 1;
+		theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
 
 		setTimeout(() => {
 			alertBox.style.animation = 'slideBackUp 0.5s ease-out forwards';
@@ -1147,13 +1193,13 @@ function UpdateAlertBox(platform, avatarURL, usernameText, descriptionText, attr
 			setTimeout(() => {
 				alertBox.style.transition = '';
 				theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
-				messageLabel.style.opacity = 0;
+				theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
 				alertBox.style.height = '0px';
 				widgetLocked = false;
 				if (alertQueue.length > 0) {
 					console.debug("Pulling next alert from the queue");
 					let data = alertQueue.shift();
-					UpdateAlertBox(data.platform, data.avatarURL, data.usernameText, data.descriptionText, data.attributeText, data.message)
+					UpdateAlertBox(data.platform, data.avatarURL, data.headerText, data.descriptionText, data.attributeText, data.message)
 				}
 			}, 1000);
 		}, messageLabel.innerText.trim() != '' ? animationSpeed : 0);
