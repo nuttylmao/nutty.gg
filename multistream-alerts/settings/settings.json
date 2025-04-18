@@ -1,6 +1,14 @@
 {
 	"settings": [
 		{
+			"id": "testWidgetButton",
+			"label": "Send Test Alert",
+			"description": "",
+			"type": "button",
+			"callFunction": "testWidget",
+			"group": "Test Alerts"
+		},
+		{
 			"id": "showAvatar",
 			"label": "Show Avatar",
 			"description": "",
@@ -56,7 +64,7 @@
 		{
 			"id": "hideAfter",
 			"label": "Hide After",
-			"description": "Alerts will show for X seconds",
+			"description": "Alerts will hide for X seconds",
 			"type": "number",
 			"min": 1,
 			"max": 120,
@@ -151,18 +159,19 @@
 		},
 		{
 			"id": "showTwitchFollows",
-			"label": "New Follows",
+			"label": "New Followers",
 			"description": "",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
-			"id": "showTwitchCheers",
-			"label": "Cheers",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": true,
+			"id": "twitchFollowAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showTwitchFollows",
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
@@ -174,11 +183,46 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
+			"id": "twitchSubAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showTwitchSubs",
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
 			"id": "showTwitchChannelPointRedemptions",
 			"label": "Channel Point Redemptions",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "twitchChannelPointRedemptionAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showTwitchChannelPointRedemptions",
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "showTwitchCheers",
+			"label": "Cheers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "twitchCheerAction",
+			"label": "",
+			"description": "Also run Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showTwitchCheers",
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
@@ -190,11 +234,29 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
+			"id": "twitchRaidAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showTwitchRaids",
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
 			"id": "showYouTubeSuperChats",
 			"label": "Super Chats",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "youtubeSuperChatAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showYouTubeSuperChats",
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
@@ -206,6 +268,15 @@
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
+			"id": "youtubeSuperStickerAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showYouTubeSuperStickers",
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
 			"id": "showYouTubeMemberships",
 			"label": "Memberships",
 			"description": "",
@@ -214,11 +285,29 @@
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
+			"id": "youtubeMembershipAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showYouTubeMemberships",
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
 			"id": "showStreamlabsDonations",
 			"label": "Streamlabs Tips",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/streamlabs\" target=\"_blank\">Click to connect</a>",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "streamlabsDonationAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showStreamlabsDonations",
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
@@ -226,7 +315,16 @@
 			"label": "StreamElements Tips",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/streamelements\" target=\"_blank\">Click to connect</a>",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "streamelementsTipAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showStreamElementsTips",
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
@@ -234,7 +332,16 @@
 			"label": "Patreon Memberships",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/patreon\" target=\"_blank\">Click to connect</a>",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "patreonMembershipActions",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showPatreonMemberships",
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
@@ -242,7 +349,16 @@
 			"label": "Ko-fi Donations",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/ko-fi\" target=\"_blank\">Click to connect</a>",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "kofiDonationAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showKofiDonations",
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
@@ -250,7 +366,16 @@
 			"label": "TipeeeStream Donations",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/tipeee-stream\" target=\"_blank\">Click to connect</a>",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "tipeeestreamDonationAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showTipeeeStreamDonations",
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
@@ -258,7 +383,16 @@
 			"label": "Fourthwall Alerts",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/fourthwall\" target=\"_blank\">Click to connect</a>",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "fourthwallAlertAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"hideIf": "showFourthwallAlerts",
 			"group": "Which donation alerts do you want to see?"
 		}
 	]

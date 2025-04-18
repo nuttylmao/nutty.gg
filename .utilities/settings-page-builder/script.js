@@ -1,14 +1,52 @@
+// Search paramaters
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-
 const settingsJson = urlParams.get("settingsJson") || "";
 
+// Connect to Streamer.bot and get list of actions
+const sbServerAddress = '127.0.0.1';
+const sbServerPort = '8080';
+const client = new StreamerbotClient({
+	host: sbServerAddress,
+	port: sbServerPort,
+
+	onConnect: (data) => {
+		console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
+		console.debug(data);
+
+    // Get list of actions
+    GetSBActions();
+	},
+
+	onDisconnect: () => {
+		console.error(`Streamer.bot disconnected from ${sbServerAddress}:${sbServerPort}`)
+	}
+});
+
+async function GetSBActions() {
+  const response = await client.getActions();
+
+  console.debug(response);
+  
+  const datalistElement = document.createElement('datalist');
+  datalistElement.id = 'streamer-bot-actions';
+
+  for (const action of response.actions)
+  {
+    const option = document.createElement('option');  
+    option.value = action.name;
+    datalistElement.appendChild(option);
+  }
+
+  document.body.appendChild(datalistElement);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
   const settingsContent = document.getElementById('settings-content');
   const saveButton = document.getElementById('save-settings');
 
   fetch(settingsJson)
-  //fetch('../../multichat-overlay/settings/settings.json')
     .then(response => response.json())
     .then(data => {
       const groupedSettings = {};
@@ -33,12 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
         groupedSettings[groupName].forEach(setting => {
           const settingItem = document.createElement('div');
           settingItem.classList.add('setting-item');
+          settingItem.id = `item-${setting.id}`;
 
           const labelDescriptionDiv = document.createElement('div');
 
-          const label = document.createElement('label');
-          label.textContent = setting.label;
-          labelDescriptionDiv.appendChild(label);
+          if (setting.label) {
+            const label = document.createElement('label');
+            label.textContent = setting.label;
+            labelDescriptionDiv.appendChild(label);
+          }
 
           if (setting.description) {
             const description = document.createElement('p');
@@ -74,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
               // Add event listener to the switchDiv
               labelDiv.addEventListener('click', () => {
                 checkBoxElement.checked = !checkBoxElement.checked;
+                UpdateSettingItemVisibility();
               });
               inputElement = labelDiv;
               break;
@@ -106,6 +148,37 @@ document.addEventListener('DOMContentLoaded', () => {
               inputElement.max = setting.max;
               inputElement.step = setting.step;
               break;
+            case 'sb-actions':
+              inputElement = document.createElement('input');
+              inputElement.type = 'text';
+              inputElement.placeholder = 'Type to search...';
+              inputElement.id = setting.id; //Added setting ID
+              inputElement.value = setting.defaultValue;
+              inputElement.setAttribute('list', 'streamer-bot-actions');
+              inputElement.autocomplete = 'off';
+              break;
+            case 'button':
+              inputElement = document.createElement('button');
+              inputElement.id = setting.id; //Added setting ID
+              inputElement.textContent = setting.label;
+
+              inputElement.addEventListener('click', () => {
+                window.parent.callFunction(setting.callFunction);
+
+                const defaultBackgroundColor = "#2e2e2e";
+                const defaultTextColor = "white";
+              
+                inputElement.style.transitionDuration = '0s'
+                inputElement.style.backgroundColor = "#2196f3"
+                inputElement.style.color = "#ffffff";
+
+                setTimeout(() => {
+                  inputElement.style.transitionDuration = '0.2s'
+                  inputElement.style.backgroundColor = defaultBackgroundColor;
+                  inputElement.style.color = defaultTextColor;
+                }, 100);
+              });
+              break;
             default:
               inputElement = document.createElement('input');
               inputElement.type = 'text';
@@ -114,30 +187,53 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           inputElement.addEventListener('input', function (event) {
-            SendDateToParent(data);
+            SendDataToParent(data);
           });
 
           settingItemContent.appendChild(inputElement);
 
-          settingItem.appendChild(labelDescriptionDiv);
-          settingItem.appendChild(settingItemContent);
+          if (setting.type == 'button')
+          {
+            settingItem.style.display = 'block'
+            settingItem.appendChild(settingItemContent);
+          }
+          else
+          {
+            settingItem.appendChild(labelDescriptionDiv);
+            settingItem.appendChild(settingItemContent);
+          }
+
           groupDiv.appendChild(settingItem);
         });
 
         settingsContent.appendChild(groupDiv);
       }
 
+      function UpdateSettingItemVisibility() {
+        data.settings.forEach(setting => {
+          if (setting.hideIf)
+          {
+            if (!document.getElementById(setting.hideIf).checked)
+              document.getElementById(`item-${setting.id}`).style.display = 'none'
+            else
+              document.getElementById(`item-${setting.id}`).style.display = 'flex'
+          }
+        });
+      }
+
+      UpdateSettingItemVisibility();
+
       // saveButton.addEventListener('click', () => {
-      //   SendDateToParent(data);
+      //   SendDataToParent(data);
       // });
-      SendDateToParent(data);
+      SendDataToParent(data);
     })
     .catch(error => console.error('Error loading settings:', error));
 });
 
 
 // In the iframe's JavaScript:
-function SendDateToParent(data) {
+function SendDataToParent(data) {
   const settings = {};
   data.settings.forEach(setting => {
     let inputElement = document.getElementById(setting.id);
@@ -183,12 +279,6 @@ saveButton.addEventListener('click', () => {
   }, 3000);
 });
 
-widgetURLBox.addEventListener('click', () => {
-  let loadSettingsBox = document.getElementById('mommy-milkers');
-  loadSettingsBox.style.visibility = 'visible';
-  loadSettingsBox.style.opacity = 1;
-});
-
 function CloseSettings() {
   let loadSettingsBox = document.getElementById('mommy-milkers');
   loadSettingsBox.style.visibility = 'hidden';
@@ -198,12 +288,11 @@ function CloseSettings() {
 function LoadSettings() {
   let loadURLBox = document.getElementById('load-url');
   const url = new URL(loadURLBox.value);
-  
+
   url.searchParams.forEach((value, key) => {
 
     const inputElement = document.getElementById(key);
-    if (inputElement != null)
-    {
+    if (inputElement != null) {
       if (inputElement.type == 'checkbox')
         inputElement.checked = value.toLocaleLowerCase() == 'true';
       else
@@ -230,8 +319,15 @@ function GetWidgetURL() {
   }
 
   return result;
+  //return 'D:/Projects/GitHub Projects/nutty.gg/multistream-alerts/index.html'
 }
 
 function OpenMembershipPage() {
-    window.open("https://nutty.gg/supporters/sign_in", '_blank').focus();
+  window.open("https://nutty.gg/supporters/sign_in", '_blank').focus();
+}
+
+function OpenLoadSettingsPopup() {
+  let loadSettingsBox = document.getElementById('mommy-milkers');
+  loadSettingsBox.style.visibility = 'visible';
+  loadSettingsBox.style.opacity = 1;
 }

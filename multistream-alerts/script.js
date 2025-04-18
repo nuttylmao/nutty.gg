@@ -28,48 +28,103 @@ let alertQueue = [];
 // OPTIONS //
 /////////////
 
-const showPlatform = GetBooleanParam("showPlatform", true);
+// const showPlatform = GetBooleanParam("showPlatform", true);
+// const showAvatar = GetBooleanParam("showAvatar", true);
+// const showTimestamps = GetBooleanParam("showTimestamps", true);
+// const showBadges = GetBooleanParam("showBadges", true);
+// const showPronouns = GetBooleanParam("showPronouns", true);
+// const showUsername = GetBooleanParam("showUsername", true);
+// const showMessage = GetBooleanParam("showMessage", true);
+// const font = urlParams.get("font") || "";
+// const fontSize = urlParams.get("fontSize") || "30";
+// const lineSpacing = urlParams.get("lineSpacing") || "1.7";
+// const background = urlParams.get("background") || "#000000";
+// const opacity = urlParams.get("opacity") || "0.85";
+
+// const hideAfter = GetIntParam("hideAfter", 0);
+// const excludeCommands = GetBooleanParam("excludeCommands", true);
+// const ignoreChatters = urlParams.get("ignoreChatters") || "";
+// const scrollDirection = GetIntParam("scrollDirection", 1);
+// const inlineChat = GetBooleanParam("inlineChat", false);
+// const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
+
+// const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
+// const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
+// const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
+// const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
+// const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
+// const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
+
+// const twitchFollowTrigger = urlParams.get("twitchFollowTrigger") || "";
+
+// const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
+// const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
+// const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+// const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
+
+// const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
+// const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
+// const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
+// const showKofiDonations = GetBooleanParam("showKofiDonations", true);
+// const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
+// const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
+
+// const animationSpeed = GetIntParam("animationSpeed", 8000);
+
+// const furryMode = GetBooleanParam("furryMode", false);
+
+// Appearance
 const showAvatar = GetBooleanParam("showAvatar", true);
-const showTimestamps = GetBooleanParam("showTimestamps", true);
-const showBadges = GetBooleanParam("showBadges", true);
-const showPronouns = GetBooleanParam("showPronouns", true);
-const showUsername = GetBooleanParam("showUsername", true);
-const showMessage = GetBooleanParam("showMessage", true);
 const font = urlParams.get("font") || "";
-const fontSize = urlParams.get("fontSize") || "30";
-const lineSpacing = urlParams.get("lineSpacing") || "1.7";
-const background = urlParams.get("background") || "#000000";
-const opacity = urlParams.get("opacity") || "0.85";
+const fontSize = GetIntParam("fontSize", 30);
+const useCustomBackground = GetBooleanParam("useCustomBackground", true);
+const background = urlParams.get("background") || "";
+const opacity = GetIntParam("opacity", 0.85);
 
-const hideAfter = GetIntParam("hideAfter", 0);
-const excludeCommands = GetBooleanParam("excludeCommands", true);
-const ignoreChatters = urlParams.get("ignoreChatters") || "";
-const scrollDirection = GetIntParam("scrollDirection", 1);
-const inlineChat = GetBooleanParam("inlineChat", false);
-const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
+// General
+const hideAfter = GetIntParam("hideAfter", 8);
+const showAnimation = urlParams.get("showAnimation") || "";
+const hideAnimation = urlParams.get("hideAnimation") || "";
+const alignment = urlParams.get("alignment") || "";
+const showMesesages = GetBooleanParam("showMesesages", true);
 
-const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
-const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
+// Which Twitch alerts do you want to see?
+const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
+const twitchFollowAction = urlParams.get("twitchFollowAction") || "";
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
+const twitchSubAction = urlParams.get("twitchSubAction") || "";
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
+const twitchChannelPointRedemptionAction = urlParams.get("twitchChannelPointRedemptionAction") || "";
+const showTwitchCheers = GetBooleanParam("showTwitchCheers", true);
+const twitchCheerAction = urlParams.get("twitchCheerAction") || "";
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
-const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
+const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
-const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
+// Which YouTube alerts do you want to see?
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
+const youtubeSuperChatAction = urlParams.get("youtubeSuperChatAction") || "";
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+const youtubeSuperStickerAction = urlParams.get("youtubeSuperStickerAction") || "";
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
+const youtubeMembershipAction = urlParams.get("youtubeMembershipAction") || "";
 
-const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
-const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
-const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
-const showKofiDonations = GetBooleanParam("showKofiDonations", true);
-const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
-const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
+// Which donation alerts do you want to see?
+const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", false);
+const streamlabsDonationAction = urlParams.get("streamlabsDonationAction") || "";
+const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", false);
+const streamelementsTipAction = urlParams.get("streamelementsTipAction") || "";
+const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", false);
+const patreonMembershipActions = urlParams.get("patreonMembershipActions") || "";
+const showKofiDonations = GetBooleanParam("showKofiDonations", false);
+const kofiDonationAction = urlParams.get("kofiDonationAction") || "";
+const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", false);
+const tipeeestreamDonationAction = urlParams.get("tipeeestreamDonationAction") || "";
+const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
+const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
 
-const animationSpeed = GetIntParam("animationSpeed", 8000);
-
-const furryMode = GetBooleanParam("furryMode", false);
+// Set avatar visibility
+if (!showAvatar)
+	avatarElement.style.display = 'none';
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -124,7 +179,7 @@ const client = new StreamerbotClient({
 
 client.on('Twitch.Cheer', (response) => {
 	console.debug(response.data);
-	TwitchChatMessage(response.data);
+	TwitchCheer(response.data);
 })
 
 client.on('Twitch.Sub', (response) => {
@@ -247,6 +302,59 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 ///////////////////////
 // MULTICHAT OVERLAY //
 ///////////////////////
+
+async function TwitchCheer(data) {
+	if (!showTwitchSubs)
+		return;
+
+	// Set the text
+	const username = data.message.displayName;
+	const bits = data.bits;
+	let message = data.message.message;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username);
+
+	// Render emotes
+	for (i in data.emotes) {
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
+		const emoteName = EscapeRegExp(data.emotes[i].name);
+
+		let regexPattern = emoteName;
+
+		// Check if the emote name consists only of word characters (alphanumeric and underscore)
+		if (/^\w+$/.test(emoteName)) {
+			regexPattern = `\\b${emoteName}\\b`;
+		}
+		else {
+			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+			regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+		}
+
+		const regex = new RegExp(regexPattern, 'g');
+		message = message.replace(regex, emoteElement);
+	}
+
+	// Render cheermotes
+	for (i in data.cheerEmotes) {
+		const bits = data.cheerEmotes[i].bits;
+		const imageUrl = data.cheerEmotes[i].imageUrl;
+		const name = data.cheerEmotes[i].name;
+		const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
+		const bitsElements = `<span class="bits">${bits}</span>`
+		message = message.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
+	}
+
+	UpdateAlertBox(
+		'twitch',
+		avatarURL,
+		`${username}`,
+		`cheered ${bits} bits`,
+		'',
+		username,
+		message
+	);
+}
 
 async function TwitchSub(data) {
 	if (!showTwitchSubs)
@@ -380,7 +488,7 @@ async function TwitchRaid(data) {
 	// Set the text
 	const username = data.from_broadcaster_user_login;
 	const viewers = data.viewers;
-
+	
 	UpdateAlertBox(
 		'twitch',
 		avatarURL,
@@ -388,7 +496,9 @@ async function TwitchRaid(data) {
 		`is raiding with a party of ${viewers}`,
 		'',
 		username,
-		''
+		'',
+		twitchFollowAction,
+		data
 	);
 }
 
@@ -1142,12 +1252,12 @@ function GetWinnersList(gifts) {
 // 	return furryWords.join('');
 // }
 
-function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message) {
+async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message, sbAction, sbData) {
 	// Check if the widget is in the middle of an animation
 	// If any alerts are requested while the animation is playing, it should be added to the alert queue
 	if (widgetLocked) {
 		console.debug("Animation is progress, added alert to queue");
-		let data = { platform: platform, avatarURL: avatarURL, headerText: headerText, descriptionText: descriptionText, attributeText: attributeText, message: message };
+		let data = { platform: platform, avatarURL: avatarURL, headerText: headerText, descriptionText: descriptionText, attributeText: attributeText, username: username, message: message, sbAction: sbAction, sbData: sbData};
 		alertQueue.push(data);
 		return;
 	}
@@ -1173,8 +1283,16 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 	messageLabel.innerHTML = message != null ? `${message}` : '';
 	theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
 
-	alertBox.style.height = theContentThatShowsFirstInsteadOfSecond.offsetHeight + 40 + "px";
-	alertBox.style.animation = 'slideInFromTop 0.5s ease-out forwards';
+	theContentThatShowsFirstInsteadOfSecond.style.display = 'flex';
+	alertBox.style.maxHeight = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
+	alertBox.style.minHeight = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
+	alertBox.style.animation = 'slideInFromRight 0.5s ease-out forwards';
+
+	// Run the Streamer.bot action if there is one	
+	if (sbAction) {
+		console.debug('Running Streamer.bot action: ' + sbAction);
+		await client.doAction({name: sbAction}, sbData);
+	}
 
 	// (1) Set timeout (5 seconds)
 	// (2) Set the message label
@@ -1183,29 +1301,51 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 	//		(a) Add in the CSS animation when this is working
 	setTimeout(() => {
 		alertBox.style.transition = 'all 0.5s ease-in-out';
-		alertBox.style.height = theContentThatShowsLastInsteadOfFirst.offsetHeight + 40 + "px";
 		theContentThatShowsFirstInsteadOfSecond.style.opacity = 0;
+		
+		theContentThatShowsFirstInsteadOfSecond.style.position = 'absolute';
+		theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
+		alertBox.style.maxHeight = theContentThatShowsLastInsteadOfFirst.offsetHeight + "px";
+		alertBox.style.minHeight = 'none';
 		theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
-
+			
 		setTimeout(() => {
-			alertBox.style.animation = 'slideBackUp 0.5s ease-out forwards';
+			alertBox.style.animation = 'slideOffRight 0.5s ease-out forwards';
 
 			setTimeout(() => {
-				alertBox.style.transition = '';
+				alertBox.style.maxHeight = '0px';
 				theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
 				theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
-				alertBox.style.height = '0px';
+				theContentThatShowsFirstInsteadOfSecond.style.position = 'relative';
+				theContentThatShowsLastInsteadOfFirst.style.display = 'none';
 				widgetLocked = false;
 				if (alertQueue.length > 0) {
 					console.debug("Pulling next alert from the queue");
 					let data = alertQueue.shift();
-					UpdateAlertBox(data.platform, data.avatarURL, data.headerText, data.descriptionText, data.attributeText, data.message)
+					UpdateAlertBox(data.platform, data.avatarURL, data.headerText, data.descriptionText, data.attributeText, data.username, data.message, data.sbAction, data.sbData);
 				}
 			}, 1000);
-		}, messageLabel.innerText.trim() != '' ? animationSpeed : 0);
+		}, message ? hideAfter * 1000 : 0);		
+	}, hideAfter * 1000);
 
-	}, animationSpeed);
+}
 
+////////////////////
+// TEST FUNCTIONS //
+////////////////////
+
+async function testWidget()
+{
+	UpdateAlertBox(
+		'twitch',
+		await GetAvatar('nutty'),
+		`nutty`,
+		`subscribed with Tier 3`,
+		'',
+		`nutty`,
+		`O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA`
+		//``
+	);
 }
 
 

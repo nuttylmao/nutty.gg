@@ -2,10 +2,12 @@
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   font-size: 16px;
   color: white;
+  --accent-color: #2196f3;
 }
 
 body {
   background-color: #181818;
+  margin: 0px 20px;
 }
 
 body::-webkit-scrollbar {
@@ -63,7 +65,7 @@ body::-webkit-scrollbar-thumb:hover {
 .setting-group {
   margin-bottom: 20px;
   /* border: 1px solid #ddd; */
-  padding: 15px;
+  padding-bottom: 15px;
   border-radius: 5px;
 }
 
@@ -97,7 +99,7 @@ h2 {
   font-weight: 300;
   /* color: #666; */
   opacity: 0.6;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 a {
@@ -126,6 +128,7 @@ input[type="number"] {
      -moz-box-sizing: border-box;
           box-sizing: border-box;
 }
+
 #widget-url:hover {
   cursor: pointer;
 }
@@ -195,11 +198,11 @@ input:focus {
 }
 
 input:checked+.slider {
-  background-color: #2196F3;
+  background-color: var(--accent-color);
 }
 
 input:focus+.slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px var(--accent-color);
 }
 
 input:checked+.slider:before {
@@ -227,7 +230,7 @@ button {
   border-radius: 0.5em;
   padding: 10px 20px;
   width: 100%;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
 }
 
 button:hover {
@@ -270,5 +273,5 @@ button:hover {
 }
 
 #load-settings {
-  background-color: #2196F3;
+  background-color: var(--accent-color);
 }

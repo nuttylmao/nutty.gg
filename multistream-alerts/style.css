@@ -1,9 +1,9 @@
 * {
 	margin: 0;
 	padding: 0;
-	--margin: 20px;
-	/* --border-radius: 20px; */
-	font-size: 30px;
+	--margin: 0.5em;
+	--border-radius: 1em;
+	/* font-size: 30px; */
 	/* --line-spacing: 1.7em; */
 }
 
@@ -37,12 +37,14 @@ html {
 }
 
 #mainContainer {
-	display: block;
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	padding: calc(2 * var(--margin));
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 }
 
 #alertBox {
@@ -53,10 +55,10 @@ html {
 	overflow: hidden;
 	box-sizing: border-box;
 	/* text-align: center; */
-	position: relative;
+	/* position: relative; */
 	/* transition: all 1s ease-in-out; */
-	min-height: 0px;
-	height: 0px;
+	/* min-height: 0px;
+	max-height: 0px; */
 }
 
 /* #alertBox::before {
@@ -79,21 +81,25 @@ html {
 	display: flex;
 	align-items: center;
 	z-index: 1;
-	position: absolute;
-	left: var(--margin);
-	top: var(--margin);
+	/* position: absolute; */
+	/* left: var(--margin);
+	top: var(--margin); */
 	transition: inherit;
+	padding: var(--margin);
+	display: none;
 }
 
 #theContentThatShowsLastInsteadOfFirst {
-	position: absolute;
-	display: block;
+	/* position: absolute; */
+	display: inline-block;
 	align-items: center;
 	z-index: 0;
-	position: absolute;
-	left: var(--margin);
-	top: var(--margin);
+	/* position: absolute; */
+	/* left: var(--margin);
+	top: var(--margin); */
+	padding: var(--margin);
 	transition: inherit;
+	display: none;
 }
 
 #avatar {
@@ -146,6 +152,19 @@ html {
 	border-radius: 0.5em;
 }
 
+.emote {
+	height: 1.5em;
+	margin: 1px;
+	transform: translate(0px, 0.4em);
+}
+
+.bits {
+	background: #adadad46;
+	border-radius: calc(var(--border-radius) / 2);
+	font-size: 0.7em;
+	padding: 5px 10px;
+}
+
 #message {
 	width: calc(100% - 2 * var(--margin));
 	z-index: 0;
@@ -167,7 +186,7 @@ html {
 	}
 }
 
-@keyframes slideBackUp {
+@keyframes slideOffUp {
 	0% {
 		transform: translateY(0);
 		opacity: 1;
@@ -191,7 +210,7 @@ html {
 	}
 }
 
-@keyframes slideBackDown {
+@keyframes slideOffDown {
 	0% {
 		transform: translateY(0);
 		opacity: 1;
@@ -215,7 +234,7 @@ html {
 	}
 }
 
-@keyframes slideBackLeft {
+@keyframes slideOffLeft {
 	0% {
 		transform: translateX(0);
 		opacity: 1;
@@ -239,7 +258,7 @@ html {
 	}
 }
 
-@keyframes slideBackRight {
+@keyframes slideOffRight {
 	0% {
 		transform: translateX(0);
 		opacity: 1;

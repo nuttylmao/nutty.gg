@@ -1,5 +1,6 @@
 let settingsContainer = document.getElementById('settings-container');
 settingsContainer.src = `../../.utilities/settings-page-builder?settingsJson=${window.location.href}/settings.json`
+//settingsContainer.src = `../../.utilities/settings-page-builder?settingsJson=../../multistream-alerts/settings/settings.json`
 console.log(settingsContainer.src);
 
 function reloadWidget(data) {
@@ -26,4 +27,10 @@ function getParentUrl() {
     }
 
     return parentUrl;
+}
+
+function callFunction(functionName) {
+    console.debug(`Calling ${functionName}`);
+    let widget = document.getElementById("widget");
+    widget.contentWindow[functionName]();
 }
