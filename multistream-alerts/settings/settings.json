@@ -82,23 +82,23 @@
 					"label": "Fade In"
 				},
 				{
-					"value": "slide-from-top",
-					"label": "Slide From Top"
+					"value": "slide-in-from-top",
+					"label": "Slide Down From Top"
 				},
 				{
-					"value": "slide-from-bottom",
-					"label": "Slide From Bottom"
+					"value": "slide-in-from-bottom",
+					"label": "Slide Up From Bottom"
 				},
 				{
-					"value": "slide-from-left",
-					"label": "Slide From Left"
+					"value": "slide-in-from-left",
+					"label": "Slide In From Left"
 				},
 				{
-					"value": "slide-from-right",
-					"label": "Slide From Right"
+					"value": "slide-in-from-right",
+					"label": "Slide In From Right"
 				}
 			],
-			"defaultValue": "fade-in",
+			"defaultValue": "slide-in-from-bottom",
 			"group": "General"
 		},
 		{
@@ -112,23 +112,23 @@
 					"label": "Fade Out"
 				},
 				{
-					"value": "slide-top",
-					"label": "Slide Top"
+					"value": "slide-out-top",
+					"label": "Slide Up And Out"
 				},
 				{
-					"value": "slide-bottom",
-					"label": "Slide Bottom"
+					"value": "slide-out-bottom",
+					"label": "Slide Down And Out"
 				},
 				{
-					"value": "slide-left",
-					"label": "Slide Left"
+					"value": "slide-out-left",
+					"label": "Slide Out Left"
 				},
 				{
-					"value": "slide-right",
-					"label": "Slide Right"
+					"value": "slide-out-right",
+					"label": "Slide Out Right"
 				}
 			],
-			"defaultValue": "fade-in",
+			"defaultValue": "slide-out-bottom",
 			"group": "General"
 		},
 		{
@@ -138,12 +138,12 @@
 			"type": "select",
 			"options": [
 				{
-					"value": "align-to-bottom",
-					"label": "Align To Bottom"
-				},
-				{
 					"value": "align-to-top",
 					"label": "Align To Top"
+				},
+				{
+					"value": "align-to-bottom",
+					"label": "Align To Bottom"
 				}
 			],
 			"defaultValue": "align-to-bottom",

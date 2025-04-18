@@ -1,7 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
-	--margin: 0.5em;
+	--margin: 1em;
 	--border-radius: 1em;
 	/* font-size: 30px; */
 	/* --line-spacing: 1.7em; */
@@ -44,7 +44,7 @@ html {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end;
+	/* justify-content: flex-end; */
 }
 
 #alertBox {
@@ -174,7 +174,25 @@ html {
 	font-style: italic;
 }
 
-@keyframes slideInFromTop {
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-out {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}@keyframes slide-in-from-top {
 	0% {
 		transform: translateY(-100%);
 		opacity: 0;
@@ -186,7 +204,19 @@ html {
 	}
 }
 
-@keyframes slideOffUp {
+@keyframes slide-in-from-top {
+	0% {
+		transform: translateY(-100%);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-top {
 	0% {
 		transform: translateY(0);
 		opacity: 1;
@@ -198,7 +228,7 @@ html {
 	}
 }
 
-@keyframes slideInFromBottom {
+@keyframes slide-in-from-bottom {
 	0% {
 		transform: translateY(100%);
 		opacity: 0;
@@ -210,7 +240,7 @@ html {
 	}
 }
 
-@keyframes slideOffDown {
+@keyframes slide-out-bottom {
 	0% {
 		transform: translateY(0);
 		opacity: 1;
@@ -222,7 +252,7 @@ html {
 	}
 }
 
-@keyframes slideInFromLeft {
+@keyframes slide-in-from-left {
 	0% {
 		transform: translateX(-100%);
 		opacity: 0;
@@ -234,7 +264,7 @@ html {
 	}
 }
 
-@keyframes slideOffLeft {
+@keyframes slide-out-left {
 	0% {
 		transform: translateX(0);
 		opacity: 1;
@@ -246,7 +276,7 @@ html {
 	}
 }
 
-@keyframes slideInFromRight {
+@keyframes slide-in-from-right {
 	0% {
 		transform: translateX(100%);
 		opacity: 0;
@@ -258,7 +288,7 @@ html {
 	}
 }
 
-@keyframes slideOffRight {
+@keyframes slide-out-right {
 	0% {
 		transform: translateX(0);
 		opacity: 1;

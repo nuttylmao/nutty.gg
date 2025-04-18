@@ -9,6 +9,7 @@ const sbServerAddress = urlParams.get("address") || "127.0.0.1";
 const sbServerPort = urlParams.get("port") || "8080";
 const avatarMap = new Map();
 
+const mainContainer = document.getElementById('mainContainer');
 const alertBox = document.getElementById('alertBox');
 const avatarElement = document.getElementById('avatar');
 const avatarSmallElement = document.getElementById('avatarButItsSmallerThanTheOneFromBeforeForPrettinessPurposes');
@@ -123,8 +124,10 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
 const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
 
 // Set avatar visibility
-if (!showAvatar)
+if (!showAvatar) {
 	avatarElement.style.display = 'none';
+	avatarSmallElement.style.display = 'none';
+}
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -153,6 +156,10 @@ document.body.style.fontSize = `${fontSize}px`;
 // 		document.getElementById('messageList').classList.add('reverseScrollDirection');
 // 		break;
 // }
+
+// Set the alignment of the alert box
+if (alignment == "align-to-bottom")
+	mainContainer.style.justifyContent = 'flex-end';
 
 
 
@@ -304,7 +311,7 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 ///////////////////////
 
 async function TwitchCheer(data) {
-	if (!showTwitchSubs)
+	if (!showTwitchCheers)
 		return;
 
 	// Set the text
@@ -352,7 +359,9 @@ async function TwitchCheer(data) {
 		`cheered ${bits} bits`,
 		'',
 		username,
-		message
+		message,
+		twitchCheerAction,
+		data
 	);
 }
 
@@ -497,7 +506,7 @@ async function TwitchRaid(data) {
 		'',
 		username,
 		'',
-		twitchFollowAction,
+		twitchRaidAction,
 		data
 	);
 }
@@ -1286,9 +1295,9 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 	theContentThatShowsFirstInsteadOfSecond.style.display = 'flex';
 	alertBox.style.maxHeight = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
 	alertBox.style.minHeight = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
-	alertBox.style.animation = 'slideInFromRight 0.5s ease-out forwards';
+	alertBox.style.animation = `${showAnimation} 0.5s ease-out forwards`;
 
-	// Run the Streamer.bot action if there is one	
+	// Run the Streamer.bot action if there is one
 	if (sbAction) {
 		console.debug('Running Streamer.bot action: ' + sbAction);
 		await client.doAction({name: sbAction}, sbData);
@@ -1310,7 +1319,7 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 		theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
 			
 		setTimeout(() => {
-			alertBox.style.animation = 'slideOffRight 0.5s ease-out forwards';
+			alertBox.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
 
 			setTimeout(() => {
 				alertBox.style.maxHeight = '0px';
@@ -1325,7 +1334,7 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 					UpdateAlertBox(data.platform, data.avatarURL, data.headerText, data.descriptionText, data.attributeText, data.username, data.message, data.sbAction, data.sbData);
 				}
 			}, 1000);
-		}, message ? hideAfter * 1000 : 0);		
+		}, (message && showMesesages) ? hideAfter * 1000 : 0);		
 	}, hideAfter * 1000);
 
 }

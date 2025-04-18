@@ -129,9 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (option === setting.defaultValue) {
                   optionElement.selected = true;
                 }
-                inputElement.value = setting.defaultValue;
                 inputElement.appendChild(optionElement);
               });
+              inputElement.value = setting.defaultValue;
               break;
             case 'color':
               inputElement = document.createElement('input');
