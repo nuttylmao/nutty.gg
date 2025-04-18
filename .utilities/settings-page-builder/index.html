@@ -18,7 +18,7 @@
       <button style="display: flex; width: auto; margin-left: auto; background: var(--accent-color);" onclick="OpenMembershipPage()">Check out my premium widgets</button>
     </div>
     <h2>Widget URL</h2>
-    <input id="widget-url" type="text" readonly>
+    <input id="widget-url" type="text" readonly onfocus="this.select();">
     <div style="display: flex; gap: 10px;">
       <button id="save-settings">Click to copy URL</button>
       <button onclick="OpenLoadSettingsPopup()">Load Settings</button>

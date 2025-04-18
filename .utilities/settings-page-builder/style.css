@@ -129,10 +129,6 @@ input[type="number"] {
           box-sizing: border-box;
 }
 
-#widget-url:hover {
-  cursor: pointer;
-}
-
 .setting-item-content option {
   color: black;
 }
