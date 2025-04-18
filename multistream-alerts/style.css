@@ -1,7 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
-	--margin: 1em;
+	--margin: 0.5em;
 	--border-radius: 1em;
 	/* font-size: 30px; */
 	/* --line-spacing: 1.7em; */
@@ -85,7 +85,7 @@ html {
 	/* left: var(--margin);
 	top: var(--margin); */
 	transition: inherit;
-	padding: var(--margin);
+	padding: var(--margin) calc( 1.5 * var(--margin));
 	display: none;
 }
 
@@ -97,7 +97,7 @@ html {
 	/* position: absolute; */
 	/* left: var(--margin);
 	top: var(--margin); */
-	padding: var(--margin);
+	padding: var(--margin) calc( 1.5 * var(--margin));
 	transition: inherit;
 	display: none;
 }
@@ -358,6 +358,10 @@ html {
 
 .highlightMessage {
 	background: #adadad46;
+}
+
+.customBackground {
+	background: var(--custom-background);
 }
 
 /****************/

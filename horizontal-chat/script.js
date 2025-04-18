@@ -511,9 +511,13 @@ async function TwitchGiftBomb(data) {
 	if (!showTwitchSubs)
 		return;
 
-	const username = data.displayName;
-	const gifts = data.gifts;
-	const subTier = data.subTier;
+	//// The below is incorrect (Streamer.bot documentation is wrong)
+	// const username = data.displayName;
+	// const gifts = data.gifts;
+	// const subTier = data.subTier;
+	const username = data.user.name;
+	const gifts = data.recipients.length;
+	const subTier = data.sub_tier.charAt(0);
 
 	let message = `🎁 ${username} gifted ${gifts} Tier ${subTier} subs!`;
 

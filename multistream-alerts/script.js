@@ -19,7 +19,6 @@ const descriptionLabel = document.getElementById('description');
 const attributeLabel = document.getElementById('attribute');
 const theContentThatShowsFirstInsteadOfSecond = document.getElementById('theContentThatShowsFirstInsteadOfSecond');
 const theContentThatShowsLastInsteadOfFirst = document.getElementById('theContentThatShowsLastInsteadOfFirst');
-
 const messageLabel = document.getElementById('message');
 
 let widgetLocked = false;						// Needed to lock animation from overlapping
@@ -29,58 +28,13 @@ let alertQueue = [];
 // OPTIONS //
 /////////////
 
-// const showPlatform = GetBooleanParam("showPlatform", true);
-// const showAvatar = GetBooleanParam("showAvatar", true);
-// const showTimestamps = GetBooleanParam("showTimestamps", true);
-// const showBadges = GetBooleanParam("showBadges", true);
-// const showPronouns = GetBooleanParam("showPronouns", true);
-// const showUsername = GetBooleanParam("showUsername", true);
-// const showMessage = GetBooleanParam("showMessage", true);
-// const font = urlParams.get("font") || "";
-// const fontSize = urlParams.get("fontSize") || "30";
-// const lineSpacing = urlParams.get("lineSpacing") || "1.7";
-// const background = urlParams.get("background") || "#000000";
-// const opacity = urlParams.get("opacity") || "0.85";
-
-// const hideAfter = GetIntParam("hideAfter", 0);
-// const excludeCommands = GetBooleanParam("excludeCommands", true);
-// const ignoreChatters = urlParams.get("ignoreChatters") || "";
-// const scrollDirection = GetIntParam("scrollDirection", 1);
-// const inlineChat = GetBooleanParam("inlineChat", false);
-// const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
-
-// const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
-// const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
-// const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
-// const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
-// const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
-// const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
-
-// const twitchFollowTrigger = urlParams.get("twitchFollowTrigger") || "";
-
-// const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
-// const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
-// const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
-// const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
-
-// const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
-// const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
-// const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
-// const showKofiDonations = GetBooleanParam("showKofiDonations", true);
-// const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
-// const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
-
-// const animationSpeed = GetIntParam("animationSpeed", 8000);
-
-// const furryMode = GetBooleanParam("furryMode", false);
-
 // Appearance
 const showAvatar = GetBooleanParam("showAvatar", true);
 const font = urlParams.get("font") || "";
 const fontSize = GetIntParam("fontSize", 30);
 const useCustomBackground = GetBooleanParam("useCustomBackground", true);
-const background = urlParams.get("background") || "";
-const opacity = GetIntParam("opacity", 0.85);
+const background = urlParams.get("background") || "#000000";
+const opacity = urlParams.get("opacity") || "0.85";
 
 // General
 const hideAfter = GetIntParam("hideAfter", 8);
@@ -133,6 +87,18 @@ if (!showAvatar) {
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
 
+// Set custom background
+if (useCustomBackground) {
+	const opacity255 = Math.round(parseFloat(opacity) * 255);
+	let hexOpacity = opacity255.toString(16);
+	if (hexOpacity.length < 2) {
+		hexOpacity = "0" + hexOpacity;
+	}
+	//document.body.style.background = `${background}${hexOpacity}`;
+	console.log(`${background}${hexOpacity}`);
+	document.documentElement.style.setProperty('--custom-background', `${background}${hexOpacity}`);
+}
+
 // // Set line spacing
 // document.documentElement.style.setProperty('--line-spacing', `${lineSpacing}em`);
 
@@ -184,6 +150,11 @@ const client = new StreamerbotClient({
 	}
 });
 
+client.on('Twitch.Follow', (response) => {
+	console.debug(response.data);
+	TwitchFollow(response.data);
+})
+
 client.on('Twitch.Cheer', (response) => {
 	console.debug(response.data);
 	TwitchCheer(response.data);
@@ -202,6 +173,11 @@ client.on('Twitch.ReSub', (response) => {
 client.on('Twitch.GiftSub', (response) => {
 	console.debug(response.data);
 	TwitchGiftSub(response.data);
+})
+
+client.on('Twitch.GiftBomb', (response) => {
+	console.debug(response.data);
+	TwitchGiftBomb(response.data);
 })
 
 client.on('Twitch.RewardRedemption', (response) => {
@@ -310,6 +286,29 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 // MULTICHAT OVERLAY //
 ///////////////////////
 
+async function TwitchFollow(data) {
+	if (!showTwitchFollows)
+		return;
+
+	// Set the text
+	const username = data.user_name;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username);
+
+	UpdateAlertBox(
+		'twitch',
+		avatarURL,
+		`${username}`,
+		`followed`,
+		``,
+		username,
+		``,
+		twitchFollowAction,
+		data
+	);
+}
+
 async function TwitchCheer(data) {
 	if (!showTwitchCheers)
 		return;
@@ -385,7 +384,9 @@ async function TwitchSub(data) {
 			`subscribed with Tier ${subTier.charAt(0)}`,
 			'',
 			username,
-			''
+			'',
+			twitchSubAction,
+			data
 		);
 	else
 		UpdateAlertBox(
@@ -395,7 +396,9 @@ async function TwitchSub(data) {
 			`used their Prime Sub`,
 			'',
 			username,
-			''
+			'',
+			twitchSubAction,
+			data
 		);
 }
 
@@ -421,7 +424,9 @@ async function TwitchResub(data) {
 			`resubscribed with Tier ${subTier.charAt(0)}`,
 			`${cumulativeMonths} months`,
 			username,
-			message
+			message,
+			twitchSubAction,
+			data
 		);
 	else
 		UpdateAlertBox(
@@ -431,7 +436,9 @@ async function TwitchResub(data) {
 			`used their Prime Sub`,
 			`${cumulativeMonths} months`,
 			username,
-			message
+			message,
+			twitchSubAction,
+			data
 		);
 }
 
@@ -444,6 +451,11 @@ async function TwitchGiftSub(data) {
 	const subTier = data.subTier;
 	const recipient = data.recipient.name;
 	const cumlativeTotal = data.cumlativeTotal;
+	const fromCommunitySubGift = data.fromCommunitySubGift;
+
+	// Don't post alerts for gift bombs
+	if (fromCommunitySubGift)
+		return;
 
 	// Render avatars
 	const avatarURL = await GetAvatar(username);
@@ -459,7 +471,44 @@ async function TwitchGiftSub(data) {
 		`gifted a Tier ${subTier.charAt(0)} subscription`,
 		`to ${recipient}`,
 		username,
-		messageText
+		messageText,
+		twitchSubAction,
+		data
+	);
+}
+
+async function TwitchGiftBomb(data) {
+	if (!showTwitchSubs)
+		return;
+
+	//// The below is incorrect (Streamer.bot documentation is wrong)
+	// const username = data.displayName;
+	// const gifts = data.gifts;
+	// const totalGifts = data.totalGifts;
+	// const subTier = data.subTier;
+	const username = data.user.name;
+	const login = data.user.login;
+	const gifts = data.recipients.length;
+	const totalGifts = data.cumulative_total;
+	const subTier = data.sub_tier.charAt(0);
+
+	// Render avatars
+	const avatarURL = await GetAvatar(login);
+
+	let message = ``;
+	if (totalGifts > 0)
+		message = `They've gifted ${totalGifts} subs in total!`;
+
+	UpdateAlertBox(
+		'twitch',
+		avatarURL,
+		`${username}`,
+		`gifted ${gifts} Tier ${subTier} subs!`,
+		``,
+		username,
+		message,
+		twitchSubAction,
+		data
 	);
 }
 
@@ -483,7 +532,9 @@ async function TwitchRewardRedemption(data) {
 		`${rewardName} ${channelPointIcon} ${cost}`,
 		'',
 		username,
-		userInput
+		userInput,
+		twitchChannelPointRedemptionAction,
+		data
 	);
 }
 
@@ -525,7 +576,9 @@ function YouTubeSuperChat(data) {
 		`sent a Super Chat (${data.amount})`,
 		'',
 		data.user.name,
-		data.message
+		data.message,
+		youtubeSuperChatAction,
+		data
 	);
 }
 
@@ -543,7 +596,9 @@ function YouTubeSuperSticker(data) {
 		`sent a Super Sticker (${data.amount})`,
 		'',
 		data.user.name,
-		''
+		'',
+		youtubeSuperStickerAction,
+		data
 	);
 }
 
@@ -561,7 +616,9 @@ function YouTubeNewSponsor(data) {
 		`Welcome ${data.user.name}!`,
 		'',
 		data.user.name,
-		''
+		'',
+		youtubeMembershipAction,
+		data
 	);
 }
 
@@ -579,7 +636,9 @@ function YouTubeGiftMembershipReceived(data) {
 		`gifted a membership`,
 		`to ${data.user.name} (${data.tier})!`,
 		data.gifter.name,
-		''
+		'',
+		youtubeMembershipAction,
+		data
 	);
 }
 
@@ -600,7 +659,9 @@ async function StreamlabsDonation(data) {
 		`donated ${currency}${formattedAmount}`,
 		``,
 		donater,
-		message
+		message,
+		streamlabsDonationAction,
+		data
 	);
 }
 
@@ -621,7 +682,9 @@ async function StreamElementsTip(data) {
 		`donated ${currency}${formattedAmount}`,
 		``,
 		donater,
-		message
+		message,
+		streamelementsTipAction,
+		data
 	);
 }
 
@@ -643,7 +706,9 @@ function PatreonPledgeCreated(data) {
 		`joined Patreon ($${amount})`,
 		``,
 		user,
-		``
+		``,
+		patreonMembershipActions,
+		data
 	);
 }
 
@@ -668,7 +733,9 @@ function KofiDonation(data) {
 			`donated $${amount}`,
 			``,
 			user,
-			message
+			message,
+			kofiDonationAction,
+			data
 		);
 	else
 		UpdateAlertBox(
@@ -677,7 +744,9 @@ function KofiDonation(data) {
 			`donated ${currency} ${amount}`,
 			``,
 			user,
-			message
+			message,
+			kofiDonationAction,
+			data
 		);
 }
 
@@ -702,7 +771,9 @@ function KofiSubscription(data) {
 			`subscribed ($${amount})`,
 			``,
 			user,
-			message
+			message,
+			kofiDonationAction,
+			data
 		);
 	else
 		UpdateAlertBox(
@@ -711,7 +782,9 @@ function KofiSubscription(data) {
 			`subscribed (${currency} ${amount})`,
 			``,
 			user,
-			message
+			message,
+			kofiDonationAction,
+			data
 		);
 }
 
@@ -734,7 +807,9 @@ function KofiResubscription(data) {
 		`subscribed (${tier})`,
 		``,
 		user,
-		message
+		message,
+		kofiDonationAction,
+		data
 	);
 }
 
@@ -767,7 +842,9 @@ function KofiShopOrder(data) {
 		`ordered ${itemTotal} item(s) on Ko-fi `,
 		`${formattedAmount}`,
 		user,
-		message
+		message,
+		kofiDonationAction,
+		data
 	);
 }
 
@@ -792,7 +869,9 @@ function TipeeeStreamDonation(data) {
 			`donated $${amount}`,
 			``,
 			user,
-			message
+			message,
+			tipeeestreamDonationAction,
+			data
 		);
 	else
 		UpdateAlertBox(
@@ -802,7 +881,9 @@ function TipeeeStreamDonation(data) {
 			`donated ${currency} ${amount}`,
 			``,
 			user,
-			message
+			message,
+			tipeeestreamDonationAction,
+			data
 		);
 }
 
@@ -844,7 +925,9 @@ function FourthwallOrderPlaced(data) {
 		`ordered ${item}`,
 		attributeText,
 		user,
-		message
+		message,
+		fourthwallAlertAction,
+		data
 	);
 }
 
@@ -873,7 +956,9 @@ function FourthwallDonation(data) {
 		`donated ${formattedAmount}`,
 		'',
 		user,
-		message
+		message,
+		fourthwallAlertAction,
+		data
 	);
 }
 
@@ -901,7 +986,9 @@ function FourthwallSubscriptionPurchased(data) {
 		`subscribed ${formattedAmount}`,
 		'',
 		user,
-		''
+		'',
+		fourthwallAlertAction,
+		data
 	);
 }
 
@@ -942,7 +1029,9 @@ function FourthwallGiftPurchase(data) {
 		`gifted ${contents}`,
 		attributesText,
 		user,
-		message
+		message,
+		fourthwallAlertAction,
+		data
 	);
 }
 
@@ -961,7 +1050,9 @@ function FourthwallGiftDrawStarted(data) {
 		`Type !join in the next ${durationSeconds} seconds for your chance to win!`,
 		'',
 		'',
-		''
+		'',
+		fourthwallAlertAction,
+		data
 	);
 }
 
@@ -980,7 +1071,9 @@ function FourthwallGiftDrawEnded(data) {
 		`Congratulations ${GetWinnersList(data.gifts)}!`,
 		'',
 		'',
-		''
+		'',
+		fourthwallAlertAction,
+		data
 	);
 }
 
@@ -1028,19 +1121,6 @@ function GetIntParam(paramName, defaultValue) {
 	return intValue;
 }
 
-// function GetCurrentTimeFormatted() {
-// 	const now = new Date();
-// 	let hours = now.getHours();
-// 	const minutes = String(now.getMinutes()).padStart(2, '0');
-// 	const ampm = hours >= 12 ? 'PM' : 'AM';
-
-// 	hours = hours % 12;
-// 	hours = hours ? hours : 12; // the hour '0' should be '12'
-
-// 	const formattedTime = `${hours}:${minutes} ${ampm}`;
-// 	return formattedTime;
-// }
-
 async function GetAvatar(username) {
 	if (avatarMap.has(username)) {
 		console.debug(`Avatar found for ${username}. Retrieving from hash map.`)
@@ -1054,84 +1134,6 @@ async function GetAvatar(username) {
 		return data;
 	}
 }
-
-// async function GetPronouns(platform, username) {
-// 	const response = await client.getUserPronouns(platform, username);
-// 	const userFound = response.pronoun.userFound;
-// 	const pronouns = `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}`;
-
-// 	if (userFound)
-// 		return `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}`;
-// 	else
-// 		return '';
-// }
-
-// function IsImageUrl(url) {
-// 	return url.match(/^http.*\.(jpeg|jpg|gif|png)$/) != null;
-// }
-
-// function IsImageUrl(url) {
-// 	try {
-// 		const { pathname } = new URL(url);
-// 		// Only check the pathname since query parameters are not included in it.
-// 		return /\.(png|jpe?g|webp|gif)$/i.test(pathname);
-// 	} catch (error) {
-// 		// Return false if the URL is invalid.
-// 		return false;
-// 	}
-// }
-
-// function AddMessageItem(element, elementID, platform, userId) {
-// 	// Calculate the height of the div before inserting
-// 	const tempDiv = document.getElementById('IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList');
-// 	const tempDivTwoElectricBoogaloo = document.createElement('div');
-// 	tempDivTwoElectricBoogaloo.appendChild(element);
-// 	tempDiv.appendChild(tempDivTwoElectricBoogaloo);
-
-// 	setTimeout(function () {
-// 		const calculatedHeight = tempDivTwoElectricBoogaloo.offsetHeight + "px";
-
-// 		// Create a new line item to add to the message list later
-// 		var lineItem = document.createElement('li');
-// 		lineItem.id = elementID;
-// 		lineItem.dataset.platform = platform;
-// 		lineItem.dataset.userId = userId;
-
-// 		// Set scroll direction
-// 		if (scrollDirection == 2)
-// 			lineItem.classList.add('reverseLineItemDirection');
-
-// 		// Move the element from the temp div to the new line item
-// 		lineItem.appendChild(tempDiv.firstElementChild);
-
-// 		// Add the line item to the list and animate it
-// 		// We need to manually set the height as straight CSS can't animate on "height: auto"
-// 		messageList.appendChild(lineItem);
-// 		setTimeout(function () {
-// 			lineItem.className = lineItem.className + " show";
-// 			lineItem.style.maxHeight = calculatedHeight;
-// 			// After it's done animating, remove the height constraint in case the div needs to get bigger
-// 			setTimeout(function () {
-// 				lineItem.style.maxHeight = "none";
-// 			}, 1000);
-// 		}, 10);
-
-// 		// Remove old messages that have gone off screen to save memory
-// 		while (messageList.clientHeight > 5 * window.innerHeight) {
-// 			messageList.removeChild(messageList.firstChild);
-// 		}
-
-// 		if (hideAfter > 0) {
-// 			setTimeout(function () {
-// 				lineItem.style.opacity = 0;
-// 				setTimeout(function () {
-// 					messageList.removeChild(lineItem);
-// 				}, 1000);
-// 			}, hideAfter * 1000);
-// 		}
-
-// 	}, 200);
-// }
 
 function DecodeHTMLString(html) {
 	var txt = document.createElement("textarea");
@@ -1176,35 +1178,6 @@ function FindFirstImageUrl(jsonObject) {
 	return iterate(jsonObject);
 }
 
-// function IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(targetPermissions, data, platform) {
-// 	return GetPermissionLevel(data, platform) >= targetPermissions;
-// }
-
-// function GetPermissionLevel(data, platform) {
-// 	switch (platform) {
-// 		case 'twitch':
-// 			if (data.message.role >= 4)
-// 				return 40;
-// 			else if (data.message.role >= 3)
-// 				return 30;
-// 			else if (data.message.role >= 2)
-// 				return 20;
-// 			else if (data.message.role >= 2 || data.message.subscriber)
-// 				return 15;
-// 			else
-// 				return 10;
-// 		case 'youtube':
-// 			if (data.user.isOwner)
-// 				return 40;
-// 			else if (data.user.isModerator)
-// 				return 30;
-// 			else if (data.user.isSponsor)
-// 				return 15;
-// 			else
-// 				return 10;
-// 	}
-// }
-
 function GetWinnersList(gifts) {
 	const winners = gifts.map(gift => gift.winner);
 	const numWinners = winners.length;
@@ -1222,45 +1195,6 @@ function GetWinnersList(gifts) {
 	}
 }
 
-// function TranslateToFurry(sentence) {
-// 	const words = sentence.toLowerCase().split(/\b/);
-
-// 	const furryWords = words.map(word => {
-// 		if (/\w+/.test(word)) {
-// 			let newWord = word;
-
-// 			// Common substitutions
-// 			newWord = newWord.replace(/l/g, 'w');
-// 			newWord = newWord.replace(/r/g, 'w');
-// 			newWord = newWord.replace(/th/g, 'f');
-// 			newWord = newWord.replace(/you/g, 'yous');
-// 			newWord = newWord.replace(/my/g, 'mah');
-// 			newWord = newWord.replace(/me/g, 'meh');
-// 			newWord = newWord.replace(/am/g, 'am');
-// 			newWord = newWord.replace(/is/g, 'is');
-// 			newWord = newWord.replace(/are/g, 'are');
-// 			newWord = newWord.replace(/very/g, 'vewy');
-// 			newWord = newWord.replace(/pretty/g, 'pwetty');
-// 			newWord = newWord.replace(/little/g, 'wittle');
-// 			newWord = newWord.replace(/nice/g, 'nyce');
-
-// 			// Random additions
-// 			if (Math.random() < 0.15) {
-// 				newWord += ' nya~';
-// 			} else if (Math.random() < 0.1) {
-// 				newWord += ' >w<';
-// 			} else if (Math.random() < 0.05) {
-// 				newWord += ' owo';
-// 			}
-
-// 			return newWord;
-// 		}
-// 		return word;
-// 	});
-
-// 	return furryWords.join('');
-// }
-
 async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message, sbAction, sbData) {
 	// Check if the widget is in the middle of an animation
 	// If any alerts are requested while the animation is playing, it should be added to the alert queue
@@ -1276,7 +1210,10 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 
 	// Set the card background colors
 	alertBox.classList = '';
-	alertBox.classList.add(platform);
+	if (useCustomBackground)
+		alertBox.classList.add('customBackground');
+	else
+		alertBox.classList.add(platform);
 
 	// Render avatars
 	if (showAvatar) {
@@ -1381,3 +1318,31 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+// let data = {
+// 	cumulative_total: 77,
+// 	id: "6616253944106387595",
+// 	isTest: false,
+// 	messageId: "00e4258c-a880-4f11-a93c-4734ee92199f",
+// 	recipients: [
+// 	  {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+// 	],
+// 	sub_tier: "1000", // Usually "1000" = Tier 1
+// 	systemMessage: "thetrickster1973 is gifting 10 Tier 1 Subs to nutty's community! They've gifted a total of 77 in the channel!",
+// 	total: 10,
+// 	user: {
+// 	  badges: [{}, {}, {}],
+// 	  color: "#1E90FF",
+// 	  id: "52175891",
+// 	  login: "thetrickster1973",
+// 	  monthsSubscribed: 14,
+// 	  name: "thetrickster1973",
+// 	  role: 2, // 2 - VIP
+// 	  subscribed: true,
+// 	  type: "twitch"
+// 	}
+//   };
+
+// TwitchGiftBomb(data);
+
+//testWidget();

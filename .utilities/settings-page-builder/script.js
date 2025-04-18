@@ -211,9 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function UpdateSettingItemVisibility() {
         data.settings.forEach(setting => {
-          if (setting.hideIf)
+          if (setting.showIf)
           {
-            if (!document.getElementById(setting.hideIf).checked)
+            if (!document.getElementById(setting.showIf).checked)
               document.getElementById(`item-${setting.id}`).style.display = 'none'
             else
               document.getElementById(`item-${setting.id}`).style.display = 'flex'
