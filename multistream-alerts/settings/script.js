@@ -21,9 +21,3 @@ console.debug("Settings JSON: " + settingsJSON);
 console.debug("Widget URL: " + widgetURL);
 
 widgetContainer.src = settingsPageURL + settingsJSON + widgetURL;
-
-function callFunction(functionName) {
-    console.debug(`Calling ${functionName}`);
-    let widget = document.getElementById("widget");
-    widget.contentWindow[functionName]();
-}
