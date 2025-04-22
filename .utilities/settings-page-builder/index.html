@@ -2,49 +2,51 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="../../.resources/logo.png" type="image/png">
-  <title>Settings</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="text/javascript" src="https://unpkg.com/@streamerbot/client/dist/streamerbot-client.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://unpkg.com/@streamerbot/client/dist/streamerbot-client.js"></script>
 </head>
 
 <body>
-
-  <div id="pinned-header">
-    <div style="display: flex; align-items: center; padding-bottom: 20px;">
-      <img src="../../.resources/logo.png" style="height: 40px;"/>
-      <button style="display: flex; width: auto; margin-left: auto; background: var(--accent-color);" onclick="OpenMembershipPage()">Check out my premium widgets</button>
-    </div>
-    <h2>Widget URL</h2>
-    <input id="widget-url" type="text" readonly onfocus="this.select();">
-    <div style="display: flex; gap: 10px;">
-      <button id="save-settings">Click to copy URL</button>
-      <button onclick="OpenLoadSettingsPopup()">Load Settings</button>
-    </div>    
-    <!-- <button onclick="OpenMembershipPage()">💎 Member Exclusive Widgets</button> -->
-  </div>
-
-  <div id="settings-container">
-    <div id="settings-content"></div>
-  </div>
-  <script src="script.js"></script>
-  
-  <div id="mommy-milkers">
-    <div id="load-settings-container">
-      <h2>Load Settings</h2>
-      <label style="font-size: 0.8em;">Paste in your existing widget URL</label>
-      <input id="load-url" type="text">
-      <div style="display: flex;">
-        <button id="cancel-settings" onclick="CloseSettings()">Cancel</button>
-        <span style="width: 20px;"></span>
-        <button id="load-settings" onclick="LoadSettings()">Load Settings</button>
-      </div>
+    <!-- Header -->
+    <div id="header">
+        <img src="../../.resources/logo.png" style="height: 40px;" />
+        <button id="membershipsButton" onclick="OpenMembershipPage()">Check out my member exclusive widgets!</button>
+        <div id="widgetUrlInputWrapper">
+            <span id="urlLabel">Click to copy URL</span>
+            <input id="widgetUrlInput" type="text" readonly onclick="CopyURLToClipboard()">
+        </div>
+        <button id="loadSettingsButton" onclick="OpenLoadSettingsPopup()">Load Settings</button>
     </div>
 
-  </div>
+    <!-- Main Content Area -->
+    <div id="contentArea">
 
+        <!-- Settings Panel -->
+        <div id="settingsPanel">            
+        </div>
+
+        <!-- Widget Preview Panel -->
+        <iframe id="widgetPreview">
+        </iframe>
+    </div>
+
+    <!-- Load Settings Popup -->
+    <div id="loadSettingsWrapper">
+        <div id="loadSettingsContainer">
+            <h2>Load Settings</h2>
+            <label style="font-size: 0.8em;">Paste in your existing widget URL</label>
+            <input id="loadUrlBox" type="text" style="width: 100%;">
+            <div style="display: flex; gap: 20px">
+                <button id="cancelSettingsButton" onclick="CloseSettings()">Cancel</button>
+                <button style="background-color: var(--accent-color);" onclick="LoadSettings()">Load Settings</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
+
+<script src="script.js"></script>

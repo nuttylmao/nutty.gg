@@ -1,33 +1,26 @@
-let settingsContainer = document.getElementById('settings-container');
-settingsContainer.src = `../../.utilities/settings-page-builder?settingsJson=${window.location.href}/settings.json`
-//settingsContainer.src = `../../.utilities/settings-page-builder?settingsJson=../../multistream-alerts/settings/settings.json`
-console.log(settingsContainer.src);
+const widgetContainer = document.getElementById('widgetContainer');
 
-function reloadWidget(data) {
-    let widget = document.getElementById("widget");
-    widget.src = `${getParentUrl()}?${data}`;
-}
+const settingsPageURL = '../../.utilities/settings-page-builder';
 
-function getParentUrl() {
-    const currentUrl = window.location.href;
-    const urlParts = currentUrl.split('/');
+const currentURL = window.location.href;
 
-    // Remove the last part of the URL (the current page/file)
-    urlParts.pop();
+let settingsJSON;
+let baseURL = currentURL;
 
-    // Remove the last part again to go one directory up
-    urlParts.pop();
+if (baseURL.endsWith("index.html"))
+    baseURL = baseURL.replace("index.html", "");
 
-    // Reconstruct the URL
-    const parentUrl = urlParts.join('/');
+settingsJSON = "?settingsJson=" + baseURL + "settings.json";
 
-    // Ensure there's a trailing slash if necessary (if it was a directory)
-    if (urlParts.length > 2 && !parentUrl.endsWith('/')) {
-        return parentUrl + '/';
-    }
+const lastSlashIndex = baseURL.lastIndexOf("/");
+let widgetURL = "&widgetURL=" + baseURL.replace("/settings", "");
 
-    return parentUrl;
-}
+console.debug("Window Ref: " + window.location.href);
+console.debug("Base URL: " + baseURL);
+console.debug("Settings JSON: " + settingsJSON);
+console.debug("Widget URL: " + widgetURL);
+
+widgetContainer.src = settingsPageURL + settingsJSON + widgetURL;
 
 function callFunction(functionName) {
     console.debug(`Calling ${functionName}`);
