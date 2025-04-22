@@ -1,7 +1,6 @@
 * {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     font-size: 16px;
-    font-weight: 500;
     color: white;
     --accent-color: #2196f3;
 }
@@ -114,6 +113,7 @@ body {
     border-radius: 0.5em;
     padding: 5px 20px;
     z-index: 1;
+    font-weight: 500;
 }
 
 #urlLabel,
