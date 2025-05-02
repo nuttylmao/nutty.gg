@@ -3,6 +3,7 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const settingsJson = urlParams.get("settingsJson") || "";
 const widgetURL = urlParams.get("widgetURL") || "";
+const showUnmuteIndicator = GetBooleanParam("showUnmuteIndicator", false);
 
 // Page elements
 const widgetUrlInputWrapper = document.getElementById('widgetUrlInputWrapper');
@@ -13,6 +14,10 @@ const widgetPreview = document.getElementById('widgetPreview');
 const loadURLBox = document.getElementById('loadUrlBox');
 const cancelSettingsButton = document.getElementById('cancelSettingsButton');
 const loadSettingsBox = document.getElementById('loadSettingsWrapper');
+const unmuteLabel = document.getElementById('unmute-label');
+
+if (showUnmuteIndicator)
+	unmuteLabel.style.display = 'inline';
 
 
 
@@ -137,7 +142,7 @@ fetch(settingsJson)
 						inputElement.textContent = setting.label;
 
 						inputElement.addEventListener('click', () => {
-                            widgetPreview.contentWindow[setting.callFunction]();
+							widgetPreview.contentWindow[setting.callFunction]();
 
 							const defaultBackgroundColor = "#2e2e2e";
 							const defaultTextColor = "white";
@@ -343,3 +348,57 @@ function OpenLoadSettingsPopup() {
 	loadSettingsBox.style.visibility = 'visible';
 	loadSettingsBox.style.opacity = 1;
 }
+
+
+
+//////////////////////
+// HELPER FUNCTIONS //
+//////////////////////
+
+function GetBooleanParam(paramName, defaultValue) {
+	const urlParams = new URLSearchParams(window.location.search);
+	const paramValue = urlParams.get(paramName);
+
+	if (paramValue === null) {
+		return defaultValue; // Parameter not found
+	}
+
+	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
+
+	if (lowercaseValue === 'true') {
+		return true;
+	} else if (lowercaseValue === 'false') {
+		return false;
+	} else {
+		return paramValue; // Return original string if not 'true' or 'false'
+	}
+}
+
+function GetIntParam(paramName, defaultValue) {
+	const urlParams = new URLSearchParams(window.location.search);
+	const paramValue = urlParams.get(paramName);
+
+	if (paramValue === null) {
+		return defaultValue; // or undefined, or a default value, depending on your needs
+	}
+
+	console.log(paramValue);
+
+	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
+
+	if (isNaN(intValue)) {
+		return null; // or handle the error in another way, e.g., throw an error
+	}
+
+	return intValue;
+}
+
+
+// Handle first window interaction
+window.addEventListener('message', (event) => {
+	if (event.origin === new URL(widgetPreview.src).origin && event.data === 'iframe-interacted') {
+		iframeHasBeenInteractedWith = true;
+		console.log('Iframe has been interacted with!');
+		unmuteLabel.style.display = 'none';
+	}
+});
