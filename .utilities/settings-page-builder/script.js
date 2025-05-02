@@ -225,6 +225,21 @@ function RefreshWidgetPreview(data) {
 
 	widgetUrlInput.value = widgetURL + "?" + paramString;
 	widgetPreview.src = widgetUrlInput.value;
+
+	UpdateStreamerBotConnection();
+}
+
+function UpdateStreamerBotConnection() {
+	let addressElement = document.getElementById('address');
+	let portElement = document.getElementById('port');
+
+	if (addressElement && portElement)
+		client.options.host = addressElement.value;
+
+	if (portElement)
+		client.options.port = portElement.value;
+
+	client.connect();
 }
 
 
@@ -234,9 +249,9 @@ function RefreshWidgetPreview(data) {
 //////////////////
 
 // Connect to Streamer.bot and get list of actions
-const sbServerAddress = '127.0.0.1';
-const sbServerPort = '8080';
-const client = new StreamerbotClient({
+let sbServerAddress = '127.0.0.1';
+let sbServerPort = '8080';
+let client = new StreamerbotClient({
 	host: sbServerAddress,
 	port: sbServerPort,
 
