@@ -44,6 +44,7 @@ const hideAfter = GetIntParam("hideAfter", 8);
 const showAnimation = urlParams.get("showAnimation") || "";
 const hideAnimation = urlParams.get("hideAnimation") || "";
 const playSounds = GetBooleanParam("playSounds", true);
+const globalAction = urlParams.get("globalAction") || "";
 const showMesesages = GetBooleanParam("showMesesages", true);
 
 // Which Twitch alerts do you want to see?
@@ -84,6 +85,7 @@ const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
 if (!showAvatar) {
 	avatarElement.style.display = 'none';
 	avatarSmallElement.style.display = 'none';
+	alertBox.style.padding = '0.5em 1em';
 }
 
 // Set fonts for the widget
@@ -1187,7 +1189,7 @@ function GetWinnersList(gifts) {
 	}
 }
 
-async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message, sbAction, sbData) {
+function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message, sbAction, sbData) {
 	// Check if the widget is in the middle of an animation
 	// If any alerts are requested while the animation is playing, it should be added to the alert queue
 	if (widgetLocked) {
@@ -1227,16 +1229,22 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 	alertBox.style.height = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
 	alertBox.style.animation = `${showAnimation} 0.5s ease-out forwards`;
 
-	// Run the Streamer.bot action if there is one
-	if (sbAction) {
-		console.debug('Running Streamer.bot action: ' + sbAction);
-		await client.doAction({name: sbAction}, sbData);
-	}
-
 	// Play sound effect
 	if (playSounds) {
 		const audio = new Audio('sfx/notification.mp3');
 		audio.play();
+	}
+
+	// Run the Streamer.bot action if there is one
+	if (globalAction) {
+		console.debug('Running Streamer.bot action: ' + globalAction);
+		client.doAction({name: globalAction}, sbData);
+	}
+
+	// Run the Streamer.bot action if there is one
+	if (sbAction) {
+		console.debug('Running Streamer.bot action: ' + sbAction);
+		client.doAction({name: sbAction}, sbData);
 	}
 
 	// (1) Set timeout (8 seconds by default)
@@ -1248,16 +1256,34 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 		alertBox.style.transition = 'all 0.5s ease-in-out';
 		theContentThatShowsFirstInsteadOfSecond.style.opacity = 0;
 		
-		theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
-		alertBox.style.height = theContentThatShowsLastInsteadOfFirst.offsetHeight + "px";
-		theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
+		if (message && showMesesages) {
+		
+			theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
+			alertBox.style.height = theContentThatShowsLastInsteadOfFirst.offsetHeight + "px";
+			theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
 			
-		setTimeout(() => {
+			setTimeout(() => {
+				alertBox.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
+	
+				setTimeout(() => {
+					alertBox.style.height = '0px';
+					theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
+					theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
+					theContentThatShowsLastInsteadOfFirst.style.display = 'none';
+					widgetLocked = false;
+					if (alertQueue.length > 0) {
+						console.debug("Pulling next alert from the queue");
+						let data = alertQueue.shift();
+						UpdateAlertBox(data.platform, data.avatarURL, data.headerText, data.descriptionText, data.attributeText, data.username, data.message, data.sbAction, data.sbData);
+					}
+				}, 1000);
+			}, hideAfter * 1000);	
+		} else {			
 			alertBox.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
 
 			setTimeout(() => {
-				//alertBox.style.maxHeight = '0px';
 				alertBox.style.height = '0px';
+				
 				theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
 				theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
 				theContentThatShowsLastInsteadOfFirst.style.display = 'none';
@@ -1268,7 +1294,8 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 					UpdateAlertBox(data.platform, data.avatarURL, data.headerText, data.descriptionText, data.attributeText, data.username, data.message, data.sbAction, data.sbData);
 				}
 			}, 1000);
-		}, (message && showMesesages) ? hideAfter * 1000 : 0);		
+		}
+
 	}, hideAfter * 1000);
 
 }

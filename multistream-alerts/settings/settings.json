@@ -31,7 +31,7 @@
 			"type": "number",
 			"min": 1,
 			"max": 120,
-			"defaultValue": 30,
+			"defaultValue": 20,
 			"group": "Appearance"
 		},
 		{
@@ -201,6 +201,14 @@
 				}
 			],
 			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "globalAction",
+			"label": "Streamer.bot Action",
+			"description": "Run this Streamer.bot Action on every alert",
+			"type": "sb-actions",
+			"defaultValue": "",
 			"group": "General"
 		},
 		{
