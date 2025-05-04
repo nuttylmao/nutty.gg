@@ -120,6 +120,14 @@
 			"group": "General"
 		},
 		{
+			"id": "groupConsecutiveMessages",
+			"label": "Group Consecutive Messages",
+			"description": "Hide username on consecutive messages from the same user",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
 			"id": "showTwitchMessages",
 			"label": "Chat Messages",
 			"description": "",

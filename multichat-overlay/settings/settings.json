@@ -148,6 +148,14 @@
 			"group": "General"
 		},
 		{
+			"id": "groupConsecutiveMessages",
+			"label": "Group Consecutive Messages",
+			"description": "Hide username on consecutive messages from the same user<br>Note: This setting is ignored for \"Reversed\" scroll direction",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
 			"id": "inlineChat",
 			"label": "In-line Chat",
 			"description": "Remove the line space after the username",

@@ -33,6 +33,7 @@ const opacity = urlParams.get("opacity") || "0.5";
 const hideAfter = GetIntParam("hideAfter", 0);
 const excludeCommands = GetBooleanParam("excludeCommands", true);
 const ignoreChatters = urlParams.get("ignoreChatters") || "";
+const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", true);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
@@ -393,7 +394,7 @@ async function TwitchChatMessage(data) {
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
-	if (messageList.children.length > 0) {
+	if (groupConsecutiveMessages && messageList.children.length > 0) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "twitch" && lastUserId == data.user.id)
@@ -709,7 +710,7 @@ function YouTubeMessage(data) {
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
-	if (messageList.children.length > 0) {
+	if (groupConsecutiveMessages && messageList.children.length > 0) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "youtube" && lastUserId == data.user.id)
