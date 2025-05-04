@@ -32,15 +32,18 @@ let alertQueue = [];
 const showAvatar = GetBooleanParam("showAvatar", true);
 const font = urlParams.get("font") || "";
 const fontSize = GetIntParam("fontSize", 30);
+const fontColor = urlParams.get("fontColor") || "#FFFFFF";
 const useCustomBackground = GetBooleanParam("useCustomBackground", true);
 const background = urlParams.get("background") || "#000000";
 const opacity = urlParams.get("opacity") || "0.85";
+const textAlignment = urlParams.get("textAlignment") || "right";
+const alignment = urlParams.get("alignment") || "";
 
 // General
 const hideAfter = GetIntParam("hideAfter", 8);
 const showAnimation = urlParams.get("showAnimation") || "";
 const hideAnimation = urlParams.get("hideAnimation") || "";
-const alignment = urlParams.get("alignment") || "";
+const playSounds = GetBooleanParam("playSounds", true);
 const showMesesages = GetBooleanParam("showMesesages", true);
 
 // Which Twitch alerts do you want to see?
@@ -86,6 +89,7 @@ if (!showAvatar) {
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
+document.body.style.color = fontColor;
 
 // Set custom background
 if (useCustomBackground) {
@@ -99,34 +103,22 @@ if (useCustomBackground) {
 	document.documentElement.style.setProperty('--custom-background', `${background}${hexOpacity}`);
 }
 
-// // Set line spacing
-// document.documentElement.style.setProperty('--line-spacing', `${lineSpacing}em`);
-
-// // Set the background color
-// const opacity255 = Math.round(parseFloat(opacity) * 255);
-// let hexOpacity = opacity255.toString(16);
-// if (hexOpacity.length < 2) {
-// 	hexOpacity = "0" + hexOpacity;
-// }
-// document.body.style.background = `${background}${hexOpacity}`;
-
-// // Get a list of chatters to ignore
-// const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLowerCase()) || [];
-
-// // Set the scroll direction
-// switch (scrollDirection) {
-// 	case 1:
-// 		document.getElementById('messageList').classList.add('normalScrollDirection');
-// 		break;
-// 	case 2:
-// 		document.getElementById('messageList').classList.add('reverseScrollDirection');
-// 		break;
-// }
+// Set text alignment
+document.documentElement.style.setProperty('--text-align', textAlignment);
 
 // Set the alignment of the alert box
-if (alignment == "align-to-bottom")
-	mainContainer.style.justifyContent = 'flex-end';
-
+switch (alignment)
+{
+	case "align-to-top":
+		mainContainer.style.justifyContent = 'flex-start';
+		break;
+	case "align-to-center":
+		mainContainer.style.justifyContent = 'center';
+		break;
+	case "align-to-bottom":
+		mainContainer.style.justifyContent = 'flex-end';
+		break;
+}
 
 
 
@@ -1229,9 +1221,10 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 	messageLabel.innerHTML = message != null ? `${message}` : '';
 	theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
 
+	// Start animation
 	theContentThatShowsFirstInsteadOfSecond.style.display = 'flex';
-	alertBox.style.maxHeight = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
-	alertBox.style.minHeight = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
+	alertBox.style.transition = 'all 0s ease-in-out';
+	alertBox.style.height = theContentThatShowsFirstInsteadOfSecond.offsetHeight + "px";
 	alertBox.style.animation = `${showAnimation} 0.5s ease-out forwards`;
 
 	// Run the Streamer.bot action if there is one
@@ -1240,7 +1233,13 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 		await client.doAction({name: sbAction}, sbData);
 	}
 
-	// (1) Set timeout (5 seconds)
+	// Play sound effect
+	if (playSounds) {
+		const audio = new Audio('sfx/notification.mp3');
+		audio.play();
+	}
+
+	// (1) Set timeout (8 seconds by default)
 	// (2) Set the message label
 	// (3) Calculate the height of message label
 	// (4) Set the height of alertBox
@@ -1249,20 +1248,18 @@ async function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, 
 		alertBox.style.transition = 'all 0.5s ease-in-out';
 		theContentThatShowsFirstInsteadOfSecond.style.opacity = 0;
 		
-		theContentThatShowsFirstInsteadOfSecond.style.position = 'absolute';
 		theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
-		alertBox.style.maxHeight = theContentThatShowsLastInsteadOfFirst.offsetHeight + "px";
-		alertBox.style.minHeight = 'none';
+		alertBox.style.height = theContentThatShowsLastInsteadOfFirst.offsetHeight + "px";
 		theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
 			
 		setTimeout(() => {
 			alertBox.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
 
 			setTimeout(() => {
-				alertBox.style.maxHeight = '0px';
+				//alertBox.style.maxHeight = '0px';
+				alertBox.style.height = '0px';
 				theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
 				theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
-				theContentThatShowsFirstInsteadOfSecond.style.position = 'relative';
 				theContentThatShowsLastInsteadOfFirst.style.display = 'none';
 				widgetLocked = false;
 				if (alertQueue.length > 0) {

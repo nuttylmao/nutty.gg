@@ -48,67 +48,36 @@ html {
 }
 
 #alertBox {
-	/* padding: 0.5em; */
+	padding: 0.5em;
 	border-radius: 0.75em;
 	filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 1));
 	position: relative;
 	overflow: hidden;
-	box-sizing: border-box;
-	/* text-align: center; */
-	/* position: relative; */
-	/* transition: all 1s ease-in-out; */
-	/* min-height: 0px;
-	max-height: 0px; */
+	opacity: 0;
 }
 
-/* #alertBox::before {
-	content: "";
-	position: absolute;
-	top: -50px;
-	right: -50px;
-	bottom: -50px;
-	left: -50px;
-	background-image: url('https://static-cdn.jtvnw.net/jtv_user_pictures/272e643e-4d43-415f-9ee1-18916e825411-profile_image-300x300.png');
-	background-color: rgba(0, 0, 0, 0.6);
-	background-size: cover;
-	background-position: center;
-	background-blend-mode: multiply;	
-	filter: blur(25px);
-	z-index: -1;
-} */
-
 #theContentThatShowsFirstInsteadOfSecond {
-	display: flex;
-	align-items: center;
 	z-index: 1;
-	/* position: absolute; */
-	/* left: var(--margin);
-	top: var(--margin); */
 	transition: inherit;
-	padding: var(--margin) calc( 1.5 * var(--margin));
 	display: none;
+	position: absolute;
+	width: calc(100% - 1em);
+	box-sizing: border-box;
 }
 
 #theContentThatShowsLastInsteadOfFirst {
-	/* position: absolute; */
 	display: inline-block;
 	align-items: center;
 	z-index: 0;
-	/* position: absolute; */
-	/* left: var(--margin);
-	top: var(--margin); */
-	padding: var(--margin) calc( 1.5 * var(--margin));
 	transition: inherit;
 	display: none;
+	width: 100%;
 }
 
 #avatar {
-	display: inline;
-	max-width: 100%;
+	display: block;
 	height: 4em;
 	filter: drop-shadow(0px 0px 7px rgba(0, 0, 0, 0.5));
-	object-fit: cover;
-	margin-right: 0.75em;
 }
 
 #avatarButItsSmallerThanTheOneFromBeforeForPrettinessPurposes {
@@ -117,11 +86,21 @@ html {
 	height: 2em;
 	filter: drop-shadow(0px 0px 7px rgba(0, 0, 0, 0.5));
 	object-fit: cover;
-	margin-right: 0.75em;
 }
 
-#contents {
-	flex-grow: 1;
+#theContentThatShowsFirstInsteadOfSecondContent {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75em;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.contents {
+	/* background: red; */
+	text-align: var(--text-align);
 }
 
 #username {

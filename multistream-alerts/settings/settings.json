@@ -35,6 +35,14 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "fontColor",
+			"label": "Font Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#FFFFFF",
+			"group": "Appearance"
+		},
+		{
 			"id": "useCustomBackground",
 			"label": "Use Custom Background Color",
 			"description": "If off, platform colors will be used instead",
@@ -64,6 +72,50 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "textAlignment",
+			"label": "Text Alignment",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"defaultValue": "left",
+			"group": "Appearance"
+		},
+		{
+			"id": "alignment",
+			"label": "Alert Alignment",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "align-to-top",
+					"label": "Align To Top"
+				},
+				{
+					"value": "align-to-center",
+					"label": "Align To Center"
+				},
+				{
+					"value": "align-to-bottom",
+					"label": "Align To Bottom"
+				}
+			],
+			"defaultValue": "align-to-bottom",
+			"group": "Appearance"
+		},
+		{
 			"id": "hideAfter",
 			"label": "Hide After",
 			"description": "Alerts will hide for X seconds",
@@ -85,11 +137,11 @@
 				},
 				{
 					"value": "slide-in-from-top",
-					"label": "Slide Down From Top"
+					"label": "Slide In From Top"
 				},
 				{
 					"value": "slide-in-from-bottom",
-					"label": "Slide Up From Bottom"
+					"label": "Slide In From Bottom"
 				},
 				{
 					"value": "slide-in-from-left",
@@ -115,11 +167,11 @@
 				},
 				{
 					"value": "slide-out-top",
-					"label": "Slide Up And Out"
+					"label": "Slide Out Top"
 				},
 				{
 					"value": "slide-out-bottom",
-					"label": "Slide Down And Out"
+					"label": "Slide Out Down"
 				},
 				{
 					"value": "slide-out-left",
@@ -134,21 +186,21 @@
 			"group": "General"
 		},
 		{
-			"id": "alignment",
-			"label": "Alignment",
-			"description": "",
+			"id": "playSounds",
+			"label": "Sound Effect",
+			"description": "Play notification sound on alert",
 			"type": "select",
 			"options": [
 				{
-					"value": "align-to-top",
-					"label": "Align To Top"
+					"value": true,
+					"label": "Yes"
 				},
 				{
-					"value": "align-to-bottom",
-					"label": "Align To Bottom"
+					"value": false,
+					"label": "No"
 				}
 			],
-			"defaultValue": "align-to-bottom",
+			"defaultValue": true,
 			"group": "General"
 		},
 		{
@@ -396,6 +448,22 @@
 			"defaultValue": "",
 			"showIf": "showFourthwallAlerts",
 			"group": "Which donation alerts do you want to see?"
+		},
+		{
+			"id": "address",
+			"label": "IP Address",
+			"description": "",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "Streamer.bot Websocket Server Settings"
+		},
+		{
+			"id": "port",
+			"label": "Port",
+			"description": "",
+			"type": "text",
+			"defaultValue": "8080",
+			"group": "Streamer.bot Websocket Server Settings"
 		}
 	]
 }
