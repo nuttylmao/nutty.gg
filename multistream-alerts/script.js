@@ -36,7 +36,7 @@ const fontColor = urlParams.get("fontColor") || "#FFFFFF";
 const useCustomBackground = GetBooleanParam("useCustomBackground", true);
 const background = urlParams.get("background") || "#000000";
 const opacity = urlParams.get("opacity") || "0.85";
-const textAlignment = urlParams.get("textAlignment") || "right";
+const textAlignment = urlParams.get("textAlignment") || "left";
 const alignment = urlParams.get("alignment") || "";
 
 // General
