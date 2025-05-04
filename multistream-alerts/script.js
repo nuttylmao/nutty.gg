@@ -44,7 +44,8 @@ const hideAfter = GetIntParam("hideAfter", 8);
 const showAnimation = urlParams.get("showAnimation") || "";
 const hideAnimation = urlParams.get("hideAnimation") || "";
 const playSounds = GetBooleanParam("playSounds", true);
-const globalAction = urlParams.get("globalAction") || "";
+const globalShowAction = urlParams.get("globalShowAction") || "";
+const globalHideAction = urlParams.get("globalHideAction") || "";
 const showMesesages = GetBooleanParam("showMesesages", true);
 
 // Which Twitch alerts do you want to see?
@@ -1236,9 +1237,9 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 	}
 
 	// Run the Streamer.bot action if there is one
-	if (globalAction) {
-		console.debug('Running Streamer.bot action: ' + globalAction);
-		client.doAction({name: globalAction}, sbData);
+	if (globalShowAction) {
+		console.debug('Running Streamer.bot action: ' + globalShowAction);
+		client.doAction({name: globalShowAction}, sbData);
 	}
 
 	// Run the Streamer.bot action if there is one
@@ -1263,6 +1264,12 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 			theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
 			
 			setTimeout(() => {
+				// Run the Streamer.bot action if there is one
+				if (globalHideAction) {
+					console.debug('Running Streamer.bot action: ' + globalHideAction);
+					client.doAction({name: globalHideAction}, sbData);
+				}
+
 				alertBox.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
 	
 				setTimeout(() => {
@@ -1278,7 +1285,13 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 					}
 				}, 1000);
 			}, hideAfter * 1000);	
-		} else {			
+		} else {
+			// Run the Streamer.bot action if there is one
+			if (globalHideAction) {
+				console.debug('Running Streamer.bot action: ' + globalHideAction);
+				client.doAction({name: globalHideAction}, sbData);
+			}
+
 			alertBox.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
 
 			setTimeout(() => {

@@ -204,9 +204,17 @@
 			"group": "General"
 		},
 		{
-			"id": "globalAction",
-			"label": "Streamer.bot Action",
-			"description": "Run this Streamer.bot Action on every alert",
+			"id": "globalShowAction",
+			"label": "Show Action",
+			"description": "Run this Streamer.bot Action at the start of every alert",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"group": "General"
+		},
+		{
+			"id": "globalHideAction",
+			"label": "Hide Action",
+			"description": "Run this Streamer.bot Action at the end of every alert",
 			"type": "sb-actions",
 			"defaultValue": "",
 			"group": "General"
