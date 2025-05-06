@@ -109,12 +109,12 @@ li {
 }
 
 .slide-fade li {
-	transition: all 1s ease-out;
-	opacity: 1;
+	transition: all var(--animation-speed) ease-out;
+	/* opacity: 1; */
 }
 
 .slide-fade li.show {
-	opacity: 1;
+	/* opacity: 1; */
 }
 
 #IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList {
