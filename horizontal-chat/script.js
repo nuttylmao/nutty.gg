@@ -1203,23 +1203,24 @@ function ShowAlert(message, background = null, duration = animationDuration) {
 	const messageListDiv = document.querySelector("#messageList");
 	const backgroundDiv = document.querySelector("#background");
 	const alertBoxDiv = document.querySelector("#alertBox");
+	const alertBoxContent = document.querySelector("#alertBoxContent");
 
 	// Set the message text
-	alertBoxDiv.innerHTML = message;
+	alertBoxContent.innerHTML	 = message;
 
 	// Set the background
 	alertBoxDiv.classList.add(background);
 
 	// Start the animation
 	widgetLocked = true;
-	messageListDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
-	backgroundDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
+	// messageListDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
+	// backgroundDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
 	alertBoxDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
 
 	// To stop the animation (remove the animation property):
 	setTimeout(() => {
-		messageListDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
-		backgroundDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
+		// messageListDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
+		// backgroundDiv.style.animation = 'showAlertBox 0.5s ease-in-out forwards';
 		alertBoxDiv.style.animation = 'hideAlertBox 0.5s ease-in-out forwards';
 		setTimeout(() => {
 			alertBoxDiv.classList = '';
