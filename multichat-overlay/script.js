@@ -56,6 +56,8 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
+const animationSpeed = GetIntParam("animationSpeed", 0.1);
+
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
@@ -83,6 +85,9 @@ switch (scrollDirection) {
 		document.getElementById('messageList').classList.add('reverseScrollDirection');
 		break;
 }
+
+// Set the animation speed
+document.documentElement.style.setProperty('--animation-speed', `${animationSpeed}s`);
 
 
 
