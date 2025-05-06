@@ -18,6 +18,7 @@
             <span id="urlLabel">Click to copy URL</span>
             <input id="widgetUrlInput" type="text" readonly onclick="CopyURLToClipboard()">
         </div>
+        <button id="loadDefaultsButton" onclick="OpenLoadDefaultsPopup()">Load Default Settings</button>
         <button id="loadSettingsButton" onclick="OpenLoadSettingsPopup()">Load Settings</button>
     </div>
 
@@ -45,6 +46,17 @@
             <div style="display: flex; gap: 20px">
                 <button id="cancelSettingsButton" onclick="CloseSettings()">Cancel</button>
                 <button style="background-color: var(--accent-color);" onclick="LoadSettings()">Load Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadDefaultsWrapper">
+        <div id="loadDefaultsContainer">
+            <h2>Load Defaults</h2>
+            <label style="font-size: 0.8em;">Are you sure?</label>
+            <div style="display: flex; gap: 20px">
+                <button id="cancelDefaultsButton" onclick="CloseDefaultsPopup()">No</button>
+                <button style="background-color: var(--accent-color);" onclick="LoadDefaultSettings()">Yes</button>
             </div>
         </div>
     </div>

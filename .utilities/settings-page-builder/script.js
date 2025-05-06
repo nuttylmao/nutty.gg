@@ -12,10 +12,14 @@ const urlLabel = document.getElementById('urlLabel');
 const settingsPanel = document.getElementById('settingsPanel');
 const widgetPreview = document.getElementById('widgetPreview');
 const loadURLBox = document.getElementById('loadUrlBox');
-const cancelSettingsButton = document.getElementById('cancelSettingsButton');
+const loadDefaultsBox = document.getElementById('loadDefaultsWrapper');
 const loadSettingsBox = document.getElementById('loadSettingsWrapper');
 const unmuteLabel = document.getElementById('unmute-label');
 
+// Global variables
+let settingsMap = new Map();
+
+// Set visibility of the unmute indicator
 if (showUnmuteIndicator)
 	unmuteLabel.style.display = 'inline';
 
@@ -25,184 +29,226 @@ if (showUnmuteIndicator)
 // LOAD FROM SETTINGS.JSON //
 /////////////////////////////
 
-fetch(settingsJson)
-	.then(response => response.json())
-	.then(data => {
-		const groupedSettings = {};
+function LoadJSON(settingsJson) {
+	fetch(settingsJson)
+		.then(response => response.json())
+		.then(data => {
+			// Clear the settings panel
+			settingsPanel.innerHTML = '';
 
-		// Group settings by their 'group' property
-		data.settings.forEach(setting => {
-			if (!groupedSettings[setting.group]) {
-				groupedSettings[setting.group] = [];
-			}
-			groupedSettings[setting.group].push(setting);
-		});
+			const groupedSettings = {};
 
-		// Render settings for each group
-		for (const groupName in groupedSettings) {
-			const groupDiv = document.createElement('div');
-			groupDiv.classList.add('setting-group');
-
-			const groupHeader = document.createElement('h2');
-			groupHeader.textContent = groupName;
-			groupDiv.appendChild(groupHeader);
-
-			groupedSettings[groupName].forEach(setting => {
-				const settingItem = document.createElement('div');
-				settingItem.classList.add('setting-item');
-				settingItem.id = `item-${setting.id}`;
-
-				const labelDescriptionDiv = document.createElement('div');
-
-				if (setting.label) {
-					const label = document.createElement('label');
-					label.textContent = setting.label;
-					labelDescriptionDiv.appendChild(label);
+			// Group settings by their 'group' property
+			data.settings.forEach(setting => {
+				if (!groupedSettings[setting.group]) {
+					groupedSettings[setting.group] = [];
 				}
+				groupedSettings[setting.group].push(setting);
+			});
 
-				if (setting.description) {
-					const description = document.createElement('p');
-					description.innerHTML = setting.description;
-					labelDescriptionDiv.appendChild(description);
-				}
+			// Render settings for each group
+			for (const groupName in groupedSettings) {
+				const groupDiv = document.createElement('div');
+				groupDiv.classList.add('setting-group');
 
-				const settingItemContent = document.createElement('div');
-				settingItemContent.classList.add('setting-item-content');
+				const groupHeader = document.createElement('h2');
+				groupHeader.textContent = groupName;
+				groupDiv.appendChild(groupHeader);
 
-				let inputElement;
-				switch (setting.type) {
-					case 'text':
-						inputElement = document.createElement('input');
-						inputElement.type = 'text';
-						inputElement.id = setting.id; //Added setting ID
-						inputElement.value = setting.defaultValue;
-						break;
-					case 'checkbox':
-						const labelDiv = document.createElement('label');
-						labelDiv.classList.add('switch');
-						checkBoxElement = document.createElement('input');
-						checkBoxElement.type = 'checkbox';
-						checkBoxElement.id = setting.id;
-						checkBoxElement.checked = setting.defaultValue;
-						labelDiv.appendChild(checkBoxElement);
+				groupedSettings[groupName].forEach(setting => {
+					const settingItem = document.createElement('div');
+					settingItem.classList.add('setting-item');
+					settingItem.id = `item-${setting.id}`;
 
-						const slider = document.createElement('span');
-						slider.classList.add('slider');
-						slider.classList.add('round');
-						labelDiv.appendChild(slider);
+					const labelDescriptionDiv = document.createElement('div');
 
-						// Add event listener to the switchDiv
-						labelDiv.addEventListener('click', () => {
-							checkBoxElement.checked = !checkBoxElement.checked;
-							UpdateSettingItemVisibility();
-						});
-						inputElement = labelDiv;
-						break;
-					case 'select':
-						inputElement = document.createElement('select');
-						inputElement.id = setting.id; //Added setting ID
-						setting.options.forEach(option => {
-							const optionElement = document.createElement('option');
-							optionElement.value = option.value;
-							optionElement.textContent = option.label;
-							if (option === setting.defaultValue) {
-								optionElement.selected = true;
-							}
-							inputElement.appendChild(optionElement);
-						});
-						inputElement.value = setting.defaultValue;
-						break;
-					case 'color':
-						inputElement = document.createElement('input');
-						inputElement.type = 'color';
-						inputElement.id = setting.id; //Added setting ID
-						inputElement.value = setting.defaultValue;
-						break;
-					case 'number':
-						inputElement = document.createElement('input');
-						inputElement.type = 'number';
-						inputElement.id = setting.id; //Added setting ID
-						inputElement.value = setting.defaultValue;
-						inputElement.min = setting.min;
-						inputElement.max = setting.max;
-						inputElement.step = setting.step;
-						break;
-					case 'sb-actions':
-						inputElement = document.createElement('input');
-						inputElement.type = 'text';
-						inputElement.placeholder = 'Type to search...';
-						inputElement.id = setting.id; //Added setting ID
-						inputElement.value = setting.defaultValue;
-						inputElement.setAttribute('list', 'streamer-bot-actions');
-						inputElement.autocomplete = 'off';
-						break;
-					case 'button':
-						inputElement = document.createElement('button');
-						inputElement.id = setting.id; //Added setting ID
-						inputElement.textContent = setting.label;
+					if (setting.label) {
+						const label = document.createElement('label');
+						label.textContent = setting.label;
+						labelDescriptionDiv.appendChild(label);
+					}
 
-						inputElement.addEventListener('click', () => {
-							widgetPreview.contentWindow[setting.callFunction]();
+					if (setting.description) {
+						const description = document.createElement('p');
+						description.innerHTML = setting.description;
+						labelDescriptionDiv.appendChild(description);
+					}
 
-							const defaultBackgroundColor = "#2e2e2e";
-							const defaultTextColor = "white";
+					const settingItemContent = document.createElement('div');
+					settingItemContent.classList.add('setting-item-content');
 
-							inputElement.style.transitionDuration = '0s'
-							inputElement.style.backgroundColor = "#2196f3"
-							inputElement.style.color = "#ffffff";
+					let inputElement;
+					switch (setting.type) {
+						case 'text':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.autocomplete = 'new-password';
+							break;
+						case 'checkbox':
+							const labelDiv = document.createElement('label');
+							labelDiv.classList.add('switch');
+							checkBoxElement = document.createElement('input');
+							checkBoxElement.type = 'checkbox';
+							checkBoxElement.id = setting.id;
+							checkBoxElement.checked = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							labelDiv.appendChild(checkBoxElement);
 
-							setTimeout(() => {
-								inputElement.style.transitionDuration = '0.2s'
-								inputElement.style.backgroundColor = defaultBackgroundColor;
-								inputElement.style.color = defaultTextColor;
-							}, 100);
-						});
-						break;
-					default:
-						inputElement = document.createElement('input');
-						inputElement.type = 'text';
-						inputElement.id = setting.id; //Added setting ID
-						inputElement.value = setting.defaultValue;
-				}
+							const slider = document.createElement('span');
+							slider.classList.add('slider');
+							slider.classList.add('round');
+							labelDiv.appendChild(slider);
 
-				inputElement.addEventListener('input', function (event) {
-					RefreshWidgetPreview(data);
+							// Add event listener to the switchDiv
+							labelDiv.addEventListener('click', () => {
+								checkBoxElement.checked = !checkBoxElement.checked;
+								UpdateSettingItemVisibility();
+							});
+							inputElement = labelDiv;
+							break;
+						case 'select':
+							inputElement = document.createElement('select');
+							inputElement.id = setting.id; //Added setting ID
+							setting.options.forEach(option => {
+								const optionElement = document.createElement('option');
+								optionElement.value = option.value;
+								optionElement.textContent = option.label;
+								if (option === setting.defaultValue) {
+									optionElement.selected = true;
+								}
+								inputElement.appendChild(optionElement);
+							});
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							break;
+						case 'color':
+							inputElement = document.createElement('input');
+							inputElement.type = 'color';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							break;
+						case 'number':
+							inputElement = document.createElement('input');
+							inputElement.type = 'number';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.min = setting.min;
+							inputElement.max = setting.max;
+							inputElement.step = setting.step;
+							break;
+						case 'sb-actions':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.placeholder = 'Type to search...';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.setAttribute('list', 'streamer-bot-actions');
+							inputElement.autocomplete = 'off';
+							break;
+						case 'button':
+							inputElement = document.createElement('button');
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.textContent = setting.label;
+
+							inputElement.addEventListener('click', () => {
+								widgetPreview.contentWindow[setting.callFunction]();
+
+								const defaultBackgroundColor = "#2e2e2e";
+								const defaultTextColor = "white";
+
+								inputElement.style.transitionDuration = '0s'
+								inputElement.style.backgroundColor = "#2196f3"
+								inputElement.style.color = "#ffffff";
+
+								setTimeout(() => {
+									inputElement.style.transitionDuration = '0.2s'
+									inputElement.style.backgroundColor = defaultBackgroundColor;
+									inputElement.style.color = defaultTextColor;
+								}, 100);
+							});
+							break;
+						default:
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+					}
+
+					// Save settings to settings map
+					if (!settingsMap.has(setting.id))
+						settingsMap.set(setting.id, setting.defaultValue);
+
+					// Refresh the preview when any setting changes
+					inputElement.addEventListener('input', function (event) {
+						const settingElement = document.getElementById(setting.id);
+						if (setting.type == 'checkbox')
+							settingsMap.set(setting.id, settingElement.checked);
+						else
+							settingsMap.set(setting.id, settingElement.value);
+						
+						SaveSettingsToStorage();
+						RefreshWidgetPreview(data);
+					});
+
+					settingItemContent.appendChild(inputElement);
+
+					if (setting.type == 'button') {
+						settingItem.style.display = 'block'
+						settingItem.appendChild(settingItemContent);
+					}
+					else {
+						settingItem.appendChild(labelDescriptionDiv);
+						settingItem.appendChild(settingItemContent);
+					}
+
+					groupDiv.appendChild(settingItem);
 				});
 
-				settingItemContent.appendChild(inputElement);
+				settingsPanel.appendChild(groupDiv);
+			}
 
-				if (setting.type == 'button') {
-					settingItem.style.display = 'block'
-					settingItem.appendChild(settingItemContent);
-				}
-				else {
-					settingItem.appendChild(labelDescriptionDiv);
-					settingItem.appendChild(settingItemContent);
-				}
+			function UpdateSettingItemVisibility() {
+				data.settings.forEach(setting => {
+					if (setting.showIf) {
+						if (!document.getElementById(setting.showIf).checked)
+							document.getElementById(`item-${setting.id}`).style.display = 'none'
+						else
+							document.getElementById(`item-${setting.id}`).style.display = 'flex'
+					}
+				});
+			}
 
-				groupDiv.appendChild(settingItem);
-			});
+			UpdateSettingItemVisibility();
+			RefreshWidgetPreview(data);
+			SaveSettingsToStorage();
+		})
+		.catch(error => console.error('Error loading settings:', error));
+}
 
-			settingsPanel.appendChild(groupDiv);
-		}
+function SaveSettingsToStorage() {
+	console.log(settingsMap);
+	const settingsArray = Array.from(settingsMap.entries());
+	const settingsArrayString = JSON.stringify(settingsArray);
+	localStorage.setItem('settingsMap', settingsArrayString);
+}
 
-		function UpdateSettingItemVisibility() {
-			data.settings.forEach(setting => {
-				if (setting.showIf) {
-					if (!document.getElementById(setting.showIf).checked)
-						document.getElementById(`item-${setting.id}`).style.display = 'none'
-					else
-						document.getElementById(`item-${setting.id}`).style.display = 'flex'
-				}
-			});
-		}
+function LoadSettingsFromStorage() {
+	// Retrieve session rankings from local storage
+	const settingsMapString = localStorage.getItem('settingsMap');
+	if (settingsMapString) {
+		const settingsMapArray = JSON.parse(settingsMapString);
+		settingsMap = new Map(settingsMapArray);
+	}
+}
 
-		UpdateSettingItemVisibility();
-		RefreshWidgetPreview(data);
-	})
-	.catch(error => console.error('Error loading settings:', error));
+function LoadDefaultSettings() {
+	localStorage.removeItem('settingsMap');
+	settingsMap = new Map();
+	LoadJSON(settingsJson);
 
-
+	loadDefaultsBox.style.visibility = 'hidden';
+	loadDefaultsBox.style.opacity = 0;
+}
 
 function RefreshWidgetPreview(data) {
 	const settings = {};
@@ -330,6 +376,11 @@ function CopyURLToClipboard() {
 	}, 5000);
 }
 
+function CloseDefaultsPopup() {
+	loadDefaultsBox.style.visibility = 'hidden';
+	loadDefaultsBox.style.opacity = 0;
+};
+
 function CloseSettings() {
 	loadSettingsBox.style.visibility = 'hidden';
 	loadSettingsBox.style.opacity = 0;
@@ -357,6 +408,11 @@ function LoadSettings() {
 
 function OpenMembershipPage() {
 	window.open("https://nutty.gg/collections/member-exclusive-widgets", '_blank').focus();
+}
+
+function OpenLoadDefaultsPopup() {
+	loadDefaultsBox.style.visibility = 'visible';
+	loadDefaultsBox.style.opacity = 1;
 }
 
 function OpenLoadSettingsPopup() {
@@ -417,3 +473,12 @@ window.addEventListener('message', (event) => {
 		unmuteLabel.style.display = 'none';
 	}
 });
+
+
+
+
+// Load settings from local storage
+LoadSettingsFromStorage();
+
+// Load default settings
+LoadJSON(settingsJson);

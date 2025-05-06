@@ -329,7 +329,8 @@ button:hover {
     cursor: pointer;
 }
 
-#loadSettingsWrapper {
+#loadSettingsWrapper,
+#loadDefaultsWrapper {
     visibility: hidden;
     position: absolute;
     top: 0;
@@ -346,7 +347,8 @@ button:hover {
     opacity: 0;
 }
 
-#loadSettingsContainer {
+#loadSettingsContainer,
+#loadDefaultsContainer {
     position: absolute;
     left: 50%;
     top: 50%;
