@@ -1236,6 +1236,16 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 		audio.play();
 	}
 
+	// Add extra useful info to sbData
+	if (!sbData)
+		sbData = {};
+	
+	sbData.boxHeight1 = theContentThatShowsFirstInsteadOfSecond.offsetHeight;
+	sbData.boxHeight2 = (message && showMesesages) ? theContentThatShowsLastInsteadOfFirst.offsetHeight : 0;
+	sbData.alertDuration = hideAfter * 1000;
+
+	console.log(sbData);
+
 	// Run the Streamer.bot action if there is one
 	if (globalShowAction) {
 		console.debug('Running Streamer.bot action: ' + globalShowAction);
@@ -1259,7 +1269,8 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 		
 		if (message && showMesesages) {
 		
-			theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
+			//theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
+			theContentThatShowsLastInsteadOfFirst.style.visibility = 'visible';
 			alertBox.style.height = theContentThatShowsLastInsteadOfFirst.offsetHeight + "px";
 			theContentThatShowsLastInsteadOfFirst.style.opacity = 1;
 			
@@ -1276,7 +1287,8 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 					alertBox.style.height = '0px';
 					theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
 					theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
-					theContentThatShowsLastInsteadOfFirst.style.display = 'none';
+					//theContentThatShowsLastInsteadOfFirst.style.display = 'none';
+					theContentThatShowsLastInsteadOfFirst.style.visibility = 'hidden';
 					widgetLocked = false;
 					if (alertQueue.length > 0) {
 						console.debug("Pulling next alert from the queue");

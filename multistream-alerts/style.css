@@ -70,7 +70,7 @@ html {
 	align-items: center;
 	z-index: 0;
 	transition: inherit;
-	display: none;
+	/* display: none; */
 	width: 100%;
 }
 
