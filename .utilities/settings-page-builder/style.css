@@ -207,6 +207,7 @@ a {
 }
 
 input[type="text"],
+input[type="password"],
 select,
 input[type="number"] {
     width: 250px;

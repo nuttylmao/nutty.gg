@@ -93,6 +93,13 @@ function LoadJSON(settingsJson) {
 							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
 							inputElement.autocomplete = 'new-password';
 							break;
+						case 'password':
+							inputElement = document.createElement('input');
+							inputElement.type = 'password';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.autocomplete = 'new-password';
+							break;
 						case 'checkbox':
 							const labelDiv = document.createElement('label');
 							labelDiv.classList.add('switch');
