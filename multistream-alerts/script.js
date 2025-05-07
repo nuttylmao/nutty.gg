@@ -1317,7 +1317,8 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 				
 				theContentThatShowsFirstInsteadOfSecond.style.opacity = 1;
 				theContentThatShowsLastInsteadOfFirst.style.opacity = 0;
-				theContentThatShowsLastInsteadOfFirst.style.display = 'none';
+				//theContentThatShowsLastInsteadOfFirst.style.display = 'none';
+				theContentThatShowsLastInsteadOfFirst.style.visibility = 'hidden';
 				widgetLocked = false;
 				if (alertQueue.length > 0) {
 					console.debug("Pulling next alert from the queue");
