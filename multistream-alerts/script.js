@@ -1267,7 +1267,13 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 		alertBox.style.transition = 'all 0.5s ease-in-out';
 		theContentThatShowsFirstInsteadOfSecond.style.opacity = 0;
 		
-		if (message && showMesesages) {
+		// For safety, if message doesn't exist, set it to empty string anyway
+		if (!message)
+			message = '';
+
+		// If there is a message, show it in the second part of the animation
+		// Else, just close the alert box and run the next alert
+		if (message.trim().length > 0 && showMesesages) {
 		
 			//theContentThatShowsLastInsteadOfFirst.style.display = 'inline-block';
 			theContentThatShowsLastInsteadOfFirst.style.visibility = 'visible';
