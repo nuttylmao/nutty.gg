@@ -27,6 +27,9 @@ const keyPrefix = parts[parts.length - 1];
 if (showUnmuteIndicator)
 	unmuteLabel.style.display = 'inline';
 
+// Set hint text for "Load URL" text input
+loadUrlBox.placeholder = `${widgetURL}?...`
+
 
 
 /////////////////////////////
