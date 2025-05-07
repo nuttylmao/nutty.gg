@@ -19,6 +19,10 @@ const unmuteLabel = document.getElementById('unmute-label');
 // Global variables
 let settingsMap = new Map();
 
+// Construct local storage key prefix so that each widget has their own unique settings
+const parts = widgetURL.replace(/\/+$/, '').split('/');
+const keyPrefix = parts[parts.length - 1];
+
 // Set visibility of the unmute indicator
 if (showUnmuteIndicator)
 	unmuteLabel.style.display = 'inline';
@@ -229,12 +233,12 @@ function SaveSettingsToStorage() {
 	console.log(settingsMap);
 	const settingsArray = Array.from(settingsMap.entries());
 	const settingsArrayString = JSON.stringify(settingsArray);
-	localStorage.setItem('settingsMap', settingsArrayString);
+	localStorage.setItem(`${keyPrefix}-settings`, settingsArrayString);
 }
 
 function LoadSettingsFromStorage() {
 	// Retrieve session rankings from local storage
-	const settingsMapString = localStorage.getItem('settingsMap');
+	const settingsMapString = localStorage.getItem(`${keyPrefix}-settings`);
 	if (settingsMapString) {
 		const settingsMapArray = JSON.parse(settingsMapString);
 		settingsMap = new Map(settingsMapArray);
@@ -242,7 +246,7 @@ function LoadSettingsFromStorage() {
 }
 
 function LoadDefaultSettings() {
-	localStorage.removeItem('settingsMap');
+	localStorage.removeItem(`${keyPrefix}-settings`);
 	settingsMap = new Map();
 	LoadJSON(settingsJson);
 
