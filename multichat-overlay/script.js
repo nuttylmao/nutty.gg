@@ -559,7 +559,7 @@ async function TwitchAnnouncement(data) {
 
 	// Set the card header
 	iconDiv.innerText = "📢";
-	titleDiv.innerText = "Announcement";
+	titleDiv.innerText = "Ogłoszenie";
 
 	// Get a reference to the message template
 	const contentTemplate = document.getElementById('messageTemplate');
@@ -800,7 +800,7 @@ async function TwitchRewardRedemption(data) {
 	const userInput = data.user_input;
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
 
-	titleDiv.innerHTML = `${username} wykupił: ${rewardName}<br>${channelPointIcon} ${cost}`;
+	titleDiv.innerHTML = `🛒 ${username} wykupił: ${rewardName}<br>${channelPointIcon} ${cost}`;
 	contentDiv.innerText = `${userInput}`;
 
 	AddMessageItem(instance, data.messageId);
