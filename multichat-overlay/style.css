@@ -172,6 +172,7 @@ li {
 #message {
 	font-weight: 400;
 	line-height: var(--line-spacing);
+	margin-left: 2px;
 }
 
 #card {
