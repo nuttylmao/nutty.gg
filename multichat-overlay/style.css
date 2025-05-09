@@ -130,7 +130,7 @@ li {
 }
 
 .emote {
-	height: 1.5em;
+	height: 2em;
 	margin: 1px;
 	transform: translate(0px, 0.4em);
 }
@@ -166,7 +166,7 @@ li {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	font-size: 0.7em;
-	opacity: 0.5;
+	opacity: 0.8;
 }
 
 #message {
