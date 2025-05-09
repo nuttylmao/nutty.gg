@@ -47,7 +47,7 @@ html {
 	position: absolute;
 	left: 0;
 	width: 100%;
-	padding-left: 10px;
+	transform: translateX(5px);
 }
 
 .normalScrollDirection {
