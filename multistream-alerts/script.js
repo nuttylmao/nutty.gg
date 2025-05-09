@@ -1191,6 +1191,14 @@ function GetWinnersList(gifts) {
 }
 
 function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attributeText, username, message, sbAction, sbData) {
+	// If the page is inactive (e.g. the alert browser source is on an inactive OBS scene)
+	// don't run the alert
+	if (document.visibilityState != 'visible')
+	{
+		console.debug('Tab is inactive. Skipping alert...');
+		return;
+	}
+
 	// Check if the widget is in the middle of an animation
 	// If any alerts are requested while the animation is playing, it should be added to the alert queue
 	if (widgetLocked) {
