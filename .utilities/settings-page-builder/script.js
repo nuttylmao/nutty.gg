@@ -17,6 +17,7 @@ const loadSettingsBox = document.getElementById('loadSettingsWrapper');
 const unmuteLabel = document.getElementById('unmute-label');
 
 // Global variables
+let settingsData = '';
 let settingsMap = new Map();
 
 // Construct local storage key prefix so that each widget has their own unique settings
@@ -40,6 +41,8 @@ function LoadJSON(settingsJson) {
 	fetch(settingsJson)
 		.then(response => response.json())
 		.then(data => {
+			settingsData = data;
+
 			// Clear the settings panel
 			settingsPanel.innerHTML = '';
 
@@ -201,7 +204,7 @@ function LoadJSON(settingsJson) {
 							settingsMap.set(setting.id, settingElement.value);
 						
 						SaveSettingsToStorage();
-						RefreshWidgetPreview(data);
+						RefreshWidgetPreview();
 					});
 
 					settingItemContent.appendChild(inputElement);
@@ -233,14 +236,14 @@ function LoadJSON(settingsJson) {
 			}
 
 			UpdateSettingItemVisibility();
-			RefreshWidgetPreview(data);
+			RefreshWidgetPreview();
 			SaveSettingsToStorage();
 		})
 		.catch(error => console.error('Error loading settings:', error));
 }
 
 function SaveSettingsToStorage() {
-	console.log(settingsMap);
+	console.debug(settingsMap);
 	const settingsArray = Array.from(settingsMap.entries());
 	const settingsArrayString = JSON.stringify(settingsArray);
 	localStorage.setItem(`${keyPrefix}-settings`, settingsArrayString);
@@ -264,9 +267,9 @@ function LoadDefaultSettings() {
 	loadDefaultsBox.style.opacity = 0;
 }
 
-function RefreshWidgetPreview(data) {
+function RefreshWidgetPreview() {
 	const settings = {};
-	data.settings.forEach(setting => {
+	settingsData.settings.forEach(setting => {
 		let inputElement = document.getElementById(setting.id);
 
 		if (setting.type === 'checkbox') {
@@ -411,6 +414,7 @@ function LoadSettings() {
 				inputElement.checked = value.toLocaleLowerCase() == 'true';
 			else
 				inputElement.value = value;
+			inputElement.dispatchEvent(new Event('input')); // Triggers the page refresh
 		}
 	});
 
