@@ -94,7 +94,7 @@ li {
 
 .highlightMessage {
 	background: #adadad46;
-	padding: 20px 40px;
+	padding: 0px 0px;
 	border-radius: var(--border-radius);
 }
 
