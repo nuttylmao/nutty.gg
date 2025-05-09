@@ -47,7 +47,6 @@ html {
 	position: absolute;
 	left: 0;
 	width: 100%;
-	transform: translateX(5px);
 }
 
 .normalScrollDirection {
@@ -173,6 +172,7 @@ li {
 #message {
 	font-weight: 400;
 	line-height: var(--line-spacing);
+	transform: translateX(5px);
 }
 
 #card {
