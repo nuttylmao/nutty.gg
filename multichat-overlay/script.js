@@ -800,7 +800,7 @@ async function TwitchRewardRedemption(data) {
 	const userInput = data.user_input;
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
 
-	titleDiv.innerHTML = `${username} redeemed ${rewardName}\n${channelPointIcon} ${cost}`;
+	titleDiv.innerHTML = `${username} redeemed ${rewardName}<br>${channelPointIcon} ${cost}`;
 	contentDiv.innerText = `${userInput}`;
 
 	AddMessageItem(instance, data.messageId);
