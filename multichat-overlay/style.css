@@ -173,7 +173,7 @@ li {
 	font-weight: 400;
 	line-height: var(--line-spacing);
 	padding-left: 4px;
-	display: inline-block;
+	display: block;
 }
 
 #card {
