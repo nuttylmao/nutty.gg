@@ -176,8 +176,7 @@ li {
 
 #card {
 	background: #adadad46;
-	padding: 0px 0px;
-	border-radius: var(--border-radius);
+	padding: 20px 40px;
 }
 
 #youtubeSuperSticker {
