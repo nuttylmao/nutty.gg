@@ -1,0 +1,20 @@
+{
+	"settings": [
+		{
+			"id": "address",
+			"label": "Address",
+			"description": "Streamer.bot Websocket Server Address",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "Advanced"
+		},
+		{
+			"id": "port",
+			"label": "Port",
+			"description": "Streamer.bot Websocket Server Port",
+			"type": "text",
+			"defaultValue": "8080",
+			"group": "Advanced"
+		}
+	]
+}
