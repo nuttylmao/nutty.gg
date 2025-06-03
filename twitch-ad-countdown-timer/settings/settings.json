@@ -1,0 +1,140 @@
+{
+	"settings": [
+		{
+			"id": "testAd",
+			"label": "Send Test Ad",
+			"description": "",
+			"type": "button",
+			"callFunction": "testAd",
+			"group": ""
+		},
+		{
+			"id": "testUpcomingAdWarning",
+			"label": "Send Test Upcoming Ad Warning",
+			"description": "",
+			"type": "button",
+			"callFunction": "testUpcomingAdWarning",
+			"group": ""
+		},
+		{
+			"id": "barColor",
+			"label": "Bar Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#FFCC00",
+			"group": "Appearance"
+		},
+		{
+			"id": "barThickness",
+			"label": "Bar Thickness",
+			"description": "",
+			"type": "number",
+			"defaultValue": "4",
+			"min": 1,
+			"group": "Appearance"
+		},
+		{
+			"id": "barPosition",
+			"label": "Bar Position",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "bottom",
+					"label": "Bottom"
+				},
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"defaultValue": "bottom",
+			"group": "Appearance"
+		},
+		{
+			"id": "timerColor",
+			"label": "Timer Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#FFCC00",
+			"group": "Appearance"
+		},
+		{
+			"id": "timerPosition",
+			"label": "Timer Position",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "top-left",
+					"label": "Top Left"
+				},
+				{
+					"value": "top-right",
+					"label": "Top Right"
+				},
+				{
+					"value": "bottom-left",
+					"label": "Bottom Left"
+				},
+				{
+					"value": "bottom-right",
+					"label": "Bottom Right"
+				}
+			],
+			"defaultValue": "top-left",
+			"group": "Appearance"
+		},
+		{
+			"id": "showUpcomingAdWarning",
+			"label": "Show Upcoming Ad Warning",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "warningSeconds",
+			"label": "Warning Time",
+			"description": "Warn X seconds before ad",
+			"type": "number",
+			"defaultValue": "10",
+			"min": 1,
+			"max": 300,
+			"showIf": "showUpcomingAdWarning",
+			"group": "General"
+		},
+		{
+			"id": "address",
+			"label": "Address",
+			"description": "Streamer.bot Websocket Server Address",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "Advanced"
+		},
+		{
+			"id": "port",
+			"label": "Port",
+			"description": "Streamer.bot Websocket Server Port",
+			"type": "text",
+			"defaultValue": "8080",
+			"group": "Advanced"
+		}
+	]
+}
