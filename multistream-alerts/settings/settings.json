@@ -6,7 +6,7 @@
 			"description": "",
 			"type": "button",
 			"callFunction": "testWidget",
-			"group": "Test Alerts"
+			"group": ""
 		},
 		{
 			"id": "showAvatar",
