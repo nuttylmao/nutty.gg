@@ -164,7 +164,7 @@ function TwitchUpcomingAd(data) {
 	setTimeout(() => {
 		upcomingAdWarningStartTime = null;
 		UpcomingAdWarning(warningSeconds);
-	}, delayStart * 1000);
+	}, upcomingAdWarningStartTime * 1000);
 }
 
 function TimerBarAnimation(duration) {
