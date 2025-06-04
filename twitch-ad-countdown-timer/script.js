@@ -267,7 +267,7 @@ function UpcomingAdWarning(warningSeconds) {
 
 	// Set the starting position of the countdown box
 	upcomingAdWarningContainer.style.right = -width + "px";
-	countdownLabel.innerHTML = warningSeconds;
+	countdownLabel.innerHTML = formatTime(warningSeconds);
 
 	// Slide the countdown box on screen
 	upcomingAdWarningContainer.style.right = "0px";
