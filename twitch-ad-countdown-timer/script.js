@@ -277,7 +277,7 @@ function UpcomingAdWarning(warningSeconds) {
 
 	var timerThingy = setInterval(function () {
 		startingTime--;
-		countdownLabel.innerText = startingTime;
+		countdownLabel.innerText = formatTime(startingTime);
 		if (startingTime == 0) {
 			clearInterval(timerThingy);
 			upcomingAdWarningContainer.style.right = -width + "px";
@@ -352,6 +352,22 @@ function IsNullOrWhitespace(str) {
 	return /^\s*$/.test(str);
 }
 
+function formatTime(seconds) {
+  seconds = Math.floor(seconds); // Round down to nearest whole second
+
+  if (seconds < 60) {
+    return `${seconds}`;
+  }
+
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+
+  // Pad seconds with a leading zero if less than 10
+  const paddedSecs = secs.toString().padStart(2, '0');
+
+  return `${mins}:${paddedSecs}`;
+}
+
 ////////////////////
 // TEST FUNCTIONS //
 ////////////////////
@@ -371,7 +387,7 @@ function testAd() {
 }
 
 function testUpcomingAdWarning() {
-	UpcomingAdWarning(10);
+	UpcomingAdWarning(warningSeconds);
 }
 
 
