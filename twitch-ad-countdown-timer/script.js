@@ -147,6 +147,13 @@ client.on('Twitch.UpcomingAd', (response) => {
 
 function TwitchAdRun(data) {
 	const duration = data.length_seconds;
+	
+	// Unset the upcoming ad countdown warning
+	upcomingAdWarningStartTime = null;
+
+	// Slide the warning off screen
+	let width = upcomingAdWarningContainer.getBoundingClientRect().width;
+	upcomingAdWarningContainer.style.right = -width + "px";
 
 	TimerBarAnimation(duration);
 	TimerLabelAnimation(duration);
@@ -162,7 +169,6 @@ function TwitchUpcomingAd(data) {
 
 	// Start the countdown animation
 	setTimeout(() => {
-		upcomingAdWarningStartTime = null;
 		UpcomingAdWarning(warningSeconds);
 	}, upcomingAdWarningStartTime * 1000);
 }
@@ -173,10 +179,6 @@ function TimerBarAnimation(duration) {
 		return;
 
 	timerBarLocked = true;
-
-	// Slide the warning off screen
-	let width = upcomingAdWarningContainer.getBoundingClientRect().width;
-	upcomingAdWarningContainer.style.right = -width + "px";
 
 	// If the bar is top/bottom, animate horizontally
 	// If the bar is left/right, animate vertically
@@ -282,8 +284,8 @@ function UpcomingAdWarning(warningSeconds) {
 		startingTime--;
 		countdownLabel.innerText = formatTime(startingTime);
 		if (startingTime == 0) {
-			clearInterval(timerThingy);
 			countdownLabel.innerText = 'NOW!';
+			clearInterval(timerThingy);
 			return;
 		}
 	}, 1000)
