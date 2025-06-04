@@ -174,6 +174,10 @@ function TimerBarAnimation(duration) {
 
 	timerBarLocked = true;
 
+	// Slide the warning off screen
+	let width = upcomingAdWarningContainer.getBoundingClientRect().width;
+	upcomingAdWarningContainer.style.right = -width + "px";
+
 	// If the bar is top/bottom, animate horizontally
 	// If the bar is left/right, animate vertically
 	switch (barPosition) {
@@ -263,9 +267,8 @@ function UpcomingAdWarning(warningSeconds) {
 
 	upcomingAdWarningLocked = true;
 
-	let width = upcomingAdWarningContainer.getBoundingClientRect().width;
-
 	// Set the starting position of the countdown box
+	let width = upcomingAdWarningContainer.getBoundingClientRect().width;
 	upcomingAdWarningContainer.style.right = -width + "px";
 	countdownLabel.innerHTML = formatTime(warningSeconds);
 
@@ -280,7 +283,7 @@ function UpcomingAdWarning(warningSeconds) {
 		countdownLabel.innerText = formatTime(startingTime);
 		if (startingTime == 0) {
 			clearInterval(timerThingy);
-			upcomingAdWarningContainer.style.right = -width + "px";
+			countdownLabel.innerText = 'NOW!';
 			return;
 		}
 	}, 1000)
