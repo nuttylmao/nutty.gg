@@ -166,12 +166,11 @@ function TwitchUpcomingAd(data) {
 
 	if (!upcomingAdWarningStartDelay)
 		upcomingAdWarningStartDelay = warningMinute * 60 - warningSeconds;
-	else
-		return;
 
 	// Start the countdown animation
 	setTimeout(() => {
-		if (!upcomingAdWarningStartDelay)
+		console.debug('Upcomfing Ad Warning Countdown start...');
+		if (upcomingAdWarningStartDelay)
 			UpcomingAdWarning(warningSeconds);
 	}, upcomingAdWarningStartDelay * 1000);
 }
@@ -422,3 +421,5 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+TwitchUpcomingAd()
