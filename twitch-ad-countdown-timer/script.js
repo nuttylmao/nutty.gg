@@ -165,7 +165,9 @@ function TwitchUpcomingAd(data) {
 	const warningMinute = 5;
 
 	if (!upcomingAdWarningStartDelay)
-		upcomingAdWarningStartDelay = warningMinute * 60 - warningSeconds
+		upcomingAdWarningStartDelay = warningMinute * 60 - warningSeconds;
+	else
+		return;
 
 	// Start the countdown animation
 	setTimeout(() => {
