@@ -169,7 +169,7 @@ function TwitchUpcomingAd(data) {
 
 	// Start the countdown animation
 	setTimeout(() => {
-		console.debug('Upcomfing Ad Warning Countdown start...');
+		console.debug('Upcoming Ad Warning Countdown start...');
 		if (upcomingAdWarningStartDelay)
 			UpcomingAdWarning(warningSeconds);
 	}, upcomingAdWarningStartDelay * 1000);
@@ -421,5 +421,3 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
-
-TwitchUpcomingAd()
