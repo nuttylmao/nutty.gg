@@ -44,6 +44,7 @@ let singleAdLength = 30;
 let timerBarLocked = false;
 let timerLabelLocked = false;
 let upcomingAdWarningLocked = false;
+let upcomingAdWarningStartTime;
 
 /////////////////
 // PAGEE SETUP //
@@ -152,12 +153,16 @@ function TwitchAdRun(data) {
 }
 
 function TwitchUpcomingAd(data) {
-	// TODO: Need to scrape UpcomingAd data to continue this
+	// Twitch does not give us ANY data to work with, so we will just
+	// assume each UpcomingAd warning is 5 minutes
 	const warningMinute = 5;
 
-	const delayStart = warningMinute * 60 - warningSeconds;
+	if (!upcomingAdWarningStartTime)
+		upcomingAdWarningStartTime = warningMinute * 60 - warningSeconds
 
+	// Start the countdown animation
 	setTimeout(() => {
+		upcomingAdWarningStartTime = null;
 		UpcomingAdWarning(warningSeconds);
 	}, delayStart * 1000);
 }
