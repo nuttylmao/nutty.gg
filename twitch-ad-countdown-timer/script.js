@@ -160,11 +160,17 @@ function TwitchAdRun(data) {
 }
 
 function TwitchUpcomingAd(data) {
+	if (upcomingAdWarningStartDelay != null)
+	{
+		console.debug('Countdown already started, skipping...');
+		return;
+	}
+
 	// Twitch does not give us ANY data to work with, so we will just
 	// assume each UpcomingAd warning is 5 minutes
 	const warningMinute = 5;
 
-	if (!upcomingAdWarningStartDelay)
+	//if (!upcomingAdWarningStartDelay)
 		upcomingAdWarningStartDelay = warningMinute * 60 - warningSeconds;
 
 	// Start the countdown animation
