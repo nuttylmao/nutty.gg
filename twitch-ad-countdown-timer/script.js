@@ -170,8 +170,7 @@ function TwitchUpcomingAd(data) {
 	// assume each UpcomingAd warning is 5 minutes
 	const warningMinute = 5;
 
-	//if (!upcomingAdWarningStartDelay)
-		upcomingAdWarningStartDelay = warningMinute * 60 - warningSeconds;
+	upcomingAdWarningStartDelay = warningMinute * 60 - warningSeconds;
 
 	// Start the countdown animation
 	setTimeout(() => {
@@ -290,7 +289,7 @@ function UpcomingAdWarning(warningSeconds) {
 		startingTime--;
 		countdownLabel.innerText = formatTime(startingTime);
 		if (startingTime == 0) {
-			countdownLabel.innerText = 'NOW!';
+			countdownLabel.innerText = 'SOON';
 			clearInterval(timerThingy);
 			return;
 		}
