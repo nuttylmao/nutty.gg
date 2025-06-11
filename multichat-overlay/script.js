@@ -355,7 +355,10 @@ async function TwitchChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		usernameDiv.innerText = data.message.displayName;
+		if (data.message.displayName.toLowerCase() == data.message.username.toLowerCase())
+			usernameDiv.innerText = data.message.displayName;
+		else
+			usernameDiv.innerText = `${data.message.displayName} (${data.message.username})`;
 		usernameDiv.style.color = data.message.color;
 	}
 
@@ -572,7 +575,10 @@ async function TwitchAnnouncement(data) {
 		content.querySelector("#timestamp").classList.add("timestamp");
 		content.querySelector("#timestamp").innerText = GetCurrentTimeFormatted();
 	}
-	content.querySelector("#username").innerText = data.user.name;
+	if (data.user.name.toLowerCase() == data.user.login.toLowerCase())
+		content.querySelector("#username").innerText = data.user.name;
+	else
+		content.querySelector("#username").innerText = `${data.user.name} (${data.user.login})`;
 	content.querySelector("#username").style.color = data.user.color;
 	content.querySelector("#message").innerText = data.text;
 
@@ -659,7 +665,9 @@ async function TwitchSub(data) {
 	}
 
 	// Set the text
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const subTier = data.sub_tier;
 	const isPrime = data.is_prime;
 
@@ -703,7 +711,9 @@ async function TwitchResub(data) {
 	}
 
 	// Set the text
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const subTier = data.subTier;
 	const isPrime = data.isPrime;
 	const cumulativeMonths = data.cumulativeMonths;
@@ -750,7 +760,9 @@ async function TwitchGiftSub(data) {
 	}
 
 	// Set the text
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const subTier = data.subTier;
 	const recipient = data.recipient.name;
 	const cumlativeTotal = data.cumlativeTotal;
@@ -794,7 +806,9 @@ async function TwitchRewardRedemption(data) {
 	}
 
 	// Set the text
-	const username = data.user_name;
+	let username = data.user_name;
+	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
+		username = `${data.user_name} (${data.user_login})`;
 	const rewardName = data.reward.title;
 	const cost = data.reward.cost;
 	const userInput = data.user_input;
@@ -839,7 +853,9 @@ async function TwitchRaid(data) {
 
 
 	// Set the text
-	const username = data.from_broadcaster_user_login;
+	let username = data.from_broadcaster_user_name;
+	if (data.from_broadcaster_user_name.toLowerCase() != data.from_broadcaster_user_login.toLowerCase())
+		username = `${data.from_broadcaster_user_name} (${data.from_broadcaster_user_login})`;
 	const viewers = data.viewers;
 
 	titleDiv.innerText = `${username} is raiding`;
@@ -2075,3 +2091,40 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+
+
+let data = {
+    "sub_tier": "1000",
+    "is_prime": true,
+    "duration_months": 1,
+    "user": {
+      "role": 0,
+      "badges": [
+        {
+          "name": "subscriber",
+          "version": "0",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/acbcfda9-4941-43b6-8253-efc72fc7afef/3",
+          "info": "1"
+        },
+        {
+          "name": "partner",
+          "version": "1",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/d12a2e27-16f6-41d0-ab77-b780518f00a3/3",
+          "info": ""
+        }
+      ],
+      "color": "#D2691E",
+      "subscribed": true,
+      "monthsSubscribed": 1,
+      "id": "128200983",
+      "login": "brianricardo",
+      "name": "BrianRicardo",
+      "type": "twitch"
+    },
+    "messageId": "e8ce0e71-7ca6-4e3e-b2f7-cf569016a82c",
+    "systemMessage": "BrianRicardo subscribed with Prime.",
+    "isTest": false
+  }
+
+  TwitchSub(data);
