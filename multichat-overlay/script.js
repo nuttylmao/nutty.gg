@@ -423,7 +423,7 @@ async function TwitchChatMessage(data) {
 		}
 		else {
 			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-			regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+			regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
 		}
 
 		const regex = new RegExp(regexPattern, 'g');
@@ -619,7 +619,7 @@ async function TwitchAnnouncement(data) {
 			}
 			else {
 				// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-				regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+				regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
 			}
 	
 			const regex = new RegExp(regexPattern, 'g');
@@ -2091,3 +2091,186 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+let data = {
+    "message": {
+      "internal": false,
+      "msgId": "6d291dc3-349a-495e-aa20-7b8c45bd173b",
+      "clientNonce": "7837d3cc32ebbb0139dfa6e12036fbe7",
+      "userId": "54983562",
+      "username": "nutty",
+      "role": 4,
+      "subscriber": true,
+      "subscriptionTier": "3000",
+      "displayName": "nutty",
+      "color": "#FF69B4",
+      "channel": "nutty",
+      "message": ":D :D :D",
+      "isHighlighted": false,
+      "isMe": false,
+      "isCustomReward": false,
+      "isAnonymous": false,
+      "isReply": false,
+      "bits": 0,
+      "firstMessage": false,
+      "returningChatter": false,
+      "hasBits": false,
+      "emotes": [
+        {
+          "id": "555555560",
+          "type": "Twitch",
+          "name": ":D",
+          "startIndex": 0,
+          "endIndex": 1,
+          "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
+        },
+        {
+          "id": "555555560",
+          "type": "Twitch",
+          "name": ":D",
+          "startIndex": 3,
+          "endIndex": 4,
+          "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
+        },
+        {
+          "id": "555555560",
+          "type": "Twitch",
+          "name": ":D",
+          "startIndex": 6,
+          "endIndex": 7,
+          "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
+        }
+      ],
+      "cheerEmotes": [],
+      "badges": [
+        {
+          "name": "broadcaster",
+          "version": "1",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3",
+          "info": ""
+        },
+        {
+          "name": "subscriber",
+          "version": "3012",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/d37c6ddc-7d3e-44c8-aad8-adfde6fb0462/3",
+          "info": "96"
+        },
+        {
+          "name": "clips-leader",
+          "version": "2",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/9eddf7ab-aa46-4798-abe2-710db1043254/3",
+          "info": ""
+        }
+      ],
+      "monthsSubscribed": 96,
+      "isTest": false,
+      "sharedChat": false,
+      "sourceBadges": []
+    },
+    "user": {
+      "role": 4,
+      "badges": [
+        {
+          "name": "broadcaster",
+          "version": "1",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3",
+          "info": ""
+        },
+        {
+          "name": "subscriber",
+          "version": "3012",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/d37c6ddc-7d3e-44c8-aad8-adfde6fb0462/3",
+          "info": "96"
+        },
+        {
+          "name": "clips-leader",
+          "version": "2",
+          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/9eddf7ab-aa46-4798-abe2-710db1043254/3",
+          "info": ""
+        }
+      ],
+      "color": "#FF69B4",
+      "subscribed": true,
+      "subscriptionTier": "3000",
+      "monthsSubscribed": 96,
+      "id": "54983562",
+      "login": "nutty",
+      "name": "nutty",
+      "type": "twitch"
+    },
+    "messageId": "6d291dc3-349a-495e-aa20-7b8c45bd173b",
+    "meta": {
+      "internal": false,
+      "clientNonce": "7837d3cc32ebbb0139dfa6e12036fbe7",
+      "firstMessage": false,
+      "returningChatter": false,
+      "isHighlighted": false,
+      "isMe": false,
+      "isCustomReward": false,
+      "isTest": false
+    },
+    "anonymous": false,
+    "text": ":D :D :D",
+    "emotes": [
+      {
+        "id": "555555560",
+        "type": "Twitch",
+        "name": ":D",
+        "startIndex": 0,
+        "endIndex": 1,
+        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
+      },
+      {
+        "id": "555555560",
+        "type": "Twitch",
+        "name": ":D",
+        "startIndex": 3,
+        "endIndex": 4,
+        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
+      },
+      {
+        "id": "555555560",
+        "type": "Twitch",
+        "name": ":D",
+        "startIndex": 6,
+        "endIndex": 7,
+        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
+      }
+    ],
+    "parts": [
+      {
+        "source": "Twitch",
+        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0",
+        "zeroWidth": false,
+        "type": "emote",
+        "text": ":D"
+      },
+      {
+        "type": "text",
+        "text": " "
+      },
+      {
+        "source": "Twitch",
+        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0",
+        "zeroWidth": false,
+        "type": "emote",
+        "text": ":D"
+      },
+      {
+        "type": "text",
+        "text": " "
+      },
+      {
+        "source": "Twitch",
+        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0",
+        "zeroWidth": false,
+        "type": "emote",
+        "text": ":D"
+      }
+    ],
+    "isReply": false,
+    "isSharedChat": false,
+    "isTest": false
+  }
+
+  TwitchChatMessage(data);

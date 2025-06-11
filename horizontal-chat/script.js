@@ -368,7 +368,7 @@ async function TwitchChatMessage(data) {
 		}
 		else {
 			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-			regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+			regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
 		}
 
 		const regex = new RegExp(regexPattern, 'g');
@@ -447,7 +447,7 @@ async function TwitchAnnouncement(data) {
 			}
 			else {
 				// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-				regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
+				regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
 			}
 	
 			const regex = new RegExp(regexPattern, 'g');
