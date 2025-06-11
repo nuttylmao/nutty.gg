@@ -1074,7 +1074,8 @@ function YouTubeSuperChat(data) {
 
 	// Set message text
 	titleDiv.innerText = `🪙 ${data.user.name} sent a Super Chat (${data.amount})`;
-	contentDiv.innerText = `${data.message}!`;
+	if (data.message)
+		contentDiv.innerText = `${data.message}!`;
 
 	AddMessageItem(instance, data.eventId);
 }
