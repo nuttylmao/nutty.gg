@@ -202,7 +202,7 @@ function LoadJSON(settingsJson) {
 							settingsMap.set(setting.id, settingElement.checked);
 						else
 							settingsMap.set(setting.id, settingElement.value);
-						
+
 						SaveSettingsToStorage();
 						RefreshWidgetPreview();
 					});
@@ -270,7 +270,10 @@ function LoadDefaultSettings() {
 function RefreshWidgetPreview() {
 	const settings = {};
 	settingsData.settings.forEach(setting => {
+		if (setting.type === 'button') return; // Skip buttons
+
 		let inputElement = document.getElementById(setting.id);
+		if (!inputElement) return;
 
 		if (setting.type === 'checkbox') {
 			settings[setting.id] = inputElement.checked;
