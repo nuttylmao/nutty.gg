@@ -309,7 +309,10 @@ async function TwitchChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		usernameDiv.innerText = data.message.displayName;
+		if (data.message.displayName.toLowerCase() == data.message.username.toLowerCase())
+			usernameDiv.innerText = data.message.displayName;
+		else
+			usernameDiv.innerText = `${data.message.displayName} (${data.message.username})`;
 		usernameDiv.style.color = data.message.color;
 	}
 
@@ -462,7 +465,9 @@ async function TwitchSub(data) {
 	if (!showTwitchSubs)
 		return;
 
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const subTier = data.sub_tier;
 	const isPrime = data.is_prime;
 
@@ -480,7 +485,9 @@ async function TwitchResub(data) {
 	if (!showTwitchSubs)
 		return;
 
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const subTier = data.subTier;
 	const isPrime = data.isPrime;
 	const cumulativeMonths = data.cumulativeMonths;
@@ -499,7 +506,9 @@ async function TwitchGiftSub(data) {
 	if (!showTwitchSubs)
 		return;
 
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const subTier = data.subTier;
 	const recipient = data.recipient.name;
 	const fromCommunitySubGift = data.fromCommunitySubGift;
@@ -521,7 +530,9 @@ async function TwitchGiftBomb(data) {
 	// const username = data.displayName;
 	// const gifts = data.gifts;
 	// const subTier = data.subTier;
-	const username = data.user.name;
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
 	const gifts = data.recipients.length;
 	const subTier = data.sub_tier.charAt(0);
 
@@ -534,7 +545,9 @@ async function TwitchRewardRedemption(data) {
 	if (!showTwitchChannelPointRedemptions)
 		return;
 
-	const username = data.user_name;
+	let username = data.user_name;
+	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
+		username = `${data.user_name} (${data.user_login})`;
 	const rewardName = data.reward.title;
 	const cost = data.reward.cost;
 	const userInput = data.user_input;
@@ -549,7 +562,9 @@ async function TwitchRaid(data) {
 	if (!showTwitchRaids)
 		return;
 
-	const username = data.from_broadcaster_user_login;
+	let username = data.from_broadcaster_user_name;
+	if (data.from_broadcaster_user_name.toLowerCase() != data.from_broadcaster_user_login.toLowerCase())
+		username = `${data.from_broadcaster_user_name} (${data.from_broadcaster_user_login})`;
 	const viewers = data.viewers;
 
 	let message = `${username} is raiding with a party of ${viewers}`;
@@ -1319,15 +1334,3 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
-
-// let data = {
-// 	"isAnonymous": false,
-// 	"gifts": 10,
-// 	"totalGifts": 0,
-// 	"subTier": 1, /* 0 - Prime, 1 - Tier 1, 2 - Tier 2, 3 - Tier 3 */
-// 	"userName": "<username of gifter>",
-// 	"displayName": "<displayname of gifter>",
-// 	"role": 1 /* 1 - Viewer, 2 - VIP, 3 - Moderator, 4 - Broadcaster  */
-//   }
-
-// TwitchGiftBomb(data);
