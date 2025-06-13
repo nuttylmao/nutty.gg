@@ -272,6 +272,11 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
+client.on('General.Custom', (response) => {
+	console.debug(response.data);
+	GeneralCustom(response.data);
+})
+
 
 
 ///////////////////////
@@ -2092,185 +2097,147 @@ function SetConnectionStatus(connected) {
 	}
 }
 
-let data = {
-    "message": {
-      "internal": false,
-      "msgId": "6d291dc3-349a-495e-aa20-7b8c45bd173b",
-      "clientNonce": "7837d3cc32ebbb0139dfa6e12036fbe7",
-      "userId": "54983562",
-      "username": "nutty",
-      "role": 4,
-      "subscriber": true,
-      "subscriptionTier": "3000",
-      "displayName": "nutty",
-      "color": "#FF69B4",
-      "channel": "nutty",
-      "message": ":D :D :D",
-      "isHighlighted": false,
-      "isMe": false,
-      "isCustomReward": false,
-      "isAnonymous": false,
-      "isReply": false,
-      "bits": 0,
-      "firstMessage": false,
-      "returningChatter": false,
-      "hasBits": false,
-      "emotes": [
-        {
-          "id": "555555560",
-          "type": "Twitch",
-          "name": ":D",
-          "startIndex": 0,
-          "endIndex": 1,
-          "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
-        },
-        {
-          "id": "555555560",
-          "type": "Twitch",
-          "name": ":D",
-          "startIndex": 3,
-          "endIndex": 4,
-          "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
-        },
-        {
-          "id": "555555560",
-          "type": "Twitch",
-          "name": ":D",
-          "startIndex": 6,
-          "endIndex": 7,
-          "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
-        }
-      ],
-      "cheerEmotes": [],
-      "badges": [
-        {
-          "name": "broadcaster",
-          "version": "1",
-          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3",
-          "info": ""
-        },
-        {
-          "name": "subscriber",
-          "version": "3012",
-          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/d37c6ddc-7d3e-44c8-aad8-adfde6fb0462/3",
-          "info": "96"
-        },
-        {
-          "name": "clips-leader",
-          "version": "2",
-          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/9eddf7ab-aa46-4798-abe2-710db1043254/3",
-          "info": ""
-        }
-      ],
-      "monthsSubscribed": 96,
-      "isTest": false,
-      "sharedChat": false,
-      "sourceBadges": []
-    },
-    "user": {
-      "role": 4,
-      "badges": [
-        {
-          "name": "broadcaster",
-          "version": "1",
-          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3",
-          "info": ""
-        },
-        {
-          "name": "subscriber",
-          "version": "3012",
-          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/d37c6ddc-7d3e-44c8-aad8-adfde6fb0462/3",
-          "info": "96"
-        },
-        {
-          "name": "clips-leader",
-          "version": "2",
-          "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/9eddf7ab-aa46-4798-abe2-710db1043254/3",
-          "info": ""
-        }
-      ],
-      "color": "#FF69B4",
-      "subscribed": true,
-      "subscriptionTier": "3000",
-      "monthsSubscribed": 96,
-      "id": "54983562",
-      "login": "nutty",
-      "name": "nutty",
-      "type": "twitch"
-    },
-    "messageId": "6d291dc3-349a-495e-aa20-7b8c45bd173b",
-    "meta": {
-      "internal": false,
-      "clientNonce": "7837d3cc32ebbb0139dfa6e12036fbe7",
-      "firstMessage": false,
-      "returningChatter": false,
-      "isHighlighted": false,
-      "isMe": false,
-      "isCustomReward": false,
-      "isTest": false
-    },
-    "anonymous": false,
-    "text": ":D :D :D",
-    "emotes": [
-      {
-        "id": "555555560",
-        "type": "Twitch",
-        "name": ":D",
-        "startIndex": 0,
-        "endIndex": 1,
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
-      },
-      {
-        "id": "555555560",
-        "type": "Twitch",
-        "name": ":D",
-        "startIndex": 3,
-        "endIndex": 4,
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
-      },
-      {
-        "id": "555555560",
-        "type": "Twitch",
-        "name": ":D",
-        "startIndex": 6,
-        "endIndex": 7,
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0"
-      }
-    ],
-    "parts": [
-      {
-        "source": "Twitch",
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0",
-        "zeroWidth": false,
-        "type": "emote",
-        "text": ":D"
-      },
-      {
-        "type": "text",
-        "text": " "
-      },
-      {
-        "source": "Twitch",
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0",
-        "zeroWidth": false,
-        "type": "emote",
-        "text": ":D"
-      },
-      {
-        "type": "text",
-        "text": " "
-      },
-      {
-        "source": "Twitch",
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/555555560/default/dark/2.0",
-        "zeroWidth": false,
-        "type": "emote",
-        "text": ":D"
-      }
-    ],
-    "isReply": false,
-    "isSharedChat": false,
-    "isTest": false
-  }
 
-  TwitchChatMessage(data);
+
+
+
+
+
+function GeneralCustom(data) {
+	const target = data.target;
+	const type = data.type;
+
+	// Check the target for the message
+	const path = window.location.pathname;
+	const firstSegment = path.split('/')[1];
+	if (firstSegment != target)
+	    return;
+
+	switch (type)
+	{
+		case "message":
+			CustomMessage(data);
+			break;
+		case "alert":
+			CustomAlert(data);
+			break;
+	}
+}
+
+function CustomMessage(data) {
+	// Don't post messages starting with "!"
+	if (data.message.startsWith("!") && excludeCommands)
+		return;
+
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.username.toLowerCase()))
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('messageTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const messageContainerDiv = instance.querySelector("#messageContainer");
+	const firstMessageDiv = instance.querySelector("#firstMessage");
+	const sharedChatDiv = instance.querySelector("#sharedChat");
+	const sharedChatChannelDiv = instance.querySelector("#sharedChatChannel");
+	const replyDiv = instance.querySelector("#reply");
+	const replyUserDiv = instance.querySelector("#replyUser");
+	const replyMsgDiv = instance.querySelector("#replyMsg");
+	const userInfoDiv = instance.querySelector("#userInfo");
+	const avatarDiv = instance.querySelector("#avatar");
+	const timestampDiv = instance.querySelector("#timestamp");
+	const platformDiv = instance.querySelector("#platform");
+	const badgeListDiv = instance.querySelector("#badgeList");
+	const pronounsDiv = instance.querySelector("#pronouns");
+	const usernameDiv = instance.querySelector("#username");
+	const messageDiv = instance.querySelector("#message");
+
+	// Set timestamp
+	if (showTimestamps) {
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
+
+	// Set the username info
+	if (showUsername) {
+		if (data.displayName.toLowerCase() == data.username.toLowerCase())
+			usernameDiv.innerText = data.displayName;
+		else
+			usernameDiv.innerText = `${data.displayName} (${data.username})`;
+		usernameDiv.style.color = data.userColor;
+	}
+
+	// Set the message data
+	let message = data.message;
+
+	// Set furry mode
+	if (furryMode)
+		message = TranslateToFurry(message);
+
+	// Set message text
+	if (showMessage) {
+		messageDiv.innerText = message;
+	}
+
+	// Remove the line break
+	if (inlineChat) {
+		instance.querySelector("#colon-separator").style.display = `inline`;
+		instance.querySelector("#line-space").style.display = `none`;
+	}
+
+	// Render platform
+	if (showPlatform) {
+		const platformElements = `<img src="${data.platform.icon}" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
+
+	// Render avatars
+	if (showAvatar) {
+		const avatar = new Image();
+		avatar.src = data.avatar;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	AddMessageItem(instance, data.msgId, data.platform.name, data.username);
+}
+
+function CustomAlert(data) {
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.style.background = data.background;
+
+	// Set the card header
+	const icon = new Image();
+	icon.src = data.icon;
+	icon.classList.add("badge");
+	iconDiv.appendChild(icon);
+
+	// // Set the text
+	// let username = data.displayName;
+	// if (data.displayName.toLowerCase() != data.username.toLowerCase())
+	// 	username = `${data.displayName} (${data.username})`;
+
+	titleDiv.innerText = data.title;
+	contentDiv.innerText = data.content;
+
+	AddMessageItem(instance, data.messageId);
+
+}
