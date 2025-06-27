@@ -2911,31 +2911,3 @@ function TikTokSubscribe(data) {
 
 	AddMessageItem(instance, data.msgId);
 }
-
-let data = {
-  "user": "NestoVibe",
-  "userName": "nestovibe",
-  "userId": 66255551,
-  "userType": "kick",
-  "recipientUser": "Bifsie",
-  "recipientUserName": "bifsie",
-  "recipientUserId": 17466824,
-  "tier": "Tier1",
-  "totalSubsGifted": 1,
-  "monthsGifted": 1,
-  "rawInput": "NestoVibe gifted a sub to Bifsie.",
-  "rawInputEscaped": "NestoVibe gifted a sub to Bifsie.",
-  "eventSource": "kick",
-  "fromKick": true,
-  "__source": 18002,
-  "triggerId": "d87e05e5-0875-4c3d-8bc9-69fac3ea8528",
-  "triggerName": "Custom Code Event",
-  "triggerCategory": "Custom",
-  "triggerCustomCodeEventName": "kickGift",
-  "actionId": "fe5fc792-7e28-4ad9-bdb5-f32f8229810f",
-  "actionName": "Kick Data Scraper | Save Data",
-  "runningActionId": "2461d175-3188-4bfa-a3b2-4a171686c627",
-  "actionQueuedAt": "2025-06-28T01:53:40.6376311+10:00"
-}
-
-KickGift(data);
