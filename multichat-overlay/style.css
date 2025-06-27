@@ -261,6 +261,10 @@ li {
 	background: linear-gradient(#FF6C60BF, #FF0707BF) !important;
 }
 
+.kick {
+	background: linear-gradient(#53fc18BF, #005600BF) !important;
+}
+
 .streamlabs {
 	background: linear-gradient(#73dabbbf, #397765bf) !important;
 }

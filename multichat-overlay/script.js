@@ -1795,6 +1795,15 @@ function GeneralCustom(data) {
 				case "kickChatMessage":
 					KickChatMessage(data);
 					break;
+				case "kickSub":
+					KickSub(data);
+					break;
+				case "kickGift":
+					KickGift(data);
+					break;
+				case "kickRewardRedeemed":
+					KickRewardRedeemed(data);
+					break;
 			}
 
 			break;
@@ -1810,7 +1819,7 @@ async function KickChatMessage(data) {
 		return;
 
 	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.userName.toLowerCase()))
+	if (ignoreUserList.includes(data.user.toLowerCase()))
 		return;
 
 	// Get a reference to the template
@@ -1878,10 +1887,10 @@ async function KickChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		if (data.userName.toLowerCase() == data.userName.toLowerCase())
-			usernameDiv.innerText = data.userName;
+		if (data.user.toLowerCase() == data.userName.toLowerCase())
+			usernameDiv.innerText = data.user;
 		else
-			usernameDiv.innerText = `${data.userName} (${data.user})`;
+			usernameDiv.innerText = `${data.user} (${data.userName})`;
 		usernameDiv.style.color = data.color;
 	}
 
@@ -2013,7 +2022,7 @@ async function KickChatMessage(data) {
 
 	// Render avatars
 	if (showAvatar) {
-		const username = data.user;
+		const username = data.username;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
 		avatar.src = avatarURL;
@@ -2053,6 +2062,154 @@ async function KickChatMessage(data) {
 	else {
 		AddMessageItem(instance, data.msgId, 'kick', data.userId);
 	}
+}
+
+async function KickSub(data) {
+	if (!showTwitchSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#contentDiv");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// // Set the card header
+	// for (i in data.user.badges) {
+	// 	if (data.user.badges[i].name == "subscriber") {
+	// 		const badge = new Image();
+	// 		badge.src = data.user.badges[i].imageUrl;
+	// 		badge.classList.add("badge");
+	// 		iconDiv.appendChild(badge);
+	// 	}
+	// }
+
+	// Set the card header
+	const badge = new Image();
+	badge.src = 'icons/platforms/kick.png';
+	badge.classList.add("badge");
+	iconDiv.appendChild(badge);
+
+	// Set the text
+	let username = data.user;
+	if (data.user.toLowerCase() != data.userName.toLowerCase())
+		username = `${data.user} (${data.userName})`;
+	// const subTier = data.sub_tier;
+	// const isPrime = data.is_prime;
+
+	// if (!isPrime)
+	// 	titleDiv.innerText = `${username} subscribed with Tier ${subTier.charAt(0)}`;
+	// else
+	// 	titleDiv.innerText = `${username} used their Prime Sub`;
+	//titleDiv.innerText = `${username} subscribed on Kick`;
+	titleDiv.innerText = data.rawInput;
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function KickGift(data) {
+	if (!showTwitchSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Set the card header
+	const badge = new Image();
+	badge.src = 'icons/platforms/kick.png';
+	badge.classList.add("badge");
+	iconDiv.appendChild(badge);
+
+	// Set the text
+	// let username = data.user.name;
+	// if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+	// 	username = `${data.user.name} (${data.user.login})`;
+	// const subTier = data.subTier;
+	// const recipient = data.recipient.name;
+	// const cumlativeTotal = data.cumlativeTotal;
+	let username = data.user;
+	if (data.user.toLowerCase() != data.userName.toLowerCase())
+		username = `${data.user} (${data.userName})`;
+
+	// titleDiv.innerText = `${username} gifted a Tier ${subTier.charAt(0)} subscription to ${recipient}`;
+	// if (cumlativeTotal > 0)
+	// 	contentDiv.innerText = `They've gifted ${cumlativeTotal} subs in total!`;
+
+	titleDiv.innerText = `${data.rawInput}`;
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function KickRewardRedeemed(data) {
+	if (!showTwitchChannelPointRedemptions)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.user;
+		const avatarURL = await GetAvatar(username, 'kick');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Set the text
+	let username = data.user;
+	// if (data.user.toLowerCase() != data.userName.toLowerCase())
+	// 	username = `${data.user} (${data.userName})`;
+	const rewardName = data.rewardTitle;
+	//const cost = data.reward.cost;
+	const userInput = data.rewardUserInput;
+	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
+
+	//titleDiv.innerHTML = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
+	titleDiv.innerHTML = `${username} redeemed ${rewardName}`;
+	contentDiv.innerText = `${userInput}`;
+
+	AddMessageItem(instance, data.redeemId);
 }
 
 /*
@@ -2754,3 +2911,31 @@ function TikTokSubscribe(data) {
 
 	AddMessageItem(instance, data.msgId);
 }
+
+let data = {
+  "user": "NestoVibe",
+  "userName": "nestovibe",
+  "userId": 66255551,
+  "userType": "kick",
+  "recipientUser": "Bifsie",
+  "recipientUserName": "bifsie",
+  "recipientUserId": 17466824,
+  "tier": "Tier1",
+  "totalSubsGifted": 1,
+  "monthsGifted": 1,
+  "rawInput": "NestoVibe gifted a sub to Bifsie.",
+  "rawInputEscaped": "NestoVibe gifted a sub to Bifsie.",
+  "eventSource": "kick",
+  "fromKick": true,
+  "__source": 18002,
+  "triggerId": "d87e05e5-0875-4c3d-8bc9-69fac3ea8528",
+  "triggerName": "Custom Code Event",
+  "triggerCategory": "Custom",
+  "triggerCustomCodeEventName": "kickGift",
+  "actionId": "fe5fc792-7e28-4ad9-bdb5-f32f8229810f",
+  "actionName": "Kick Data Scraper | Save Data",
+  "runningActionId": "2461d175-3188-4bfa-a3b2-4a171686c627",
+  "actionQueuedAt": "2025-06-28T01:53:40.6376311+10:00"
+}
+
+KickGift(data);
