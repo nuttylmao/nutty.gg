@@ -1801,6 +1801,9 @@ function GeneralCustom(data) {
 				case "kickGift":
 					KickGift(data);
 					break;
+				case "kickGifts":
+					KickGifts(data);
+					break;
 				case "kickRewardRedeemed":
 					KickRewardRedeemed(data);
 					break;
@@ -2161,6 +2164,53 @@ async function KickGift(data) {
 	// 	contentDiv.innerText = `They've gifted ${cumlativeTotal} subs in total!`;
 
 	titleDiv.innerText = `${data.rawInput}`;
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function KickGifts(data) {
+	if (!showTwitchSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Set the card header
+	const badge = new Image();
+	badge.src = 'icons/platforms/kick.png';
+	badge.classList.add("badge");
+	iconDiv.appendChild(badge);
+
+	// Set the text
+	// let username = data.user.name;
+	// if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+	//	username = `${data.user.name} (${data.user.login})`;
+	const tier = data.tier;
+	const gifts = data.gifts;
+	const totalGifts = data.totalGifts;
+	// const recipient = data.recipient.name;
+	//const cumlativeTotal = data.cumlativeTotal;
+	let username = data.user;
+	if (data.user.toLowerCase() != data.userName.toLowerCase())
+		username = `${data.user} (${data.userName})`;
+
+	titleDiv.innerText = `${username} gifted ${gifts} subs to the community!`;
+	if (totalGifts > 0)
+	 	contentDiv.innerText = `They've gifted ${totalGifts} subs in total!`;
 
 	AddMessageItem(instance, data.messageId);
 }
@@ -2911,3 +2961,26 @@ function TikTokSubscribe(data) {
 
 	AddMessageItem(instance, data.msgId);
 }
+
+let data = {
+  "user": "ciuphus",
+  "userName": "ciuphus",
+  "userId": 141383,
+  "userType": "kick",
+  "tier": "Tier1",
+  "gifts": 2,
+  "totalGifts": 2,
+  "eventSource": "kick",
+  "fromKick": true,
+  "__source": 18002,
+  "triggerId": "eaad660c-fddd-4d1d-8038-752c31edb81c",
+  "triggerName": "Custom Code Event",
+  "triggerCategory": "Custom",
+  "triggerCustomCodeEventName": "kickGifts",
+  "actionId": "fe5fc792-7e28-4ad9-bdb5-f32f8229810f",
+  "actionName": "Kick Data Scraper | Save Data",
+  "runningActionId": "dc099f97-94d9-4d99-b952-c9dfbb4e914b",
+  "actionQueuedAt": "2025-06-28T03:58:02.3157736+10:00"
+}
+
+KickGifts(data);
