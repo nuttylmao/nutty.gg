@@ -2961,26 +2961,3 @@ function TikTokSubscribe(data) {
 
 	AddMessageItem(instance, data.msgId);
 }
-
-let data = {
-  "user": "ciuphus",
-  "userName": "ciuphus",
-  "userId": 141383,
-  "userType": "kick",
-  "tier": "Tier1",
-  "gifts": 2,
-  "totalGifts": 2,
-  "eventSource": "kick",
-  "fromKick": true,
-  "__source": 18002,
-  "triggerId": "eaad660c-fddd-4d1d-8038-752c31edb81c",
-  "triggerName": "Custom Code Event",
-  "triggerCategory": "Custom",
-  "triggerCustomCodeEventName": "kickGifts",
-  "actionId": "fe5fc792-7e28-4ad9-bdb5-f32f8229810f",
-  "actionName": "Kick Data Scraper | Save Data",
-  "runningActionId": "dc099f97-94d9-4d99-b952-c9dfbb4e914b",
-  "actionQueuedAt": "2025-06-28T03:58:02.3157736+10:00"
-}
-
-KickGifts(data);
