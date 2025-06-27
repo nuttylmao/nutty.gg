@@ -2209,8 +2209,8 @@ async function KickGifts(data) {
 		username = `${data.user} (${data.userName})`;
 
 	titleDiv.innerText = `${username} gifted ${gifts} subs to the community!`;
-	if (totalGifts > 0)
-	 	contentDiv.innerText = `They've gifted ${totalGifts} subs in total!`;
+	// if (totalGifts > 0)
+	//  	contentDiv.innerText = `They've gifted ${totalGifts} subs in total!`;
 
 	AddMessageItem(instance, data.messageId);
 }
