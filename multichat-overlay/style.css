@@ -52,6 +52,7 @@ html {
 .normalScrollDirection {
 	bottom: 0;
 }
+
 .reverseScrollDirection {
 	display: flex;
 	top: 0;
@@ -193,6 +194,45 @@ li {
 	font-weight: 700;
 }
 
+.tiktok-gift {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 20px;
+	padding: 20px 40px;
+	border-radius: var(--border-radius);
+	max-width: 100%;
+	background: linear-gradient(#262626BF, #000000BF) !important;
+}
+
+.tiktok-gift-avatar {
+	height: 3em;
+	margin: 1px;
+	border-radius: 50%;
+	justify-content: left;
+	flex-shrink: 0;
+}
+
+.tiktok-gift-message {
+	flex-grow: 1;
+	white-space: nowrap;		/* keeps text in a single line */
+	overflow: hidden;			/* hides overflowed content */
+	text-overflow: ellipsis;	/* adds the "..." at the end */
+}
+
+.tiktok-gift-sticker {
+	height: 2.5em;
+	flex-shrink: 0;
+	justify-content: flex-end;
+}
+
+#tiktok-gift-repeat-count {
+	justify-content: flex-end;
+	font-size: 1.5em;
+	font-style: italic;
+	font-weight: 500;
+}
+
 /*****************/
 /** CARD COLORS **/
 /*****************/
@@ -243,6 +283,10 @@ li {
 
 .fourthwall {
 	background: linear-gradient(#466edbbf, #1c56f5bf) !important;
+}
+
+.tiktok {
+	background: linear-gradient(#262626BF, #000000BF) !important;
 }
 
 .blank {
