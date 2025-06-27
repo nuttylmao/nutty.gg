@@ -1871,16 +1871,16 @@ async function KickChatMessage(data) {
 	// 		return;
 	// }
 
-	// // Set Reply Message
-	// const isReply = data.isReply;
-	// if (isReply && showMessage) {
-	// 	const replyUser = data.message.reply.userName;
-	// 	const replyMsg = data.message.reply.msgBody;
+	// Set Reply Message
+	const isReply = data.isReply;
+	if (isReply && showMessage) {
+		const replyUser = data["reply.userName"];
+		const replyMsg = data["reply.message"];
 
-	// 	replyDiv.style.display = 'block';
-	// 	replyUserDiv.innerText = replyUser;
-	// 	replyMsgDiv.innerText = replyMsg;
-	// }
+		replyDiv.style.display = 'block';
+		replyUserDiv.innerText = replyUser;
+		replyMsgDiv.innerHTML = replaceEmotes(replyMsg);;
+	}
 
 	// Set timestamp
 	if (showTimestamps) {
@@ -2025,7 +2025,7 @@ async function KickChatMessage(data) {
 
 	// Render avatars
 	if (showAvatar) {
-		const username = data.username;
+		const username = data.user;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
 		avatar.src = avatarURL;
