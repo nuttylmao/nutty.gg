@@ -260,6 +260,38 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showKickMessages",
+			"label": "Chat Messages",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickChannelPointRedemptions",
+			"label": "Channel Point Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickHosts",
+			"label": "Raids",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeMessages",
 			"label": "Chat Messages",
 			"description": "",

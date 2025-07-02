@@ -42,6 +42,11 @@ const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPoin
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
+const showKickMessages = GetBooleanParam("showKickMessages", true);
+const showKickSubs = GetBooleanParam("showKickSubs", true);
+const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
+const showKickHosts = GetBooleanParam("showKickHosts", true);
+
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
@@ -1838,11 +1843,14 @@ function CustomCodeEvent(data) {
 		case "kickRewardRedeemed":
 			KickRewardRedeemed(eventArgs);
 			break;
+		case "kickIncomingRaid":
+			KickIncomingRaid(eventArgs);
+			break;
 	}
 }
 
 async function KickChatMessage(data) {
-	if (!showTwitchMessages)
+	if (!showKickMessages)
 		return;
 
 	// Don't post messages starting with "!"
@@ -2093,7 +2101,7 @@ async function KickChatMessage(data) {
 }
 
 async function KickSub(data) {
-	if (!showTwitchSubs)
+	if (!showKickSubs)
 		return;
 
 	// Get a reference to the template
@@ -2147,7 +2155,7 @@ async function KickSub(data) {
 }
 
 async function KickGift(data) {
-	if (!showTwitchSubs)
+	if (!showKickSubs)
 		return;
 
 	// Get a reference to the template
@@ -2194,7 +2202,7 @@ async function KickGift(data) {
 }
 
 async function KickGifts(data) {
-	if (!showTwitchSubs)
+	if (!showKickSubs)
 		return;
 
 	// Get a reference to the template
@@ -2241,7 +2249,7 @@ async function KickGifts(data) {
 }
 
 async function KickRewardRedeemed(data) {
-	if (!showTwitchChannelPointRedemptions)
+	if (!showKickChannelPointRedemptions)
 		return;
 
 	// Get a reference to the template
@@ -2285,6 +2293,50 @@ async function KickRewardRedeemed(data) {
 	contentDiv.innerText = `${userInput}`;
 
 	AddMessageItem(instance, data.redeemId);
+}
+
+async function KickIncomingRaid(data) {
+	if (!showKickHosts)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.user;
+		const avatarURL = await GetAvatar(username, 'kick');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+
+	// Set the text
+	let username = data.user;
+	// if (data.from_broadcaster_user_name.toLowerCase() != data.from_broadcaster_user_login.toLowerCase())
+	// 	username = `${data.from_broadcaster_user_name} (${data.from_broadcaster_user_login})`;
+	const viewers = data.viewers;
+
+	titleDiv.innerText = `${username} is raiding`;
+	contentDiv.innerText = `with a party of ${viewers}`;
+
+	AddMessageItem(instance, data.messageId);
 }
 
 /*
