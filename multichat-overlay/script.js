@@ -2305,12 +2305,12 @@ async function KickGifts(data) {
 	iconDiv.appendChild(badge);
 
 	// Set the text
-	// let username = data.user.name;
+	let username = data.user;
 	// if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
 	//	username = `${data.user.name} (${data.user.login})`;
-	const tier = data.tier;
+	// const tier = data.tier;
 	const gifts = data.gifts;
-	const totalGifts = data.totalGifts;
+	// const totalGifts = data.totalGifts;
 	// const recipient = data.recipient.name;
 	//const cumlativeTotal = data.cumlativeTotal;
 	// let username = data.user;

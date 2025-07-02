@@ -42,6 +42,12 @@ const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPoin
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
 
+const showKickMessages = GetBooleanParam("showKickMessages", true);
+const showKickFollows = GetBooleanParam("showKickFollows", false);
+const showKickSubs = GetBooleanParam("showKickSubs", true);
+const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
+const showKickHosts = GetBooleanParam("showKickHosts", true);
+
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
@@ -258,6 +264,11 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
+client.on('Custom.CodeEvent', (response) => {
+	console.debug(response.data);
+	CustomCodeEvent(response.data);
+})
+
 
 
 /////////////////////
@@ -393,7 +404,7 @@ async function TwitchChatMessage(data) {
 	// Render avatars
 	if (showAvatar) {
 		const username = data.message.username;
-		const avatarURL = await GetAvatar(username);
+		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
@@ -1031,6 +1042,321 @@ function FourthwallGiftDrawEnded(data) {
 	ShowAlert(message, 'fourthwall');
 }
 
+function CustomCodeEvent(data) {
+	const eventName = data.eventName;
+	const eventArgs = data.args;
+
+	switch (eventName) {
+		case "kickChatMessage":
+			KickChatMessage(eventArgs);
+			break;
+		case "kickSub":
+			KickSub(eventArgs);
+			break;
+		case "kickGift":
+			KickGift(eventArgs);
+			break;
+		case "kickGifts":
+			KickGifts(eventArgs);
+			break;
+		case "kickRewardRedeemed":
+			KickRewardRedeemed(eventArgs);
+			break;
+		case "kickIncomingRaid":
+			KickIncomingRaid(eventArgs);
+			break;
+		case "kickChatMessageDeleted":
+			KickChatMessageDeleted(eventArgs);
+			break;
+		case "kickBan":
+			KickBan(eventArgs);
+			break;
+		case "kickTO":
+			KickBan(eventArgs);
+			break;
+			
+	}
+}
+
+async function KickChatMessage(data) {
+	if (!showKickMessages)
+		return;
+
+	// Don't post messages starting with "!"
+	if (data.message.startsWith("!") && excludeCommands)
+		return;
+
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.user.toLowerCase()))
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('messageTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const userInfoDiv = instance.querySelector("#userInfo");
+	const avatarDiv = instance.querySelector("#avatar");
+	const timestampDiv = instance.querySelector("#timestamp");
+	const platformDiv = instance.querySelector("#platform");
+	const badgeListDiv = instance.querySelector("#badgeList");
+	const pronounsDiv = instance.querySelector("#pronouns");
+	const usernameDiv = instance.querySelector("#username");
+	const messageDiv = instance.querySelector("#message");
+
+	// // Set Shared Chat
+	// // If the message is from Shared Chat AND the user indicated that they do NOT
+	// // want shared chat messages, don't show it on screen
+	// const isSharedChat = data.isSharedChat;
+	// if (isSharedChat && !showTwitchSharedChat) {
+	// 	if (!data.sharedChat.primarySource)
+	// 		return;
+	// }
+
+	// Set timestamp
+	if (showTimestamps) {
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
+
+	// Set the username info
+	if (showUsername) {
+		usernameDiv.innerText = data.user;
+		usernameDiv.style.color = data.color;
+	}
+
+	// // Set pronouns
+	// const pronouns = await GetPronouns('twitch', data.message.username);
+	// if (pronouns && showPronouns) {
+	// 	pronounsDiv.classList.add("pronouns");
+	// 	pronounsDiv.innerText = pronouns;
+	// }
+
+	// Set the message data
+	let message = data.message;
+	const messageColor = data.color;
+	const role = data.role;
+
+	// Set furry mode
+	if (furryMode)
+		message = TranslateToFurry(message);
+
+	// Set message text
+	if (showMessage) {
+		messageDiv.innerText = message;
+	}
+
+	// Set the "action" color
+	if (data.isAction)
+		messageDiv.style.color = messageColor;
+
+	// Render platform
+	if (showPlatform) {
+		const platformElements = `<img src="icons/platforms/kick.png" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
+
+	// // Render badges
+	// if (showBadges) {
+	// 	badgeListDiv.innerHTML = "";
+	// 	for (i in data.message.badges) {
+	// 		const badge = new Image();
+	// 		badge.src = data.message.badges[i].imageUrl;
+	// 		badge.classList.add("badge");
+	// 		badgeListDiv.appendChild(badge);
+	// 	}
+	// }
+
+	// Render badges
+	if (data.isModerator && showBadges) {
+		const badge = new Image();
+		badge.src = `icons/badges/youtube-moderator.svg`;
+		badge.style.filter = `invert(100%)`;
+		badge.style.opacity = 0.8;
+		badge.classList.add("badge");
+		badgeListDiv.appendChild(badge);
+	}
+
+	if (data.isSubscribed && showBadges) {
+		const badge = new Image();
+		badge.src = `icons/badges/youtube-member.svg`;
+		badge.style.filter = `invert(100%)`;
+		badge.style.opacity = 0.8;
+		badge.classList.add("badge");
+		badgeListDiv.appendChild(badge);
+	}
+
+	if (data.isVip && showBadges) {
+		const badge = new Image();
+		badge.src = `icons/badges/youtube-verified.svg`;
+		badge.style.filter = `invert(100%)`;
+		badge.style.opacity = 0.8;
+		badge.classList.add("badge");
+		badgeListDiv.appendChild(badge);
+	}
+
+	// // Render emotes
+	// for (i in data.emotes) {
+	// 	const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
+	// 	const emoteName = EscapeRegExp(data.emotes[i].name);
+
+	// 	let regexPattern = emoteName;
+
+	// 	// Check if the emote name consists only of word characters (alphanumeric and underscore)
+	// 	if (/^\w+$/.test(emoteName)) {
+	// 		regexPattern = `\\b${emoteName}\\b`;
+	// 	}
+	// 	else {
+	// 		// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+	// 		regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
+	// 	}
+
+	// 	const regex = new RegExp(regexPattern, 'g');
+	// 	messageDiv.innerHTML = messageDiv.innerHTML.replace(regex, emoteElement);
+	// }
+
+	// // Render cheermotes
+	// for (i in data.cheerEmotes) {
+	// 	// const cheerEmoteElement = `<img src="${data.cheerEmotes[i].imageUrl}" class="emote"/>`;
+	// 	// messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.cheerEmotes[i].name}\\b`), cheerEmoteElement);
+	// 	const bits = data.cheerEmotes[i].bits;
+	// 	const imageUrl = data.cheerEmotes[i].imageUrl;
+	// 	const name = data.cheerEmotes[i].name;
+	// 	const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
+	// 	const bitsElements = `<span class="bits">${bits}</span>`
+	// 	messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
+	// }
+
+	// Render emotes
+	function replaceEmotes(message) {
+		const emoteRegex = /\[emote:(\d+):([^\]]+)\]/g;
+
+		return message.replace(emoteRegex, (_, id, name) => {
+			const imgUrl = `https://files.kick.com/emotes/${id}/fullsize`;
+			return `<img src="${imgUrl}" alt="${name}" title="${name}" class="emote" />`;
+		});
+	}
+	messageDiv.innerHTML = replaceEmotes(message);
+
+	// Render avatars
+	if (showAvatar) {
+		const username = data.userName;
+		const avatarURL = await GetAvatar(username, 'kick');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Hide the header if the same username sends a message twice in a row
+	const messageList = document.getElementById("messageList");
+	if (groupConsecutiveMessages && messageList.children.length > 0) {
+		const lastPlatform = messageList.lastChild.dataset.platform;
+		const lastUserId = messageList.lastChild.dataset.userId;
+		if (lastPlatform == "kick" && lastUserId == data.userId)
+			userInfoDiv.style.display = "none";
+	}
+
+	AddMessageItem(instance, data.msgId, 'kick', data.userId);
+}
+
+function KickSub(data) {
+	if (!showKickSubs)
+		return;
+
+	const message = data.rawInput;
+
+	ShowAlert(message, 'kick');
+}
+
+function KickGift(data) {
+	if (!showKickSubs)
+		return;
+
+	const message = data.rawInput;
+
+	ShowAlert(message, 'kick');
+}
+
+function KickGifts(data) {
+	if (!showKickSubs)
+		return;
+
+	const username = data.user;
+	const gifts = data.gifts;
+	const message = `${username} gifted ${gifts} subs to the community!`;
+
+	ShowAlert(message, 'kick');
+}
+
+function KickRewardRedeemed(data) {
+	if (!showKickChannelPointRedemptions)
+		return;
+
+	const username = data.user;
+	const rewardName = data.rewardTitle;
+	const message = `${username} redeemed ${rewardName}`;
+
+	ShowAlert(message, 'kick');
+}
+
+function KickIncomingRaid(data) {
+	if (!showKickHosts)
+		return;
+
+	const username = data.user;
+	const viewers = data.viewers;
+	const message = `${username} is raiding with a party of ${viewers}`;
+
+	ShowAlert(message, 'kick');
+}
+
+function KickChatMessageDeleted(data) {
+	const messageList = document.getElementById("messageList");
+
+	// Maintain a list of chat messages to delete
+	const messagesToRemove = [];
+
+	// ID of the message to remove
+	const messageId = data.msgId;
+
+	// Find the items to remove
+	for (let i = 0; i < messageList.children.length; i++) {
+		if (messageList.children[i].id === messageId) {
+			messagesToRemove.push(messageList.children[i]);
+		}
+	}
+
+	// Remove the items
+	messagesToRemove.forEach(item => {
+		messageList.removeChild(item);
+	});
+}
+
+function KickBan(data) {
+	const messageList = document.getElementById("messageList");
+
+	// Maintain a list of chat messages to delete
+	const messagesToRemove = [];
+
+	// ID of the message to remove
+	const userId = data.userId;
+
+	// Find the items to remove
+	for (let i = 0; i < messageList.children.length; i++) {
+		if (messageList.children[i].dataset.userId == userId) {
+			messagesToRemove.push(messageList.children[i]);
+		}
+	}
+
+	// Remove the items
+	messagesToRemove.forEach(item => {
+		messageList.removeChild(item);
+	});
+}
+
 
 
 //////////////////////
@@ -1086,17 +1412,36 @@ function GetCurrentTimeFormatted() {
 	return formattedTime;
 }
 
-async function GetAvatar(username) {
-	if (avatarMap.has(username)) {
-		console.debug(`Avatar found for ${username}. Retrieving from hash map.`)
-		return avatarMap.get(username);
+async function GetAvatar(username, platform) {
+
+	// First, check if the username is hashed already
+	if (avatarMap.has(`${username}-${platform}`)) {
+		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
+		return avatarMap.get(`${username}-${platform}`);
 	}
-	else {
-		console.debug(`No avatar found for ${username}. Retrieving from Decapi.`)
-		let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-		let data = await response.text()
-		avatarMap.set(username, data);
-		return data;
+
+	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
+	switch (platform) {
+		case 'twitch':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
+				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
+				let data = await response.text();
+				avatarMap.set(`${username}-${platform}`, data);
+				return data;
+			}
+		case 'kick':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
+				let response = await fetch('https://kick.com/api/v2/channels/' + username);
+				console.log('https://kick.com/api/v2/channels/' + username)
+				let data = await response.json();
+				let avatarURL = data.user.profile_pic;
+				if (!avatarURL)
+					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+				avatarMap.set(`${username}-${platform}`, avatarURL);
+				return avatarURL;
+			}
 	}
 }
 
