@@ -272,9 +272,14 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
-client.on('General.Custom', (response) => {
+// client.on('General.Custom', (response) => {
+// 	console.debug(response.data);
+// 	GeneralCustom(response.data);
+// })
+
+client.on('Custom.CodeEvent', (response) => {
 	console.debug(response.data);
-	GeneralCustom(response.data);
+	CustomCodeEvent(response.data);
 })
 
 
@@ -1784,31 +1789,54 @@ function FourthwallGiftDrawEnded(data) {
 	AddMessageItem(instance, data.id);
 }
 
-function GeneralCustom(data) {
-	const eventSource = data.eventSource;
+// function GeneralCustom(data) {
+// 	const eventSource = data.eventSource;
 
-	switch (eventSource) {
-		case "kick":
-			const triggerCustomCodeEventName = data.triggerCustomCodeEventName;
+// 	switch (eventSource) {
+// 		case "kick":
+// 			const triggerCustomCodeEventName = data.triggerCustomCodeEventName;
 
-			switch (triggerCustomCodeEventName) {
-				case "kickChatMessage":
-					KickChatMessage(data);
-					break;
-				case "kickSub":
-					KickSub(data);
-					break;
-				case "kickGift":
-					KickGift(data);
-					break;
-				case "kickGifts":
-					KickGifts(data);
-					break;
-				case "kickRewardRedeemed":
-					KickRewardRedeemed(data);
-					break;
-			}
+// 			switch (triggerCustomCodeEventName) {
+// 				case "kickChatMessage":
+// 					KickChatMessage(data);
+// 					break;
+// 				case "kickSub":
+// 					KickSub(data);
+// 					break;
+// 				case "kickGift":
+// 					KickGift(data);
+// 					break;
+// 				case "kickGifts":
+// 					KickGifts(data);
+// 					break;
+// 				case "kickRewardRedeemed":
+// 					KickRewardRedeemed(data);
+// 					break;
+// 			}
 
+// 			break;
+// 	}
+// }
+
+function CustomCodeEvent(data) {
+	const eventName = data.eventName;
+	const eventArgs = data.args;
+
+	switch (eventName) {
+		case "kickChatMessage":
+			KickChatMessage(eventArgs);
+			break;
+		case "kickSub":
+			KickSub(eventArgs);
+			break;
+		case "kickGift":
+			KickGift(eventArgs);
+			break;
+		case "kickGifts":
+			KickGifts(eventArgs);
+			break;
+		case "kickRewardRedeemed":
+			KickRewardRedeemed(eventArgs);
 			break;
 	}
 }
