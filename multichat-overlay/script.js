@@ -1890,10 +1890,7 @@ async function KickChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		if (data.user.toLowerCase() == data.userName.toLowerCase())
-			usernameDiv.innerText = data.user;
-		else
-			usernameDiv.innerText = `${data.user} (${data.userName})`;
+		usernameDiv.innerText = data.user;
 		usernameDiv.style.color = data.color;
 	}
 
@@ -2025,7 +2022,7 @@ async function KickChatMessage(data) {
 
 	// Render avatars
 	if (showAvatar) {
-		const username = data.user;
+		const username = data.userName;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
 		avatar.src = avatarURL;
@@ -2105,9 +2102,9 @@ async function KickSub(data) {
 	iconDiv.appendChild(badge);
 
 	// Set the text
-	let username = data.user;
-	if (data.user.toLowerCase() != data.userName.toLowerCase())
-		username = `${data.user} (${data.userName})`;
+	// let username = data.user;
+	// if (data.user.toLowerCase() != data.userName.toLowerCase())
+	// 	username = `${data.user} (${data.userName})`;
 	// const subTier = data.sub_tier;
 	// const isPrime = data.is_prime;
 
@@ -2155,9 +2152,9 @@ async function KickGift(data) {
 	// const subTier = data.subTier;
 	// const recipient = data.recipient.name;
 	// const cumlativeTotal = data.cumlativeTotal;
-	let username = data.user;
-	if (data.user.toLowerCase() != data.userName.toLowerCase())
-		username = `${data.user} (${data.userName})`;
+	// let username = data.user;
+	// if (data.user.toLowerCase() != data.userName.toLowerCase())
+	// 	username = `${data.user} (${data.userName})`;
 
 	// titleDiv.innerText = `${username} gifted a Tier ${subTier.charAt(0)} subscription to ${recipient}`;
 	// if (cumlativeTotal > 0)
@@ -2204,9 +2201,9 @@ async function KickGifts(data) {
 	const totalGifts = data.totalGifts;
 	// const recipient = data.recipient.name;
 	//const cumlativeTotal = data.cumlativeTotal;
-	let username = data.user;
-	if (data.user.toLowerCase() != data.userName.toLowerCase())
-		username = `${data.user} (${data.userName})`;
+	// let username = data.user;
+	// if (data.user.toLowerCase() != data.userName.toLowerCase())
+	// 	username = `${data.user} (${data.userName})`;
 
 	titleDiv.innerText = `${username} gifted ${gifts} subs to the community!`;
 	// if (totalGifts > 0)
@@ -2238,7 +2235,7 @@ async function KickRewardRedeemed(data) {
 
 	if (showAvatar) {
 		// Render avatars
-		const username = data.user;
+		const username = data.userName;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
 		avatar.src = avatarURL;
