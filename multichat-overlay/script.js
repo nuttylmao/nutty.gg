@@ -37,12 +37,14 @@ const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
+const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
 const showKickMessages = GetBooleanParam("showKickMessages", true);
+const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
 const showKickHosts = GetBooleanParam("showKickHosts", true);
@@ -135,6 +137,11 @@ client.on('Twitch.AutomaticRewardRedemption', (response) => {
 client.on('Twitch.Announcement', (response) => {
 	console.debug(response.data);
 	TwitchAnnouncement(response.data);
+})
+
+client.on('Twitch.Follow', (response) => {
+	console.debug(response.data);
+	TwitchFollow(response.data);
 })
 
 client.on('Twitch.Sub', (response) => {
@@ -644,6 +651,37 @@ async function TwitchAnnouncement(data) {
 
 	// Insert the modified template instance into the DOM
 	instance.querySelector("#content").appendChild(content);
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function TwitchFollow(data) {
+	if (!showTwitchFollows)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#contentDiv");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	// Set the text
+	let username = data.user_name;
+	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
+		username = `${data.user_name} (${data.user_login})`;
+
+	titleDiv.innerText = `${username} followed`;
 
 	AddMessageItem(instance, data.messageId);
 }
@@ -2098,6 +2136,34 @@ async function KickChatMessage(data) {
 	else {
 		AddMessageItem(instance, data.msgId, 'kick', data.userId);
 	}
+}
+
+async function KickFollow(data) {
+	if (!showKickFollows)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#contentDiv");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Set the text
+	let username = data.user;
+	titleDiv.innerText = `${username} followed`;
+
+	AddMessageItem(instance, data.messageId);
 }
 
 async function KickSub(data) {
