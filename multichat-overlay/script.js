@@ -2054,7 +2054,7 @@ async function KickChatMessage(data) {
 			return `<img src="${imgUrl}" alt="${name}" title="${name}" class="emote" />`;
 		});
 	}
-	messageDiv.innerHTML = replaceEmotes(data.message);
+	messageDiv.innerHTML = replaceEmotes(message);
 
 	// Render avatars
 	if (showAvatar) {
