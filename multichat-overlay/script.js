@@ -2337,7 +2337,7 @@ async function KickRewardRedeemed(data) {
 
 	if (showAvatar) {
 		// Render avatars
-		const username = data.userName;
+		const username = data.user;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
 		avatar.src = avatarURL;
