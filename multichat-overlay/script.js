@@ -1884,6 +1884,16 @@ function CustomCodeEvent(data) {
 		case "kickIncomingRaid":
 			KickIncomingRaid(eventArgs);
 			break;
+		case "kickChatMessageDeleted":
+			KickChatMessageDeleted(eventArgs);
+			break;
+		case "kickBan":
+			KickBan(eventArgs);
+			break;
+		case "kickTO":
+			KickBan(eventArgs);
+			break;
+			
 	}
 }
 
@@ -2403,6 +2413,54 @@ async function KickIncomingRaid(data) {
 	contentDiv.innerText = `with a party of ${viewers}`;
 
 	AddMessageItem(instance, data.messageId);
+}
+
+function KickChatMessageDeleted(data) {
+	const messageList = document.getElementById("messageList");
+
+	// Maintain a list of chat messages to delete
+	const messagesToRemove = [];
+
+	// ID of the message to remove
+	const messageId = data.msgId;
+
+	// Find the items to remove
+	for (let i = 0; i < messageList.children.length; i++) {
+		if (messageList.children[i].id === messageId) {
+			messagesToRemove.push(messageList.children[i]);
+		}
+	}
+
+	// Remove the items
+	messagesToRemove.forEach(item => {
+		item.style.opacity = 0;
+		item.style.height = 0;
+		setTimeout(function () {
+			messageList.removeChild(item);
+		}, 1000);
+	});
+}
+
+function KickBan(data) {
+	const messageList = document.getElementById("messageList");
+
+	// Maintain a list of chat messages to delete
+	const messagesToRemove = [];
+
+	// ID of the message to remove
+	const userId = data.userId;
+
+	// Find the items to remove
+	for (let i = 0; i < messageList.children.length; i++) {
+		if (messageList.children[i].dataset.userId.toString() == userId.toString()) {
+			messagesToRemove.push(messageList.children[i]);
+		}
+	}
+
+	// Remove the items
+	messagesToRemove.forEach(item => {
+		messageList.removeChild(item);
+	});
 }
 
 /*
