@@ -1050,6 +1050,9 @@ function CustomCodeEvent(data) {
 		case "kickChatMessage":
 			KickChatMessage(eventArgs);
 			break;
+		case "kickFollow":
+			KickFollow(eventArgs);
+			break;
 		case "kickSub":
 			KickSub(eventArgs);
 			break;

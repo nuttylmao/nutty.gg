@@ -60,6 +60,16 @@ const twitchCheerAction = urlParams.get("twitchCheerAction") || "";
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
+// Which Kick alerts do you want to see?
+const showKickFollows = GetBooleanParam("showKickFollows", false);
+const kickFollowAction = urlParams.get("kickFollowAction") || "";
+const showKickSubs = GetBooleanParam("showKickSubs", true);
+const kickSubAction = urlParams.get("kickSubAction") || "";
+const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
+const kickChannelPointRedemptionAction = urlParams.get("kickChannelPointRedemptionAction") || "";
+const showKickHosts = GetBooleanParam("showKickHosts", true);
+const kickHostAction = urlParams.get("kickHostAction") || "";
+
 // Which YouTube alerts do you want to see?
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const youtubeSuperChatAction = urlParams.get("youtubeSuperChatAction") || "";
@@ -275,6 +285,11 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
+client.on('Custom.CodeEvent', (response) => {
+	console.debug(response.data);
+	CustomCodeEvent(response.data);
+})
+
 
 
 ///////////////////////
@@ -289,7 +304,7 @@ async function TwitchFollow(data) {
 	const username = data.user_name;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	UpdateAlertBox(
 		'twitch',
@@ -314,7 +329,7 @@ async function TwitchCheer(data) {
 	let message = data.message.message;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	// Render emotes
 	for (i in data.emotes) {
@@ -369,7 +384,7 @@ async function TwitchSub(data) {
 	const isPrime = data.is_prime;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	if (!isPrime)
 		UpdateAlertBox(
@@ -409,7 +424,7 @@ async function TwitchResub(data) {
 	const message = data.text;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	if (!isPrime)
 		UpdateAlertBox(
@@ -453,7 +468,7 @@ async function TwitchGiftSub(data) {
 		return;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 	
 	let messageText = '';
 	if (cumlativeTotal > 0)
@@ -488,7 +503,7 @@ async function TwitchGiftBomb(data) {
 	const subTier = data.sub_tier.charAt(0);
 
 	// Render avatars
-	const avatarURL = await GetAvatar(login);
+	const avatarURL = await GetAvatar(login, 'twitch');
 
 	let message = ``;
 	if (totalGifts > 0)
@@ -518,7 +533,7 @@ async function TwitchRewardRedemption(data) {
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform" style="height: 1em"/>`;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.user_login);
+	const avatarURL = await GetAvatar(data.user_login, 'twitch');
 
 	UpdateAlertBox(
 		'twitch',
@@ -538,7 +553,7 @@ async function TwitchRaid(data) {
 		return;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.from_broadcaster_user_login);
+	const avatarURL = await GetAvatar(data.from_broadcaster_user_login, 'twitch');
 
 	// Set the text
 	const username = data.from_broadcaster_user_login;
@@ -1072,6 +1087,205 @@ function FourthwallGiftDrawEnded(data) {
 	);
 }
 
+function CustomCodeEvent(data) {
+	const eventName = data.eventName;
+	const eventArgs = data.args;
+
+	switch (eventName) {
+		case "kickFollow":
+			KickFollow(eventArgs);
+			break;
+		case "kickSub":
+			KickSub(eventArgs);
+			break;
+		case "kickGift":
+			KickGift(eventArgs);
+			break;
+		case "kickGifts":
+			KickGifts(eventArgs);
+			break;
+		case "kickRewardRedeemed":
+			KickRewardRedeemed(eventArgs);
+			break;
+		case "kickIncomingRaid":
+			KickIncomingRaid(eventArgs);
+			break;			
+	}
+}
+
+async function KickFollow(data) {
+	if (!showKickFollows)
+		return;
+
+	// Set the text
+	const username = data.user;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		`followed`,
+		``,
+		username,
+		``,
+		kickFollowAction,
+		data
+	);
+}
+
+async function KickSub(data) {
+	if (!showKickSubs)
+		return;
+
+	// Set the text
+	const username = data.user;
+	// const subTier = data.sub_tier;
+	// const isPrime = data.is_prime;
+	
+	// Take the raw message and remove the first word which should be the username
+	const description = data.rawInput.trim().split(" ").slice(1).join(" ");
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		description,
+		'',
+		username,
+		'',
+		kickSubAction,
+		data
+	);
+}
+
+async function KickGift(data) {
+	if (!showKickSubs)
+		return;
+
+	// Set the text
+	const username = data.user;
+	// const subTier = data.subTier;
+	// const recipient = data.recipient.name;
+	// const cumlativeTotal = data.cumlativeTotal;
+	// const fromCommunitySubGift = data.fromCommunitySubGift;
+	
+	// Take the raw message and remove the first word which should be the username
+	const description = data.rawInput.trim().split(" ").slice(1, -2).join(" ");
+	
+	// Take the raw message and remove the first word which should be the username
+	const attribute = data.rawInput.trim().split(" ").slice(-2).join(" ");
+
+	// // Don't post alerts for gift bombs
+	// if (fromCommunitySubGift)
+	// 	return;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
+	
+	// let messageText = '';
+	// if (cumlativeTotal > 0)
+	// 	messageText = `They've gifted ${cumlativeTotal} subs in total!`;
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		description,
+		attribute,
+		username,
+		'', //messageText,
+		kickSubAction,
+		data
+	);
+}
+
+async function KickGifts(data) {
+	if (!showKickSubs)
+		return;
+
+	// Set the text
+	const username = data.user;
+	const gifts = data.gifts;
+	// const subTier = data.subTier;
+	// const recipient = data.recipient.name;
+	// const cumlativeTotal = data.cumlativeTotal;
+	// const fromCommunitySubGift = data.fromCommunitySubGift;
+	
+	// Take the raw message and remove the first word which should be the username
+	const description = `gifted ${gifts} subs to the community!`;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		description,
+		'',
+		'',
+		'', //messageText,
+		kickSubAction,
+		data
+	);
+}
+
+async function KickRewardRedeemed(data) {
+	if (!showKickChannelPointRedemptions)
+		return;
+
+	const username = data.user;
+	const rewardName = data.rewardTitle;
+	// const cost = data.reward.cost;
+	const userInput = data.rewardUserInput;
+	// const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform" style="height: 1em"/>`;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(data.user, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username} redeemed`,
+		`${rewardName}`,
+		'',
+		username,
+		userInput,
+		kickChannelPointRedemptionAction,
+		data
+	);
+}
+
+async function KickIncomingRaid(data) {
+	if (!showKickHosts)
+		return;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(data.user, 'kick');
+
+	// Set the text
+	const username = data.user;
+	const viewers = data.viewers;
+	
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		`is raiding with a party of ${viewers}`,
+		'',
+		username,
+		'',
+		kickHostAction,
+		data
+	);
+}
+
 
 
 //////////////////////
@@ -1116,17 +1330,36 @@ function GetIntParam(paramName, defaultValue) {
 	return intValue;
 }
 
-async function GetAvatar(username) {
-	if (avatarMap.has(username)) {
-		console.debug(`Avatar found for ${username}. Retrieving from hash map.`)
-		return avatarMap.get(username);
+async function GetAvatar(username, platform) {
+
+	// First, check if the username is hashed already
+	if (avatarMap.has(`${username}-${platform}`)) {
+		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
+		return avatarMap.get(`${username}-${platform}`);
 	}
-	else {
-		console.debug(`No avatar found for ${username}. Retrieving from Decapi.`)
-		let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-		let data = await response.text()
-		avatarMap.set(username, data);
-		return data;
+
+	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
+	switch (platform) {
+		case 'twitch':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
+				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
+				let data = await response.text();
+				avatarMap.set(`${username}-${platform}`, data);
+				return data;
+			}
+		case 'kick':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
+				let response = await fetch('https://kick.com/api/v2/channels/' + username);
+				console.log('https://kick.com/api/v2/channels/' + username)
+				let data = await response.json();
+				let avatarURL = data.user.profile_pic;
+				if (!avatarURL)
+					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+				avatarMap.set(`${username}-${platform}`, avatarURL);
+				return avatarURL;
+			}
 	}
 }
 
@@ -1348,7 +1581,7 @@ async function testWidget()
 {
 	UpdateAlertBox(
 		'twitch',
-		await GetAvatar('nutty'),
+		await GetAvatar('nutty', 'twitch'),
 		`nutty`,
 		`subscribed with Tier 3`,
 		'',
@@ -1384,29 +1617,21 @@ function SetConnectionStatus(connected) {
 }
 
 // let data = {
-// 	cumulative_total: 77,
-// 	id: "6616253944106387595",
-// 	isTest: false,
-// 	messageId: "00e4258c-a880-4f11-a93c-4734ee92199f",
-// 	recipients: [
-// 	  {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-// 	],
-// 	sub_tier: "1000", // Usually "1000" = Tier 1
-// 	systemMessage: "thetrickster1973 is gifting 10 Tier 1 Subs to nutty's community! They've gifted a total of 77 in the channel!",
-// 	total: 10,
-// 	user: {
-// 	  badges: [{}, {}, {}],
-// 	  color: "#1E90FF",
-// 	  id: "52175891",
-// 	  login: "thetrickster1973",
-// 	  monthsSubscribed: 14,
-// 	  name: "thetrickster1973",
-// 	  role: 2, // 2 - VIP
-// 	  subscribed: true,
-// 	  type: "twitch"
-// 	}
-//   };
+//   "user": "BnBriTV",
+//   "viewers": 34,
+//   "eventSource": "kick",
+//   "fromKick": true,
+//   "__source": 18002,
+//   "triggerId": "e7be4c30-180c-40cd-b2cf-0f1bcc04e106",
+//   "triggerName": "Custom Code Event",
+//   "triggerCategory": "Custom",
+//   "triggerCustomCodeEventName": "kickIncomingRaid",
+//   "actionId": "fe5fc792-7e28-4ad9-bdb5-f32f8229810f",
+//   "actionName": "Kick Data Scraper | Save Data",
+//   "runningActionId": "1508eed5-7e08-49a9-9699-f3285b0200d8",
+//   "actionQueuedAt": "2025-07-03T06:13:40.3382156+10:00"
+// }
 
-// TwitchGiftBomb(data);
+// KickIncomingRaid(data);
 
-//testWidget();
+// testWidget();
