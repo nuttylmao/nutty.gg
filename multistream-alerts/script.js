@@ -318,6 +318,57 @@ function CustomCodeEvent(data) {
 
 
 
+//////////////////////
+// TIKFINITY CLIENT //
+//////////////////////
+
+let tikfinityWebsocket = null;
+
+function tikfinityConnect() {
+	if (tikfinityWebsocket) return; // Already connected
+
+	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
+
+	tikfinityWebsocket.onopen = function () {
+		console.log(`TikFinity successfully connected...`)
+	}
+
+	tikfinityWebsocket.onclose = function () {
+		console.error(`TikFinity disconnected...`)
+		tikfinityWebsocket = null;
+		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onerror = function () {
+		console.error(`TikFinity failed for some reason...`)
+		tikfinityWebsocket = null;
+		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onmessage = function (response) {
+		let payload = JSON.parse(response.data);
+
+		let event = payload.event;
+		let data = payload.data;
+
+		console.debug('Event: ' + event);
+
+		switch (event) {
+			case 'gift':
+				TikTokGift(data);
+				break;
+			case 'subscribe':
+				TikTokSubscribe(data);
+				break;
+		}
+	}
+}
+
+// Try connect when window is loaded
+window.addEventListener('load', tikfinityConnect);
+
+
+
 ///////////////////////
 // MULTICHAT OVERLAY //
 ///////////////////////
@@ -1268,6 +1319,49 @@ async function KickIncomingRaid(data) {
 	);
 }
 
+async function TikTokGift(data) {
+	// Set the text
+	const username = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+	const giftImg = `<img src=${data.giftPictureUrl} style="height: 1em"/>`;
+	
+	// Render avatars
+	const avatarURL = 'icons/platforms/tiktok.png';
+
+	UpdateAlertBox(
+		'tiktok',
+		avatarURL,
+		`${username}`,
+		`sent ${giftImg}x${data.repeatCount}`,
+		'',
+		username,
+		'',
+		'', //twitchSubAction,
+		data
+	);
+}
+
+async function TikTokSubscribe(data) {
+	// Set the text
+	const username = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+	
+	// Render avatars
+	const avatarURL = 'icons/platforms/tiktok.png';
+	
+	UpdateAlertBox(
+		'tiktok',
+		avatarURL,
+		`${username}`,
+		`subscribed on TikTok`,
+		'',
+		username,
+		'',
+		'', //twitchSubAction,
+		data
+	);
+}
+
 
 
 //////////////////////
@@ -1597,3 +1691,79 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+let data = {
+  "giftId": 5655,
+  "repeatCount": 1,
+  "repeatEnd": true,
+  "groupId": "1750261118899",
+  "userId": "6955276871237370885",
+  "secUid": "MS4wLjABAAAAWFtVMVXKfBB_hnuByyirANl3y8R4o8PC9clvNivtbD5JvdS6JtmCo0GR9int0mNU",
+  "uniqueId": "deejayamme",
+  "nickname": "Amme",
+  "profilePictureUrl": "https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.webp?dr=10399&refresh_token=b162ebd3&x-expires=1750431600&x-signature=9bDYBHHAzrlaBnA9%2BkBW37toUrI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a",
+  "followRole": 0,
+  "userBadges": [
+    {
+      "type": "image",
+      "badgeSceneType": 6,
+      "displayType": 1,
+      "url": "https://p19-webcast.tiktokcdn.com/webcast-sg/new_top_gifter_version_2.png~tplv-obj.image"
+    },
+    {
+      "type": "privilege",
+      "privilegeId": "7138381861675357988",
+      "level": 22,
+      "badgeSceneType": 8
+    }
+  ],
+  "userSceneTypes": [
+    6,
+    8,
+    6
+  ],
+  "userDetails": {
+    "createTime": "0",
+    "bioDescription": "",
+    "profilePictureUrls": [
+      "https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.webp?dr=10399&refresh_token=b162ebd3&x-expires=1750431600&x-signature=9bDYBHHAzrlaBnA9%2BkBW37toUrI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a",
+      "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.webp?dr=10399&refresh_token=e43e92cc&x-expires=1750431600&x-signature=UD9nuFnspy%2B%2Bi0ouX2FfTf1EUX0%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a",
+      "https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.jpeg?dr=10399&refresh_token=32267bb8&x-expires=1750431600&x-signature=rEkdnHYpCSdnuS4IFZ7Xgg6qb0A%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a"
+    ]
+  },
+  "followInfo": {
+    "followingCount": 9109,
+    "followerCount": 6426,
+    "followStatus": 0,
+    "pushStatus": 0
+  },
+  "isModerator": false,
+  "isNewGifter": false,
+  "isSubscriber": false,
+  "topGifterRank": 1,
+  "gifterLevel": 22,
+  "teamMemberLevel": 0,
+  "msgId": "7517314100029606678",
+  "createTime": "1750261122519",
+  "displayType": "webcast_aweme_gift_send_messageNew",
+  "label": "{0:user} sent {1:gift} × {2:string}",
+  "gift": {
+    "gift_id": 5655,
+    "repeat_count": 1,
+    "repeat_end": 1,
+    "gift_type": 1
+  },
+  "describe": "sent Rose",
+  "giftType": 1,
+  "diamondCount": 1,
+  "giftName": "Rose",
+  "giftPictureUrl": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.png",
+  "timestamp": 1750261122520,
+  "receiverUserId": "7050235313499374598",
+  "originalName": "Rose",
+  "originalDescribe": "Sent Rose",
+  "tikfinityUserId": 1903738,
+  "tikfinityUsername": "nuttylmao"
+}
+
+TikTokGift(data);

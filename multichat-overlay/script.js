@@ -1181,6 +1181,10 @@ function YouTubeMessage(data) {
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
 	}
+	else
+	{
+		avatarDiv.style.display = 'none';
+	}
 
 
 	// Hide the header if the same username sends a message twice in a row
@@ -2094,6 +2098,10 @@ async function KickChatMessage(data) {
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
 	}
+	else
+	{
+		avatarDiv.style.display = 'none';
+	}
 
 	// Hide the header if the same username sends a message twice in a row
 	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
@@ -2500,6 +2508,22 @@ function TikTokChat(data) {
 		avatar.src = data.profilePictureUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
+	}
+	else
+	{
+		avatarDiv.style.display = 'none';
+	}
+
+	// Hide the header if the same username sends a message twice in a row
+	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
+	const messageList = document.getElementById("messageList");
+	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
+		const lastPlatform = messageList.lastChild.dataset.platform;
+		const lastUserId = messageList.lastChild.dataset.userId;
+		if (lastPlatform == "tiktok" && lastUserId == data.userId){
+			userInfoDiv.style.display = "none";
+			avatarDiv.innerHTML = '';
+		}
 	}
 
 	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
