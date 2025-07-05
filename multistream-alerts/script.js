@@ -290,6 +290,32 @@ client.on('Custom.CodeEvent', (response) => {
 	CustomCodeEvent(response.data);
 })
 
+function CustomCodeEvent(data) {
+	const eventName = data.eventName;
+	const eventArgs = data.args;
+
+	switch (eventName) {
+		case "kickFollow":
+			KickFollow(eventArgs);
+			break;
+		case "kickSub":
+			KickSub(eventArgs);
+			break;
+		case "kickGift":
+			KickGift(eventArgs);
+			break;
+		case "kickGifts":
+			KickGifts(eventArgs);
+			break;
+		case "kickRewardRedeemed":
+			KickRewardRedeemed(eventArgs);
+			break;
+		case "kickIncomingRaid":
+			KickIncomingRaid(eventArgs);
+			break;			
+	}
+}
+
 
 
 ///////////////////////
@@ -1087,32 +1113,6 @@ function FourthwallGiftDrawEnded(data) {
 	);
 }
 
-function CustomCodeEvent(data) {
-	const eventName = data.eventName;
-	const eventArgs = data.args;
-
-	switch (eventName) {
-		case "kickFollow":
-			KickFollow(eventArgs);
-			break;
-		case "kickSub":
-			KickSub(eventArgs);
-			break;
-		case "kickGift":
-			KickGift(eventArgs);
-			break;
-		case "kickGifts":
-			KickGifts(eventArgs);
-			break;
-		case "kickRewardRedeemed":
-			KickRewardRedeemed(eventArgs);
-			break;
-		case "kickIncomingRaid":
-			KickIncomingRaid(eventArgs);
-			break;			
-	}
-}
-
 async function KickFollow(data) {
 	if (!showKickFollows)
 		return;
@@ -1128,9 +1128,9 @@ async function KickFollow(data) {
 		avatarURL,
 		`${username}`,
 		`followed`,
-		``,
+		'',
 		username,
-		``,
+		'',
 		kickFollowAction,
 		data
 	);
@@ -1170,10 +1170,6 @@ async function KickGift(data) {
 
 	// Set the text
 	const username = data.user;
-	// const subTier = data.subTier;
-	// const recipient = data.recipient.name;
-	// const cumlativeTotal = data.cumlativeTotal;
-	// const fromCommunitySubGift = data.fromCommunitySubGift;
 	
 	// Take the raw message and remove the first word which should be the username
 	const description = data.rawInput.trim().split(" ").slice(1, -2).join(" ");
@@ -1181,16 +1177,8 @@ async function KickGift(data) {
 	// Take the raw message and remove the first word which should be the username
 	const attribute = data.rawInput.trim().split(" ").slice(-2).join(" ");
 
-	// // Don't post alerts for gift bombs
-	// if (fromCommunitySubGift)
-	// 	return;
-
 	// Render avatars
 	const avatarURL = await GetAvatar(username, 'kick');
-	
-	// let messageText = '';
-	// if (cumlativeTotal > 0)
-	// 	messageText = `They've gifted ${cumlativeTotal} subs in total!`;
 
 	UpdateAlertBox(
 		'kick',
@@ -1199,7 +1187,7 @@ async function KickGift(data) {
 		description,
 		attribute,
 		username,
-		'', //messageText,
+		'',
 		kickSubAction,
 		data
 	);
@@ -1212,10 +1200,6 @@ async function KickGifts(data) {
 	// Set the text
 	const username = data.user;
 	const gifts = data.gifts;
-	// const subTier = data.subTier;
-	// const recipient = data.recipient.name;
-	// const cumlativeTotal = data.cumlativeTotal;
-	// const fromCommunitySubGift = data.fromCommunitySubGift;
 	
 	// Take the raw message and remove the first word which should be the username
 	const description = `gifted ${gifts} subs to the community!`;
@@ -1230,7 +1214,7 @@ async function KickGifts(data) {
 		description,
 		'',
 		'',
-		'', //messageText,
+		'',
 		kickSubAction,
 		data
 	);
@@ -1242,9 +1226,7 @@ async function KickRewardRedeemed(data) {
 
 	const username = data.user;
 	const rewardName = data.rewardTitle;
-	// const cost = data.reward.cost;
 	const userInput = data.rewardUserInput;
-	// const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform" style="height: 1em"/>`;
 
 	// Render avatars
 	const avatarURL = await GetAvatar(data.user, 'kick');
@@ -1615,23 +1597,3 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
-
-// let data = {
-//   "user": "BnBriTV",
-//   "viewers": 34,
-//   "eventSource": "kick",
-//   "fromKick": true,
-//   "__source": 18002,
-//   "triggerId": "e7be4c30-180c-40cd-b2cf-0f1bcc04e106",
-//   "triggerName": "Custom Code Event",
-//   "triggerCategory": "Custom",
-//   "triggerCustomCodeEventName": "kickIncomingRaid",
-//   "actionId": "fe5fc792-7e28-4ad9-bdb5-f32f8229810f",
-//   "actionName": "Kick Data Scraper | Save Data",
-//   "runningActionId": "1508eed5-7e08-49a9-9699-f3285b0200d8",
-//   "actionQueuedAt": "2025-07-03T06:13:40.3382156+10:00"
-// }
-
-// KickIncomingRaid(data);
-
-// testWidget();

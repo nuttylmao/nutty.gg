@@ -269,6 +269,45 @@ client.on('Custom.CodeEvent', (response) => {
 	CustomCodeEvent(response.data);
 })
 
+function CustomCodeEvent(data) {
+	const eventName = data.eventName;
+	const eventArgs = data.args;
+
+	switch (eventName) {
+		case "kickChatMessage":
+			KickChatMessage(eventArgs);
+			break;
+		case "kickFollow":
+			KickFollow(eventArgs);
+			break;
+		case "kickSub":
+			KickSub(eventArgs);
+			break;
+		case "kickGift":
+			KickGift(eventArgs);
+			break;
+		case "kickGifts":
+			KickGifts(eventArgs);
+			break;
+		case "kickRewardRedeemed":
+			KickRewardRedeemed(eventArgs);
+			break;
+		case "kickIncomingRaid":
+			KickIncomingRaid(eventArgs);
+			break;
+		case "kickChatMessageDeleted":
+			KickChatMessageDeleted(eventArgs);
+			break;
+		case "kickBan":
+			KickBan(eventArgs);
+			break;
+		case "kickTO":
+			KickBan(eventArgs);
+			break;
+			
+	}
+}
+
 
 
 /////////////////////
@@ -1042,45 +1081,6 @@ function FourthwallGiftDrawEnded(data) {
 	ShowAlert(message, 'fourthwall');
 }
 
-function CustomCodeEvent(data) {
-	const eventName = data.eventName;
-	const eventArgs = data.args;
-
-	switch (eventName) {
-		case "kickChatMessage":
-			KickChatMessage(eventArgs);
-			break;
-		case "kickFollow":
-			KickFollow(eventArgs);
-			break;
-		case "kickSub":
-			KickSub(eventArgs);
-			break;
-		case "kickGift":
-			KickGift(eventArgs);
-			break;
-		case "kickGifts":
-			KickGifts(eventArgs);
-			break;
-		case "kickRewardRedeemed":
-			KickRewardRedeemed(eventArgs);
-			break;
-		case "kickIncomingRaid":
-			KickIncomingRaid(eventArgs);
-			break;
-		case "kickChatMessageDeleted":
-			KickChatMessageDeleted(eventArgs);
-			break;
-		case "kickBan":
-			KickBan(eventArgs);
-			break;
-		case "kickTO":
-			KickBan(eventArgs);
-			break;
-			
-	}
-}
-
 async function KickChatMessage(data) {
 	if (!showKickMessages)
 		return;
@@ -1109,15 +1109,6 @@ async function KickChatMessage(data) {
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
 
-	// // Set Shared Chat
-	// // If the message is from Shared Chat AND the user indicated that they do NOT
-	// // want shared chat messages, don't show it on screen
-	// const isSharedChat = data.isSharedChat;
-	// if (isSharedChat && !showTwitchSharedChat) {
-	// 	if (!data.sharedChat.primarySource)
-	// 		return;
-	// }
-
 	// Set timestamp
 	if (showTimestamps) {
 		timestampDiv.classList.add("timestamp");
@@ -1129,13 +1120,6 @@ async function KickChatMessage(data) {
 		usernameDiv.innerText = data.user;
 		usernameDiv.style.color = data.color;
 	}
-
-	// // Set pronouns
-	// const pronouns = await GetPronouns('twitch', data.message.username);
-	// if (pronouns && showPronouns) {
-	// 	pronounsDiv.classList.add("pronouns");
-	// 	pronounsDiv.innerText = pronouns;
-	// }
 
 	// Set the message data
 	let message = data.message;
@@ -1199,38 +1183,6 @@ async function KickChatMessage(data) {
 		badge.classList.add("badge");
 		badgeListDiv.appendChild(badge);
 	}
-
-	// // Render emotes
-	// for (i in data.emotes) {
-	// 	const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-	// 	const emoteName = EscapeRegExp(data.emotes[i].name);
-
-	// 	let regexPattern = emoteName;
-
-	// 	// Check if the emote name consists only of word characters (alphanumeric and underscore)
-	// 	if (/^\w+$/.test(emoteName)) {
-	// 		regexPattern = `\\b${emoteName}\\b`;
-	// 	}
-	// 	else {
-	// 		// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-	// 		regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
-	// 	}
-
-	// 	const regex = new RegExp(regexPattern, 'g');
-	// 	messageDiv.innerHTML = messageDiv.innerHTML.replace(regex, emoteElement);
-	// }
-
-	// // Render cheermotes
-	// for (i in data.cheerEmotes) {
-	// 	// const cheerEmoteElement = `<img src="${data.cheerEmotes[i].imageUrl}" class="emote"/>`;
-	// 	// messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.cheerEmotes[i].name}\\b`), cheerEmoteElement);
-	// 	const bits = data.cheerEmotes[i].bits;
-	// 	const imageUrl = data.cheerEmotes[i].imageUrl;
-	// 	const name = data.cheerEmotes[i].name;
-	// 	const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
-	// 	const bitsElements = `<span class="bits">${bits}</span>`
-	// 	messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
-	// }
 
 	// Render emotes
 	function replaceEmotes(message) {

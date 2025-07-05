@@ -284,15 +284,103 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
-// client.on('General.Custom', (response) => {
-// 	console.debug(response.data);
-// 	GeneralCustom(response.data);
-// })
-
 client.on('Custom.CodeEvent', (response) => {
 	console.debug(response.data);
 	CustomCodeEvent(response.data);
 })
+
+function CustomCodeEvent(data) {
+	const eventName = data.eventName;
+	const eventArgs = data.args;
+
+	switch (eventName) {
+		case "kickChatMessage":
+			KickChatMessage(eventArgs);
+			break;
+		case "kickFollow":
+			KickFollow(eventArgs);
+			break;
+		case "kickSub":
+			KickSub(eventArgs);
+			break;
+		case "kickGift":
+			KickGift(eventArgs);
+			break;
+		case "kickGifts":
+			KickGifts(eventArgs);
+			break;
+		case "kickRewardRedeemed":
+			KickRewardRedeemed(eventArgs);
+			break;
+		case "kickIncomingRaid":
+			KickIncomingRaid(eventArgs);
+			break;
+		case "kickChatMessageDeleted":
+			KickChatMessageDeleted(eventArgs);
+			break;
+		case "kickBan":
+			KickBan(eventArgs);
+			break;
+		case "kickTO":
+			KickBan(eventArgs);
+			break;
+			
+	}
+}
+
+
+
+//////////////////////
+// TIKFINITY CLIENT //
+//////////////////////
+
+let tikfinityWebsocket = null;
+
+function tikfinityConnect() {
+	if (tikfinityWebsocket) return; // Already connected
+
+	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
+
+	tikfinityWebsocket.onopen = function () {
+		console.log(`TikFinity successfully connected...`)
+	}
+
+	tikfinityWebsocket.onclose = function () {
+		console.error(`TikFinity disconnected...`)
+		tikfinityWebsocket = null;
+		setTimeout(connect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onerror = function () {
+		console.error(`TikFinity failed for some reason...`)
+		tikfinityWebsocket = null;
+		setTimeout(connect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onmessage = function (response) {
+		let payload = JSON.parse(response.data);
+
+		let event = payload.event;
+		let data = payload.data;
+
+		console.debug('Event: ' + event);
+
+		switch (event) {
+			case 'chat':
+				TikTokChat(data);
+				break;
+			case 'gift':
+				TikTokGift(data);
+				break;
+			case 'subscribe':
+				TikTokSubscribe(data);
+				break;
+		}
+	}
+}
+
+// Try connect when window is loaded
+window.addEventListener('load', tikfinityConnect);
 
 
 
@@ -1832,74 +1920,6 @@ function FourthwallGiftDrawEnded(data) {
 	AddMessageItem(instance, data.id);
 }
 
-// function GeneralCustom(data) {
-// 	const eventSource = data.eventSource;
-
-// 	switch (eventSource) {
-// 		case "kick":
-// 			const triggerCustomCodeEventName = data.triggerCustomCodeEventName;
-
-// 			switch (triggerCustomCodeEventName) {
-// 				case "kickChatMessage":
-// 					KickChatMessage(data);
-// 					break;
-// 				case "kickSub":
-// 					KickSub(data);
-// 					break;
-// 				case "kickGift":
-// 					KickGift(data);
-// 					break;
-// 				case "kickGifts":
-// 					KickGifts(data);
-// 					break;
-// 				case "kickRewardRedeemed":
-// 					KickRewardRedeemed(data);
-// 					break;
-// 			}
-
-// 			break;
-// 	}
-// }
-
-function CustomCodeEvent(data) {
-	const eventName = data.eventName;
-	const eventArgs = data.args;
-
-	switch (eventName) {
-		case "kickChatMessage":
-			KickChatMessage(eventArgs);
-			break;
-		case "kickFollow":
-			KickFollow(eventArgs);
-			break;
-		case "kickSub":
-			KickSub(eventArgs);
-			break;
-		case "kickGift":
-			KickGift(eventArgs);
-			break;
-		case "kickGifts":
-			KickGifts(eventArgs);
-			break;
-		case "kickRewardRedeemed":
-			KickRewardRedeemed(eventArgs);
-			break;
-		case "kickIncomingRaid":
-			KickIncomingRaid(eventArgs);
-			break;
-		case "kickChatMessageDeleted":
-			KickChatMessageDeleted(eventArgs);
-			break;
-		case "kickBan":
-			KickBan(eventArgs);
-			break;
-		case "kickTO":
-			KickBan(eventArgs);
-			break;
-			
-	}
-}
-
 async function KickChatMessage(data) {
 	if (!showKickMessages)
 		return;
@@ -1942,22 +1962,6 @@ async function KickChatMessage(data) {
 		messageContainerDiv.classList.add("highlightMessage");
 	}
 
-	// // Set Shared Chat
-	// console.log(showTwitchSharedChat);
-	// const isSharedChat = data.isSharedChat;
-	// if (isSharedChat) {
-	// 	if (showTwitchSharedChat > 1) {
-	// 		if (!data.sharedChat.primarySource) {
-	// 			const sharedChatChannel = data.sharedChat.sourceRoom.name;
-	// 			sharedChatDiv.style.display = 'block';
-	// 			sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
-	// 			messageContainerDiv.classList.add("highlightMessage");
-	// 		}
-	// 	}
-	// 	else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
-	// 		return;
-	// }
-
 	// Set Reply Message
 	const isReply = data.isReply;
 	if (isReply && showMessage) {
@@ -1980,13 +1984,6 @@ async function KickChatMessage(data) {
 		usernameDiv.innerText = data.user;
 		usernameDiv.style.color = data.color;
 	}
-
-	// // Set pronouns
-	// const pronouns = await GetPronouns('twitch', data.message.username);
-	// if (pronouns && showPronouns) {
-	// 	pronounsDiv.classList.add("pronouns");
-	// 	pronounsDiv.innerText = pronouns;
-	// }
 
 	// Set the message data
 	let message = data.message;
@@ -2065,36 +2062,6 @@ async function KickChatMessage(data) {
 		badge.classList.add("badge");
 		badgeListDiv.appendChild(badge);
 	}
-
-	// // Render emotes
-	// for (i in data.emotes) {
-	// 	const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-	// 	const emoteName = EscapeRegExp(data.emotes[i].name);
-
-	// 	let regexPattern = emoteName;
-
-	// 	// Check if the emote name consists only of word characters (alphanumeric and underscore)
-	// 	if (/^\w+$/.test(emoteName)) {
-	// 		regexPattern = `\\b${emoteName}\\b`;
-	// 	}
-	// 	else {
-	// 		// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-	// 		regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
-	// 	}
-
-	// 	const regex = new RegExp(regexPattern, 'g');
-	// 	messageDiv.innerHTML = messageDiv.innerHTML.replace(regex, emoteElement);
-	// }
-
-	// // Render cheermotes
-	// for (i in data.cheerEmotes) {
-	// 	const bits = data.cheerEmotes[i].bits;
-	// 	const imageUrl = data.cheerEmotes[i].imageUrl;
-	// 	const name = data.cheerEmotes[i].name;
-	// 	const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
-	// 	const bitsElements = `<span class="bits">${bits}</span>`
-	// 	messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
-	// }
 
 	// Render emotes
 	function replaceEmotes(message) {
@@ -2217,17 +2184,6 @@ async function KickSub(data) {
 	iconDiv.appendChild(badge);
 
 	// Set the text
-	// let username = data.user;
-	// if (data.user.toLowerCase() != data.userName.toLowerCase())
-	// 	username = `${data.user} (${data.userName})`;
-	// const subTier = data.sub_tier;
-	// const isPrime = data.is_prime;
-
-	// if (!isPrime)
-	// 	titleDiv.innerText = `${username} subscribed with Tier ${subTier.charAt(0)}`;
-	// else
-	// 	titleDiv.innerText = `${username} used their Prime Sub`;
-	//titleDiv.innerText = `${username} subscribed on Kick`;
 	titleDiv.innerText = data.rawInput;
 
 	AddMessageItem(instance, data.messageId);
@@ -2261,20 +2217,6 @@ async function KickGift(data) {
 	iconDiv.appendChild(badge);
 
 	// Set the text
-	// let username = data.user.name;
-	// if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
-	// 	username = `${data.user.name} (${data.user.login})`;
-	// const subTier = data.subTier;
-	// const recipient = data.recipient.name;
-	// const cumlativeTotal = data.cumlativeTotal;
-	// let username = data.user;
-	// if (data.user.toLowerCase() != data.userName.toLowerCase())
-	// 	username = `${data.user} (${data.userName})`;
-
-	// titleDiv.innerText = `${username} gifted a Tier ${subTier.charAt(0)} subscription to ${recipient}`;
-	// if (cumlativeTotal > 0)
-	// 	contentDiv.innerText = `They've gifted ${cumlativeTotal} subs in total!`;
-
 	titleDiv.innerText = `${data.rawInput}`;
 
 	AddMessageItem(instance, data.messageId);
@@ -2308,21 +2250,9 @@ async function KickGifts(data) {
 	iconDiv.appendChild(badge);
 
 	// Set the text
-	let username = data.user;
-	// if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
-	//	username = `${data.user.name} (${data.user.login})`;
-	// const tier = data.tier;
+	const username = data.user;
 	const gifts = data.gifts;
-	// const totalGifts = data.totalGifts;
-	// const recipient = data.recipient.name;
-	//const cumlativeTotal = data.cumlativeTotal;
-	// let username = data.user;
-	// if (data.user.toLowerCase() != data.userName.toLowerCase())
-	// 	username = `${data.user} (${data.userName})`;
-
 	titleDiv.innerText = `${username} gifted ${gifts} subs to the community!`;
-	// if (totalGifts > 0)
-	//  	contentDiv.innerText = `They've gifted ${totalGifts} subs in total!`;
 
 	AddMessageItem(instance, data.messageId);
 }
@@ -2360,14 +2290,9 @@ async function KickRewardRedeemed(data) {
 
 	// Set the text
 	let username = data.user;
-	// if (data.user.toLowerCase() != data.userName.toLowerCase())
-	// 	username = `${data.user} (${data.userName})`;
 	const rewardName = data.rewardTitle;
-	//const cost = data.reward.cost;
 	const userInput = data.rewardUserInput;
-	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
 
-	//titleDiv.innerHTML = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
 	titleDiv.innerHTML = `${username} redeemed ${rewardName}`;
 	contentDiv.innerText = `${userInput}`;
 
@@ -2407,9 +2332,7 @@ async function KickIncomingRaid(data) {
 
 
 	// Set the text
-	let username = data.user;
-	// if (data.from_broadcaster_user_name.toLowerCase() != data.from_broadcaster_user_login.toLowerCase())
-	// 	username = `${data.from_broadcaster_user_name} (${data.from_broadcaster_user_login})`;
+	const username = data.user;
 	const viewers = data.viewers;
 
 	titleDiv.innerText = `${username} is raiding`;
@@ -2466,35 +2389,15 @@ function KickBan(data) {
 	});
 }
 
-/*
-function GeneralCustom(data) {
-	const target = data.target;
-	const type = data.type;
 
-	// Check the target for the message
-	const path = window.location.pathname;
-	const firstSegment = path.split('/')[1];
-	if (firstSegment != target)
-		return;
 
-	switch (type)
-	{
-		case "message":
-			CustomMessage(data);
-			break;
-		case "alert":
-			CustomAlert(data);
-			break;
-	}
-}
-
-function CustomMessage(data) {
+function TikTokChat(data) {
 	// Don't post messages starting with "!"
-	if (data.message.startsWith("!") && excludeCommands)
+	if (data.comment.startsWith("!") && excludeCommands)
 		return;
 
 	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.username.toLowerCase()))
+	if (ignoreUserList.includes(data.comment.toLowerCase()))
 		return;
 
 	// Get a reference to the template
@@ -2528,15 +2431,12 @@ function CustomMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		if (data.displayName.toLowerCase() == data.username.toLowerCase())
-			usernameDiv.innerText = data.displayName;
-		else
-			usernameDiv.innerText = `${data.displayName} (${data.username})`;
-		usernameDiv.style.color = data.userColor;
+		usernameDiv.innerText = data.nickname;
+		usernameDiv.style.color = '#9e9e9e';
 	}
 
 	// Set the message data
-	let message = data.message;
+	let message = data.comment;
 
 	// Set furry mode
 	if (furryMode)
@@ -2555,22 +2455,77 @@ function CustomMessage(data) {
 
 	// Render platform
 	if (showPlatform) {
-		const platformElements = `<img src="${data.platform.icon}" class="platform"/>`;
+		const platformElements = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
 		platformDiv.innerHTML = platformElements;
+	}
+
+	// Render badges
+	if (showBadges) {
+		badgeListDiv.innerHTML = "";
+
+		if (data.isModerator) {
+			const badge = new Image();
+			badge.src = `icons/badges/youtube-moderator.svg`;
+			badge.style.filter = `invert(100%)`;
+			badge.style.opacity = 0.8;
+			badge.classList.add("badge");
+			badgeListDiv.appendChild(badge);
+		}
+
+		for (i in data.userBadges) {
+			if (data.userBadges[i].type == 'image') {
+				const badge = new Image();
+				badge.src = data.userBadges[i].url;
+				badge.classList.add("badge");
+				badgeListDiv.appendChild(badge);
+			}
+		}
 	}
 
 	// Render avatars
 	if (showAvatar) {
 		const avatar = new Image();
-		avatar.src = data.avatar;
+		avatar.src = data.profilePictureUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
 	}
 
-	AddMessageItem(instance, data.msgId, data.platform.name, data.username);
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 }
 
-function CustomAlert(data) {
+function TikTokGift(data) {
+	if (data.giftType === 1 && !data.repeatEnd) {
+		// Streak in progress => show only temporary
+		console.debug(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
+		return;
+	}
+
+	// Streak ended or non-streakable gift => process the gift with final repeat_count
+	console.debug(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
+
+	// Get a reference to the template
+	const template = document.getElementById('tiktok-gift-template');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
+	const usernameSpan = instance.querySelector('#tiktok-gift-username');
+	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
+	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
+	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
+
+	avatarImg.src = data.profilePictureUrl;				// Set the card header
+	usernameSpan.innerText = data.nickname;				// Set the username
+	giftNameSpan.innerText = data.giftName;				// Set the gift name
+	stickerImg.src = data.giftPictureUrl;				// Set the sticker image URL
+	repeatCountDiv.innerText = `x${data.repeatCount}`;	// Set the number of gifts sent
+
+	AddMessageItem(instance, data.messageId);
+}
+
+function TikTokSubscribe(data) {
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -2586,25 +2541,15 @@ function CustomAlert(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.style.background = data.background;
+	cardDiv.classList.add('tiktok');
 
-	// Set the card header
-	const icon = new Image();
-	icon.src = data.icon;
-	icon.classList.add("badge");
-	iconDiv.appendChild(icon);
+	const user = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
 
-	// // Set the text
-	// let username = data.displayName;
-	// if (data.displayName.toLowerCase() != data.username.toLowerCase())
-	// 	username = `${data.displayName} (${data.username})`;
+	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
 
-	titleDiv.innerText = data.title;
-	contentDiv.innerText = data.content;
-
-	AddMessageItem(instance, data.messageId);
+	AddMessageItem(instance, data.msgId);
 }
-*/
 
 
 
@@ -2947,221 +2892,4 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.transition = "";
 		statusContainer.style.opacity = 1;
 	}
-}
-
-
-
-//////////////////////
-// TIKFINITY CLIENT //
-//////////////////////
-
-let websocket = null;
-
-function connect() {
-	if (websocket) return; // Already connected
-
-	websocket = new WebSocket("ws://localhost:21213/");
-
-	websocket.onopen = function () {
-		console.log(`TikFinity successfully connected...`)
-	}
-
-	websocket.onclose = function () {
-		console.error(`TikFinity disconnected...`)
-		websocket = null;
-		setTimeout(connect, 1000); // Schedule a reconnect attempt
-	}
-
-	websocket.onerror = function () {
-		console.error(`TikFinity failed for some reason...`)
-		websocket = null;
-		setTimeout(connect, 1000); // Schedule a reconnect attempt
-	}
-
-	websocket.onmessage = function (response) {
-		console.debug('THINGS ARE HAPPENING ON TIKTOK');
-		let responseroni = JSON.parse(response.data);
-
-		let event = responseroni.event;
-		let data = responseroni.data;
-
-		console.debug('Event: ' + event);
-
-		switch (event) {
-			case 'chat':
-				TikTokChat(data);
-				break;
-			case 'gift':
-				TikTokGift(data);
-				break;
-			case 'subscribe':
-				TikTokSubscribe(data);
-				break;
-		}
-	}
-}
-
-// Try connect when window is loaded
-window.addEventListener('load', connect);
-
-
-
-function TikTokChat(data) {
-	// Don't post messages starting with "!"
-	if (data.comment.startsWith("!") && excludeCommands)
-		return;
-
-	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.comment.toLowerCase()))
-		return;
-
-	// Get a reference to the template
-	const template = document.getElementById('messageTemplate');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const messageContainerDiv = instance.querySelector("#messageContainer");
-	const firstMessageDiv = instance.querySelector("#firstMessage");
-	const sharedChatDiv = instance.querySelector("#sharedChat");
-	const sharedChatChannelDiv = instance.querySelector("#sharedChatChannel");
-	const replyDiv = instance.querySelector("#reply");
-	const replyUserDiv = instance.querySelector("#replyUser");
-	const replyMsgDiv = instance.querySelector("#replyMsg");
-	const userInfoDiv = instance.querySelector("#userInfo");
-	const avatarDiv = instance.querySelector("#avatar");
-	const timestampDiv = instance.querySelector("#timestamp");
-	const platformDiv = instance.querySelector("#platform");
-	const badgeListDiv = instance.querySelector("#badgeList");
-	const pronounsDiv = instance.querySelector("#pronouns");
-	const usernameDiv = instance.querySelector("#username");
-	const messageDiv = instance.querySelector("#message");
-
-	// Set timestamp
-	if (showTimestamps) {
-		timestampDiv.classList.add("timestamp");
-		timestampDiv.innerText = GetCurrentTimeFormatted();
-	}
-
-	// Set the username info
-	if (showUsername) {
-		usernameDiv.innerText = data.nickname;
-		usernameDiv.style.color = '#9e9e9e';
-	}
-
-	// Set the message data
-	let message = data.comment;
-
-	// Set furry mode
-	if (furryMode)
-		message = TranslateToFurry(message);
-
-	// Set message text
-	if (showMessage) {
-		messageDiv.innerText = message;
-	}
-
-	// Remove the line break
-	if (inlineChat) {
-		instance.querySelector("#colon-separator").style.display = `inline`;
-		instance.querySelector("#line-space").style.display = `none`;
-	}
-
-	// Render platform
-	if (showPlatform) {
-		const platformElements = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
-		platformDiv.innerHTML = platformElements;
-	}
-
-	// Render badges
-	if (showBadges) {
-		badgeListDiv.innerHTML = "";
-
-		if (data.isModerator) {
-			const badge = new Image();
-			badge.src = `icons/badges/youtube-moderator.svg`;
-			badge.style.filter = `invert(100%)`;
-			badge.style.opacity = 0.8;
-			badge.classList.add("badge");
-			badgeListDiv.appendChild(badge);
-		}
-
-		for (i in data.userBadges) {
-			if (data.userBadges[i].type == 'image') {
-				const badge = new Image();
-				badge.src = data.userBadges[i].url;
-				badge.classList.add("badge");
-				badgeListDiv.appendChild(badge);
-			}
-		}
-	}
-
-	// Render avatars
-	if (showAvatar) {
-		const avatar = new Image();
-		avatar.src = data.profilePictureUrl;
-		avatar.classList.add("avatar");
-		avatarDiv.appendChild(avatar);
-	}
-
-	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
-}
-
-function TikTokGift(data) {
-	if (data.giftType === 1 && !data.repeatEnd) {
-		// Streak in progress => show only temporary
-		console.debug(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
-		return;
-	}
-
-	// Streak ended or non-streakable gift => process the gift with final repeat_count
-	console.debug(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
-
-	// Get a reference to the template
-	const template = document.getElementById('tiktok-gift-template');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
-	const usernameSpan = instance.querySelector('#tiktok-gift-username');
-	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
-	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
-	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
-
-	avatarImg.src = data.profilePictureUrl;				// Set the card header
-	usernameSpan.innerText = data.nickname;				// Set the username
-	giftNameSpan.innerText = data.giftName;				// Set the gift name
-	stickerImg.src = data.giftPictureUrl;				// Set the sticker image URL
-	repeatCountDiv.innerText = `x${data.repeatCount}`;	// Set the number of gifts sent
-
-	AddMessageItem(instance, data.messageId);
-}
-
-function TikTokSubscribe(data) {
-	// Get a reference to the template
-	const template = document.getElementById('cardTemplate');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const cardDiv = instance.querySelector("#card");
-	const headerDiv = instance.querySelector("#header");
-	const avatarDiv = instance.querySelector("#avatar");
-	const iconDiv = instance.querySelector("#icon");
-	const titleDiv = instance.querySelector("#title");
-	const contentDiv = instance.querySelector("#content");
-
-	// Set the card background colors
-	cardDiv.classList.add('tiktok');
-
-	const user = data.nickname;
-	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
-
-	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
-
-	AddMessageItem(instance, data.msgId);
 }
