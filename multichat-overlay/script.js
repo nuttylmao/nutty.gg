@@ -348,13 +348,13 @@ function tikfinityConnect() {
 	tikfinityWebsocket.onclose = function () {
 		console.error(`TikFinity disconnected...`)
 		tikfinityWebsocket = null;
-		setTimeout(connect, 1000); // Schedule a reconnect attempt
+		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
 	}
 
 	tikfinityWebsocket.onerror = function () {
 		console.error(`TikFinity failed for some reason...`)
 		tikfinityWebsocket = null;
-		setTimeout(connect, 1000); // Schedule a reconnect attempt
+		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
 	}
 
 	tikfinityWebsocket.onmessage = function (response) {
@@ -431,7 +431,6 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set Shared Chat
-	console.log(showTwitchSharedChat);
 	const isSharedChat = data.isSharedChat;
 	if (isSharedChat) {
 		if (showTwitchSharedChat > 1) {
@@ -501,6 +500,7 @@ async function TwitchChatMessage(data) {
 	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
 
 	// Render platform
@@ -559,6 +559,10 @@ async function TwitchChatMessage(data) {
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
 	}
+	else
+	{
+		avatarDiv.style.display = 'none';
+	}
 
 	// Hide the header if the same username sends a message twice in a row
 	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
@@ -566,8 +570,10 @@ async function TwitchChatMessage(data) {
 	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
-		if (lastPlatform == "twitch" && lastUserId == data.user.id)
+		if (lastPlatform == "twitch" && lastUserId == data.user.id){
 			userInfoDiv.style.display = "none";
+			avatarDiv.innerHTML = '';
+		}
 	}
 
 	// Embed image
@@ -624,8 +630,8 @@ async function TwitchAutomaticRewardRedemption(data) {
 	const gigaEmote = data.gigantified_emote.imageUrl;
 	const image = new Image();
 	image.src = gigaEmote;
-	image.style.padding = "20px 0px";
-	image.style.width = "50%";
+	image.style.padding = "0px 0px";
+	image.style.width = "10em";
 
 	image.onload = function () {
 		messageDiv.innerHTML = '';
@@ -695,6 +701,9 @@ async function TwitchAnnouncement(data) {
 	// Remove the line break
 	content.querySelector("#colon-separator").style.display = `inline`;
 	content.querySelector("#line-space").style.display = `none`;
+
+	// Remove the avatar
+	content.querySelector("#avatar").style.display = `none`;
 
 	// Render platform
 	content.querySelector("#platform").style.display = `none`;
@@ -1112,6 +1121,7 @@ function YouTubeMessage(data) {
 	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
 
 	// Render platform
@@ -2007,6 +2017,7 @@ async function KickChatMessage(data) {
 	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
 
 	// Render platform
@@ -2451,6 +2462,7 @@ function TikTokChat(data) {
 	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
 
 	// Render platform

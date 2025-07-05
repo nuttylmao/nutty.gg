@@ -1,8 +1,8 @@
 * {
 	margin: 0;
 	padding: 0;
-	--margin: 40px;
-	--border-radius: 20px;
+	--margin: 20px;
+	--border-radius: 0.5em;
 	/* --line-spacing: 1.7em; */
 }
 
@@ -95,15 +95,25 @@ li {
 
 .highlightMessage {
 	background: #adadad46;
-	padding: 20px 40px;
+	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
+}
+
+.message-contents {
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
+}
+
+#avatar {
+	width: 2em;
 }
 
 .avatar {
 	height: 2em;
 	margin: 1px;
 	transform: translate(0px, 0.25em);
-	border-radius: 50%
+	border-radius: 50%;
 }
 
 .timestamp,
@@ -177,7 +187,7 @@ li {
 
 #card {
 	background: #adadad46;
-	padding: 20px 40px;
+	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 }
 
@@ -198,8 +208,8 @@ li {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 20px;
-	padding: 20px 40px;
+	gap: 1em;
+	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 	max-width: 100%;
 	background: linear-gradient(#262626BF, #000000BF) !important;
