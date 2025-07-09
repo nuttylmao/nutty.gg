@@ -25,7 +25,7 @@ const font = urlParams.get("font") || "";
 const fontSize = urlParams.get("fontSize") || "30";
 const lineSpacing = urlParams.get("lineSpacing") || "1.7";
 const background = urlParams.get("background") || "#000000";
-const opacity = urlParams.get("opacity") || "0.85";
+const opacity = urlParams.get("opacity") || "0";
 
 const hideAfter = GetIntParam("hideAfter", 0);
 const excludeCommands = GetBooleanParam("excludeCommands", true);
@@ -422,6 +422,8 @@ async function TwitchChatMessage(data) {
 	const pronounsDiv = instance.querySelector("#pronouns");
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
+	
+	// messageContainerDiv.classList.add("bubble");
 
 	// Set First Time Chatter
 	const firstMessage = data.message.firstMessage;
@@ -558,10 +560,6 @@ async function TwitchChatMessage(data) {
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
-	}
-	else
-	{
-		avatarDiv.style.display = 'none';
 	}
 
 	// Hide the header if the same username sends a message twice in a row
@@ -1089,6 +1087,7 @@ function YouTubeMessage(data) {
 	const instance = template.content.cloneNode(true);
 
 	// Get divs
+	const messageContainerDiv = instance.querySelector("#messageContainer");
 	const userInfoDiv = instance.querySelector("#userInfo");
 	const avatarDiv = instance.querySelector("#avatar");
 	const timestampDiv = instance.querySelector("#timestamp");
@@ -1096,6 +1095,8 @@ function YouTubeMessage(data) {
 	const badgeListDiv = instance.querySelector("#badgeList");
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
+	
+	// messageContainerDiv.classList.add("bubble");
 
 	// Set timestamp
 	if (showTimestamps) {
@@ -1180,10 +1181,6 @@ function YouTubeMessage(data) {
 		avatar.src = data.user.profileImageUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
-	}
-	else
-	{
-		avatarDiv.style.display = 'none';
 	}
 
 
@@ -1968,6 +1965,8 @@ async function KickChatMessage(data) {
 	const pronounsDiv = instance.querySelector("#pronouns");
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
+	
+	// messageContainerDiv.classList.add("bubble");
 
 	// Set First Time Chatter
 	const firstMessage = data.firstMessage;
@@ -2097,10 +2096,6 @@ async function KickChatMessage(data) {
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
-	}
-	else
-	{
-		avatarDiv.style.display = 'none';
 	}
 
 	// Hide the header if the same username sends a message twice in a row
@@ -2297,8 +2292,8 @@ async function KickRewardRedeemed(data) {
 	// Set the card background colors
 	cardDiv.classList.add('kick');
 
+	// Render avatars
 	if (showAvatar) {
-		// Render avatars
 		const username = data.user;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
@@ -2339,8 +2334,8 @@ async function KickIncomingRaid(data) {
 	// Set the card background colors
 	cardDiv.classList.add('kick');
 
+	// Render avatars
 	if (showAvatar) {
-		// Render avatars
 		const username = data.user;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
@@ -2508,10 +2503,6 @@ function TikTokChat(data) {
 		avatar.src = data.profilePictureUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
-	}
-	else
-	{
-		avatarDiv.style.display = 'none';
 	}
 
 	// Hide the header if the same username sends a message twice in a row

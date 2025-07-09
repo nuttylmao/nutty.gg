@@ -93,8 +93,15 @@ li {
 	font-size: 0.7em;
 }
 
+.bubble {
+	background: #000000bf !important;
+	padding: 0.5em 1em;
+	border-radius: var(--border-radius);
+}
+
 .highlightMessage {
-	background: #adadad46;
+	/* background: #adadad46 !important; */
+	background: #414141bf !important;
 	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 }
@@ -102,11 +109,19 @@ li {
 .message-contents {
 	display: flex;
 	flex-direction: row;
-	gap: 1em;
+	gap: 0.5em;
+}
+
+.add-this-class-to-the-thing-to-make-all-the-text-centered-vertically-because-that-looks-much-better {
+	align-items: center;
 }
 
 #avatar {
 	width: 2em;
+}
+
+#avatar:empty {
+	display: none;
 }
 
 .avatar {
