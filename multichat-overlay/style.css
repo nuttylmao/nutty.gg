@@ -94,14 +94,15 @@ li {
 }
 
 .bubble {
-	background: #000000bf !important;
+	background: var(--bubble-color) !important;
 	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 }
 
 .highlightMessage {
 	/* background: #adadad46 !important; */
-	background: #414141bf !important;
+	background: #414141e5 !important;
+	box-shadow: inset 0 0 0 0.1em rgb(94, 94, 94);
 	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 }
