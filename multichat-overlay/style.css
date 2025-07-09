@@ -162,16 +162,16 @@ li {
 }
 
 .productImage {
-	height: 15em;
+	height: 3em;
 	border-radius: 0.25em;
 	transform: translate(0px, 0.25em);
 }
 
-.centerThatShitHomie {
+/* .centerThatShitHomie {
 	display: inline-block;
 	width: 100%;
 	text-align: center;
-}
+} */
 
 #badgeList {
 	margin: 0px 5px;

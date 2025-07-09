@@ -1647,11 +1647,17 @@ function FourthwallOrderPlaced(data) {
 	const iconDiv = instance.querySelector("#icon");
 	const titleDiv = instance.querySelector("#title");
 	const contentDiv = instance.querySelector("#content");
+	const messageContentsDiv = instance.querySelector(".message-contents");
 
 	// Set the card background colors
-	cardDiv.classList.add('blank');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+	cardDiv.classList.add('fourthwall');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('blank');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
+
+	messageContentsDiv.style.gap = '1em';
 
 	// Set the text
 	let user = data.username;
@@ -1663,11 +1669,13 @@ function FourthwallOrderPlaced(data) {
 	const itemImageUrl = data.variants[0].image;
 	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
 
+	avatarDiv.innerHTML = fourthwallProductImage;
+
 	let contents = "";
 
-	contents += fourthwallProductImage;
+	// contents += fourthwallProductImage;
 
-	contents += "<br><br>";
+	// contents += "<br><br>";
 
 	// If there user did not provide a username, just say "Someone"
 	if (user == undefined)
@@ -2920,3 +2928,42 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+let data = {
+    "isTest": false,
+    "createdAt": "2025-07-09T20:08:00.285111Z",
+    "updatedAt": "2025-07-09T20:08:02.875157Z",
+    "orderId": "cf346240-4aec-4180-a934-c537da606d1d",
+    "shopId": "sh_52bd3cd7-9d2a-411f-a39d-b5f495d94b56",
+    "friendly": "C3A21GSN",
+    "checkoutId": "ch_OorLt1nmQSuaJ-7cuw4gpw",
+    "status": "DELIVERED",
+    "email": "soyyahirda@gmail.com",
+    "emailMarketingOptIn": true,
+    "statmessageus": "",
+    "currency": "USD",
+    "subtotal": 0,
+    "shipping": 0,
+    "tax": 0,
+    "donation": 0,
+    "discount": 0,
+    "total": 0,
+    "variants": [
+      {
+        "id": "3615db93-4ee6-4e74-95da-423f6d269c5e",
+        "name": "Multichat Overlay",
+        "sku": "E6V8-M370000",
+        "image": "https://imgproxy.fourthwall.com/c8hzt6dcz8oRydfWZefs6SIE7XaHLb3nxdh2ffZx2MU/sm:1/enc/_E4zXgCjbueqrWEM/vAI0dpdr2NXEdZIv/hVgptGguJAG4x4v8/yqjRDCUeVomnpIvo/hhfJImiPC0CPAr4X/8185Z_nufxplf3mf/n9dRJ9OKofWADudx/e1PHg35vHZFqM1Fz/2-Bv0zKfGD44YSub/jVxvQNIZcEnEoXg2/YaudjZoENaKjwiaa/tzRZd55HVsXDx46P/838PRG1uTkIzmlej/zVnr_g",
+        "unitPrice": 0,
+        "currencyCode": "USD",
+        "quantity": 1,
+        "attributes": {
+          "description": ""
+        },
+        "stock": 0
+      }
+    ],
+    "source": "ORDER"
+  }
+
+  FourthwallOrderPlaced(data);
