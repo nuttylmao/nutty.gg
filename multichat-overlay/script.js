@@ -10,6 +10,12 @@ const sbServerPort = urlParams.get("port") || "8080";
 const avatarMap = new Map();
 const pronounMap = new Map();
 
+/////////////////
+// GLOBAL VARS //
+/////////////////
+
+const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&?#].*)?$/;
+
 /////////////
 // OPTIONS //
 /////////////
@@ -37,6 +43,7 @@ const scrollDirection = GetIntParam("scrollDirection", 1);
 const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", false);
 const inlineChat = GetBooleanParam("inlineChat", false);
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
+const showYouTubeLinkPreviews = GetBooleanParam("showYouTubeLinkPreviews", true);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
@@ -537,7 +544,7 @@ async function TwitchChatMessage(data) {
 
 	// Render emotes
 	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" title="${data.emotes[i].name}" class="emote"/>`;
 		const emoteName = EscapeRegExp(data.emotes[i].name);
 
 		let regexPattern = emoteName;
@@ -560,7 +567,7 @@ async function TwitchChatMessage(data) {
 		const bits = data.cheerEmotes[i].bits;
 		const imageUrl = data.cheerEmotes[i].imageUrl;
 		const name = data.cheerEmotes[i].name;
-		const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
+		const cheerEmoteElement = `<img src="${imageUrl}" title="${data.cheerEmotes[i].name} class="emote"/>`;
 		const bitsElements = `<span class="bits">${bits}</span>`
 		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
 	}
@@ -608,6 +615,15 @@ async function TwitchChatMessage(data) {
 	}
 	else {
 		AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
+	}
+
+	// Render YouTube links
+	if (youtubeRegex.test(message))
+	{
+		const videoId = ExtractYouTubeVideoId(message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
 	}
 }
 
@@ -738,7 +754,7 @@ async function TwitchAnnouncement(data) {
 	// Render emotes
 	for (i in data.parts) {
 		if (data.parts[i].type == `emote`) {
-			const emoteElement = `<img src="${data.parts[i].imageUrl}" class="emote"/>`;
+			const emoteElement = `<img src="${data.parts[i].imageUrl}" title="${data.parts[i].text}" class="emote"/>`;
 			const emoteName = EscapeRegExp(data.parts[i].text);
 
 			let regexPattern = emoteName;
@@ -1081,7 +1097,7 @@ function TwitchChatCleared(data) {
 	}
 }
 
-function YouTubeMessage(data) {
+async function YouTubeMessage(data) {
 	if (!showYouTubeMessages)
 		return;
 
@@ -1193,7 +1209,7 @@ function YouTubeMessage(data) {
 
 	// Render emotes
 	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" title="${data.emotes[i].name}" class="emote"/>`;
 		// messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
 		messageDiv.innerHTML = messageDiv.innerHTML.replace(data.emotes[i].name, emoteElement);
 	}
@@ -1239,6 +1255,15 @@ function YouTubeMessage(data) {
 	}
 	else {
 		AddMessageItem(instance, data.eventId, 'youtube', data.user.id);
+	}
+
+	// Render YouTube links
+	if (youtubeRegex.test(data.message))
+	{
+		const videoId = ExtractYouTubeVideoId(data.message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
 	}
 }
 
@@ -1670,7 +1695,6 @@ function FourthwallOrderPlaced(data) {
 	const iconDiv = instance.querySelector("#icon");
 	const titleDiv = instance.querySelector("#title");
 	const contentDiv = instance.querySelector("#content");
-	const messageContentsDiv = instance.querySelector(".message-contents");
 
 	// Set the card background colors
 	cardDiv.classList.add('fourthwall');
@@ -1680,7 +1704,7 @@ function FourthwallOrderPlaced(data) {
 	// titleDiv.classList.add('centerThatShitHomie');
 	// contentDiv.classList.add('centerThatShitHomie');
 
-	messageContentsDiv.style.gap = '1em';
+	avatarDiv.style.width = 'auto';
 
 	// Set the text
 	let user = data.username;
@@ -2171,6 +2195,15 @@ async function KickChatMessage(data) {
 	else {
 		AddMessageItem(instance, data.msgId, 'kick', data.userId);
 	}
+
+	// Render YouTube links
+	if (youtubeRegex.test(message))
+	{
+		const videoId = ExtractYouTubeVideoId(message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
+	}
 }
 
 async function KickFollow(data) {
@@ -2446,7 +2479,7 @@ function KickBan(data) {
 
 
 
-function TikTokChat(data) {
+async function TikTokChat(data) {
 	// Don't post messages starting with "!"
 	if (data.comment.startsWith("!") && excludeCommands)
 		return;
@@ -2571,6 +2604,15 @@ function TikTokChat(data) {
 	}
 
 	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+
+	// Render YouTube links
+	if (youtubeRegex.test(message))
+	{
+		const videoId = ExtractYouTubeVideoId(message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
+	}
 }
 
 function TikTokGift(data) {
@@ -2629,6 +2671,41 @@ function TikTokSubscribe(data) {
 	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
 
 	AddMessageItem(instance, data.msgId);
+}
+
+function YouTubeThumbnailPreview(data) {
+	if (!showYouTubeLinkPreviews)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('thumbnail');
+
+	avatarDiv.style.width = 'auto';
+
+	// Set the text
+	const title = data.title;
+	const author = data.author;
+	const thumbnail = `<img src="${data.thumbnail}" class="youtubeThumbnail"/>`;
+
+	avatarDiv.innerHTML = thumbnail;
+	titleDiv.innerHTML = `${title}`;
+	contentDiv.innerHTML = `by ${author}`;
+
+	AddMessageItem(instance);
 }
 
 
@@ -2751,6 +2828,11 @@ function IsImageUrl(url) {
 		// Return false if the URL is invalid.
 		return false;
 	}
+}
+
+function ExtractYouTubeVideoId(url) {
+  const match = url.match(youtubeRegex);
+  return match ? match[1] : null;
 }
 
 function AddMessageItem(element, elementID, platform, userId) {
@@ -2973,3 +3055,34 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+async function GetYouTubeVideoData(videoId) {
+  const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      title: data.title,
+      author: data.author_name,
+      thumbnail: data.thumbnail_url,
+    };
+  } catch (error) {
+    console.error('Error fetching YouTube video data:', error);
+    return null;
+  }
+}
+
+async function SemenLover()
+{
+	let data = await GetYouTubeVideoData('dQw4w9WgXcQ');
+
+	console.log(data);
+}
+
+SemenLover()

@@ -168,6 +168,12 @@ li {
 	transform: translate(0px, 0.25em);
 }
 
+.youtubeThumbnail {
+	width: 5em;
+	border-radius: 0.25em;
+	transform: translate(0px, 0.25em);
+}
+
 /* .centerThatShitHomie {
 	display: inline-block;
 	width: 100%;
@@ -318,6 +324,15 @@ li {
 .tiktok {
 	background: linear-gradient(#262626BF, #000000BF) !important;
 }
+
+.fourthwall {
+	background: linear-gradient(#466edbbf, #1c56f5bf) !important;
+}
+
+.thumbnail {
+	background: linear-gradient(#494949bf, #202020bf) !important;
+}
+
 
 .blank {
 	background: #adadad00 !important;

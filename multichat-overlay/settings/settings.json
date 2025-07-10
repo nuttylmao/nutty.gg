@@ -227,6 +227,14 @@
 			"group": "General"
 		},
 		{
+			"id": "showYouTubeLinkPreviews",
+			"label": "Show YouTube Link Previews",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
 			"id": "showTwitchMessages",
 			"label": "Chat Messages",
 			"description": "",
