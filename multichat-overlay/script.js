@@ -544,7 +544,7 @@ async function TwitchChatMessage(data) {
 
 	// Render emotes
 	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" title="${data.emotes[i].name}" class="emote"/>`;
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
 		const emoteName = EscapeRegExp(data.emotes[i].name);
 
 		let regexPattern = emoteName;
@@ -567,7 +567,7 @@ async function TwitchChatMessage(data) {
 		const bits = data.cheerEmotes[i].bits;
 		const imageUrl = data.cheerEmotes[i].imageUrl;
 		const name = data.cheerEmotes[i].name;
-		const cheerEmoteElement = `<img src="${imageUrl}" title="${data.cheerEmotes[i].name} class="emote"/>`;
+		const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
 		const bitsElements = `<span class="bits">${bits}</span>`
 		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
 	}
@@ -754,7 +754,7 @@ async function TwitchAnnouncement(data) {
 	// Render emotes
 	for (i in data.parts) {
 		if (data.parts[i].type == `emote`) {
-			const emoteElement = `<img src="${data.parts[i].imageUrl}" title="${data.parts[i].text}" class="emote"/>`;
+			const emoteElement = `<img src="${data.parts[i].imageUrl}" class="emote"/>`;
 			const emoteName = EscapeRegExp(data.parts[i].text);
 
 			let regexPattern = emoteName;
@@ -1209,7 +1209,7 @@ async function YouTubeMessage(data) {
 
 	// Render emotes
 	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" title="${data.emotes[i].name}" class="emote"/>`;
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
 		// messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
 		messageDiv.innerHTML = messageDiv.innerHTML.replace(data.emotes[i].name, emoteElement);
 	}
@@ -2148,7 +2148,7 @@ async function KickChatMessage(data) {
 
 		return message.replace(emoteRegex, (_, id, name) => {
 			const imgUrl = `https://files.kick.com/emotes/${id}/fullsize`;
-			return `<img src="${imgUrl}" alt="${name}" title="${name}" class="emote" />`;
+			return `<img src="${imgUrl}" alt="${name}" class="emote" />`;
 		});
 	}
 	messageDiv.innerHTML = replaceEmotes(message);
