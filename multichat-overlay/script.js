@@ -2359,9 +2359,11 @@ async function KickGiftedSubscriptions(data) {
 	// Set the text
 	const gifter = data.gifter_username;
 	const gifts = data.gifter_total;
-	titleDiv.innerText = `${gifter} gifted ${gifts} subscription${gifts === 1 ? '' : 's'} to the community!`;
+	const giftedUsers = data.gifted_usernames;
+	titleDiv.innerText = `${gifter} gifted ${giftedUsers.length} subscription${giftedUsers.length === 1 ? '' : 's'} to the community!`;
+	contentDiv.innerText = `${gifts === 1 ? '' : "They've gifted " + gifts + " subscription in the channel."}`;
 
-	if (gifts > 1)
+	if (giftedUsers.length > 1)
 		AddMessageItem(instance, data.messageId);
 
 	// Send individual notifications for every gifted user	
