@@ -1324,7 +1324,12 @@ function KickGiftedSubscriptions(data) {
 	const gifter = data.gifter_username;
 	const giftedUsers = data.gifted_usernames;
 
-	let message = `${gifter} gifted ${giftedUsers.length} subscription${giftedUsers.length === 1 ? '' : 's'} to the community!`
+	let message = '';
+
+	if (giftedUsers.length <= 1)
+		message = `${gifter} gifted a sub to ${giftedUsers[0]}`;
+	else
+		message = `${gifter} gifted ${giftedUsers.length} subscription${giftedUsers.length === 1 ? '' : 's'} to the community!`;
 
 	ShowAlert(message, 'kick');
 }
@@ -1353,8 +1358,7 @@ function KickStreamHost(data) {
 
 function KickMessageDeleted(data) {
 	const messageList = document.getElementById("messageList");
-
-	// Maintain a list of chat messages to delete
+// Maintain a list of chat messages to delete
 	const messagesToRemove = [];
 
 	// ID of the message to remove
@@ -1888,3 +1892,63 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+let data = {
+  "chatroom_id": 137726,
+  "gifted_usernames": [
+    "bmblnds",
+    "akilynczz",
+    "kukuda",
+    "him12345",
+    "mrzexter",
+    "kelsysosa",
+    "daddon001",
+    "Micca",
+    "SUPAHH0TT",
+    "andyp85",
+    "kearaunii",
+    "brianplayslive",
+    "Kidrin",
+    "fasenk",
+    "mohammadadilibi",
+    "coolsharkman09",
+    "PI0_JOGADOR",
+    "ricviera",
+    "kiitss",
+    "Gooboobananas",
+    "chrisVER455",
+    "wearyDingo49",
+    "PelaGOD",
+    "AksiOnPc",
+    "Demis898_",
+    "Koruptid",
+    "Kyuss",
+    "SellaRotalis",
+    "BUZZINJAE",
+    "carspeedman6",
+    "ketsuki31",
+    "Blizzard4E",
+    "PicklePickleton",
+    "Narcol",
+    "kinadol",
+    "PRAKNASTY",
+    "Kriegs_Toddlich",
+    "alz_abod",
+    "OfficialCoffeeClub",
+    "cathesaurus",
+    "Donglong",
+    "KingGrispy",
+    "sanwio",
+    "jakethedog69",
+    "happyX0",
+    "Crazedfate011",
+    "MikkaBot",
+    "NoLmtJ",
+    "chipo5000",
+    "crysstaline"
+  ],
+  "gifter_username": "Kick",
+  "gifter_total": 100
+}
+
+KickGiftedSubscriptions(data);
