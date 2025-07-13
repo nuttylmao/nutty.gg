@@ -176,19 +176,29 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "enableKickSupport",
+			"label": "Enable Kick Support",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "kickUsername",
+			"label": "Kick Username",
+			"description": "",
+			"type": "text",
+			"defaultValue": "",
+			"showIf": "enableKickSupport",
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
 			"id": "showKickMessages",
 			"label": "Chat Messages",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "Which Kick messages do you want to see?"
-		},
-		{
-			"id": "showKickFollows",
-			"label": "New Followers",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": false,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick messages do you want to see?"
 		},
 		{
@@ -197,6 +207,7 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick messages do you want to see?"
 		},
 		{
@@ -205,14 +216,16 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick messages do you want to see?"
 		},
 		{
 			"id": "showKickHosts",
-			"label": "Raids",
+			"label": "Hosts",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick messages do you want to see?"
 		},
 		{

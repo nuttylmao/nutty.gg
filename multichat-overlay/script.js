@@ -58,7 +58,7 @@ const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 const enableKickSupport = GetBooleanParam("enableKickSupport", false);
 const kickUsername = urlParams.get("kickUsername") || "";
 const showKickMessages = GetBooleanParam("showKickMessages", true);
-//const showKickFollows = GetBooleanParam("showKickFollows", false);
+// const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
 const showKickHosts = GetBooleanParam("showKickHosts", true);
@@ -297,50 +297,6 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	console.debug(response.data);
 	FourthwallGiftDrawEnded(response.data);
 })
-
-// client.on('Custom.CodeEvent', (response) => {
-// 	console.debug(response.data);
-// 	CustomCodeEvent(response.data);
-// })
-
-// function CustomCodeEvent(data) {
-// 	const eventName = data.eventName;
-// 	const eventArgs = data.args;
-
-// 	switch (eventName) {
-// 		case "kickChatMessage":
-// 			KickChatMessage(eventArgs);
-// 			break;
-// 		case "kickFollow":
-// 			KickFollow(eventArgs);
-// 			break;
-// 		case "kickSub":
-// 			KickSub(eventArgs);
-// 			break;
-// 		case "kickGift":
-// 			KickGift(eventArgs);
-// 			break;
-// 		case "kickGifts":
-// 			KickGifts(eventArgs);
-// 			break;
-// 		case "kickRewardRedeemed":
-// 			KickRewardRedeemed(eventArgs);
-// 			break;
-// 		case "kickIncomingRaid":
-// 			KickIncomingRaid(eventArgs);
-// 			break;
-// 		case "kickChatMessageDeleted":
-// 			KickChatMessageDeleted(eventArgs);
-// 			break;
-// 		case "kickBan":
-// 			KickBan(eventArgs);
-// 			break;
-// 		case "kickTO":
-// 			KickBan(eventArgs);
-// 			break;
-
-// 	}
-// }
 
 
 
@@ -2484,7 +2440,7 @@ async function KickStreamHost(data) {
 	titleDiv.innerText = `${username} is raiding`;
 	contentDiv.innerText = `with a party of ${viewers}`;
 
-	AddMessageItem(instance, data.messageId);
+	AddMessageItem(instance);
 }
 
 function KickMessageDeleted(data) {
