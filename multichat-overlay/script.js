@@ -2364,7 +2364,7 @@ async function KickGiftedSubscriptions(data) {
 	contentDiv.innerText = `${gifts === 1 ? '' : "They've gifted " + gifts + " subscription in the channel."}`;
 
 	if (giftedUsers.length > 1)
-		AddMessageItem(instance, data.messageId);
+		AddMessageItem(instance);
 
 	// Send individual notifications for every gifted user	
 	for (const username of data.gifted_usernames)
@@ -2401,7 +2401,7 @@ async function KickGiftToUser(gifter, username) {
 	// Set the text
 	titleDiv.innerText = `${gifter} gifted a sub to ${username}`;
 
-	AddMessageItem(instance, data.messageId);
+	AddMessageItem(instance);
 }
 
 async function KickRewardRedeemed(data) {
