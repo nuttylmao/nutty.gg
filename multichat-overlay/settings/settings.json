@@ -350,7 +350,7 @@
 		},
 		{
 			"id": "showKickHosts",
-			"label": "Raids",
+			"label": "Hosts",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
