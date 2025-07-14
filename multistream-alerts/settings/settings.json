@@ -318,7 +318,7 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": false,
-			"group": "Which Kick messages do you want to see?"
+			"group": "Which Kick alerts do you want to see?"
 		},
 		{
 			"id": "kickUsername",
@@ -327,7 +327,7 @@
 			"type": "text",
 			"defaultValue": "",
 			"showIf": "enableKickSupport",
-			"group": "Which Kick messages do you want to see?"
+			"group": "Which Kick alerts do you want to see?"
 		},
 		{
 			"id": "showKickSubs",
