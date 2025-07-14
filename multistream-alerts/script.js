@@ -1786,12 +1786,3 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
-
-let data = {
-  "chatroom_id": 137726,
-  "optional_message": "",
-  "number_viewers": 334,
-  "host_username": "spoomenka"
-}
-
-KickStreamHost(data);
