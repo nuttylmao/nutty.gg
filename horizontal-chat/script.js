@@ -390,13 +390,13 @@ function TikfinityConnect() {
 	tikfinityWebsocket.onclose = function () {
 		console.error(`TikFinity disconnected...`)
 		tikfinityWebsocket = null;
-		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
 	}
 
 	tikfinityWebsocket.onerror = function () {
 		console.error(`TikFinity failed for some reason...`)
 		tikfinityWebsocket = null;
-		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
 	}
 
 	tikfinityWebsocket.onmessage = function (response) {

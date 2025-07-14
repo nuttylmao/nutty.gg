@@ -313,21 +313,21 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
-			"id": "showKickFollows",
-			"label": "New Followers",
+			"id": "enableKickSupport",
+			"label": "Enable Kick Support",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": false,
-			"group": "Which Kick alerts do you want to see?"
+			"group": "Which Kick messages do you want to see?"
 		},
 		{
-			"id": "kickFollowAction",
-			"label": "",
-			"description": "Also run this Streamer.bot Action",
-			"type": "sb-actions",
+			"id": "kickUsername",
+			"label": "Kick Username",
+			"description": "",
+			"type": "text",
 			"defaultValue": "",
-			"showIf": "showKickFollows",
-			"group": "Which Kick alerts do you want to see?"
+			"showIf": "enableKickSupport",
+			"group": "Which Kick messages do you want to see?"
 		},
 		{
 			"id": "showKickSubs",
@@ -335,6 +335,7 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
@@ -352,6 +353,7 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
@@ -369,6 +371,7 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{

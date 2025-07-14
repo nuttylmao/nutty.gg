@@ -24,6 +24,15 @@ const messageLabel = document.getElementById('message');
 let widgetLocked = false;						// Needed to lock animation from overlapping
 let alertQueue = [];
 
+/////////////////
+// GLOBAL VARS //
+/////////////////
+
+const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
+let kickSubBadges = [];
+
+
+
 /////////////
 // OPTIONS //
 /////////////
@@ -61,8 +70,8 @@ const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
 // Which Kick alerts do you want to see?
-const showKickFollows = GetBooleanParam("showKickFollows", false);
-const kickFollowAction = urlParams.get("kickFollowAction") || "";
+const enableKickSupport = GetBooleanParam("enableKickSupport", false);
+const kickUsername = urlParams.get("kickUsername") || "";
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const kickSubAction = urlParams.get("kickSubAction") || "";
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
@@ -285,36 +294,91 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
-client.on('Custom.CodeEvent', (response) => {
-	console.debug(response.data);
-	CustomCodeEvent(response.data);
-})
 
-function CustomCodeEvent(data) {
-	const eventName = data.eventName;
-	const eventArgs = data.args;
 
-	switch (eventName) {
-		case "kickFollow":
-			KickFollow(eventArgs);
-			break;
-		case "kickSub":
-			KickSub(eventArgs);
-			break;
-		case "kickGift":
-			KickGift(eventArgs);
-			break;
-		case "kickGifts":
-			KickGifts(eventArgs);
-			break;
-		case "kickRewardRedeemed":
-			KickRewardRedeemed(eventArgs);
-			break;
-		case "kickIncomingRaid":
-			KickIncomingRaid(eventArgs);
-			break;			
+///////////////////////////
+// KICK PUSHER WEBSOCKET //
+///////////////////////////
+
+// Connect and handle Pusher WebSocket
+async function KickConnect() {
+	if (!enableKickSupport)
+		return;
+
+	// Channel to subscribe to (you'll need the correct channel name here)
+	const chatroomId = await GetKickChatroomId(kickUsername);
+
+	// Cache subscriber badges
+	kickSubBadges = await GetKickSubBadges(kickUsername);
+
+	const websocket = new WebSocket(kickPusherWsUrl);
+
+	websocket.onopen = function () {
+		console.log(`Kick successfully conntected to ${kickUsername}.`);
+	}
+
+	websocket.onmessage = function (response) {
+		try {
+			let data = JSON.parse(response.data);
+
+			console.debug(data);
+
+			// When connection is established, subscribe to a channel
+			if (data.event === 'pusher:connection_established') {
+				const socketData = JSON.parse(data.data);
+				console.log(`[Pusher] Socket established with ID: ${socketData.socket_id}`);
+
+				// Now subscribe to a channel
+				let subscribeMessage = {
+					event: 'pusher:subscribe',
+					data: {
+						channel: `chatroom_${chatroomId}`
+					}
+				};
+
+				websocket.send(JSON.stringify(subscribeMessage));
+
+				// Now subscribe to a channel
+				subscribeMessage = {
+					event: 'pusher:subscribe',
+					data: {
+						channel: `chatrooms.${chatroomId}.v2`
+					}
+				};
+
+				websocket.send(JSON.stringify(subscribeMessage));
+				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
+			}
+
+			// Event handlers
+			const eventArgs = JSON.parse(data.data);
+			const event = data.event.split('\\').pop();
+			switch (event) {
+				//// 'Follows' unsupported by pusher
+				// case 'FollowEvent':
+				// 	break;
+				case 'SubscriptionEvent':
+					KickSubscription(eventArgs);
+					break;
+				case 'GiftedSubscriptionsEvent':
+					KickGiftedSubscriptions(eventArgs);
+					break;
+				case 'RewardRedeemedEvent':
+					KickRewardRedeemed(eventArgs);
+					break;
+				case 'StreamHostEvent':
+					KickStreamHost(eventArgs);
+					break;
+			}
+		}
+		catch (error) {
+			console.error(error);
+		}
 	}
 }
+
+// Try connect when window is loaded
+window.addEventListener('load', KickConnect);
 
 
 
@@ -324,7 +388,7 @@ function CustomCodeEvent(data) {
 
 let tikfinityWebsocket = null;
 
-function tikfinityConnect() {
+function TikfinityConnect() {
 	if (tikfinityWebsocket) return; // Already connected
 
 	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
@@ -336,13 +400,13 @@ function tikfinityConnect() {
 	tikfinityWebsocket.onclose = function () {
 		console.error(`TikFinity disconnected...`)
 		tikfinityWebsocket = null;
-		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
 	}
 
 	tikfinityWebsocket.onerror = function () {
 		console.error(`TikFinity failed for some reason...`)
 		tikfinityWebsocket = null;
-		setTimeout(tikfinityConnect, 1000); // Schedule a reconnect attempt
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
 	}
 
 	tikfinityWebsocket.onmessage = function (response) {
@@ -365,7 +429,7 @@ function tikfinityConnect() {
 }
 
 // Try connect when window is loaded
-window.addEventListener('load', tikfinityConnect);
+window.addEventListener('load', TikfinityConnect);
 
 
 
@@ -1164,69 +1228,44 @@ function FourthwallGiftDrawEnded(data) {
 	);
 }
 
-async function KickFollow(data) {
-	if (!showKickFollows)
-		return;
+// async function KickFollow(data) {
+// 	if (!showKickFollows)
+// 		return;
 
-	// Set the text
-	const username = data.user;
+// 	// Set the text
+// 	const username = data.user;
 
-	// Render avatars
-	const avatarURL = await GetAvatar(username, 'kick');
+// 	// Render avatars
+// 	const avatarURL = await GetAvatar(username, 'kick');
 
-	UpdateAlertBox(
-		'kick',
-		avatarURL,
-		`${username}`,
-		`followed`,
-		'',
-		username,
-		'',
-		kickFollowAction,
-		data
-	);
-}
+// 	UpdateAlertBox(
+// 		'kick',
+// 		avatarURL,
+// 		`${username}`,
+// 		`followed`,
+// 		'',
+// 		username,
+// 		'',
+// 		kickFollowAction,
+// 		data
+// 	);
+// }
 
-async function KickSub(data) {
+async function KickSubscription(data) {
 	if (!showKickSubs)
 		return;
 
 	// Set the text
-	const username = data.user;
-	// const subTier = data.sub_tier;
-	// const isPrime = data.is_prime;
+	const username = data.username;
+	const months = data.months;
 	
-	// Take the raw message and remove the first word which should be the username
-	const description = data.rawInput.trim().split(" ").slice(1).join(" ");
+	let description = '';
+	if (months <= 1)
+		description = `just subscribed for the first time!`;
+	else
+		description = `resubscribed!`;
 
-	// Render avatars
-	const avatarURL = await GetAvatar(username, 'kick');
-
-	UpdateAlertBox(
-		'kick',
-		avatarURL,
-		`${username}`,
-		description,
-		'',
-		username,
-		'',
-		kickSubAction,
-		data
-	);
-}
-
-async function KickGift(data) {
-	if (!showKickSubs)
-		return;
-
-	// Set the text
-	const username = data.user;
-	
-	// Take the raw message and remove the first word which should be the username
-	const description = data.rawInput.trim().split(" ").slice(1, -2).join(" ");
-	
-	// Take the raw message and remove the first word which should be the username
-	const attribute = data.rawInput.trim().split(" ").slice(-2).join(" ");
+	const attribute = `${months} months`;
 
 	// Render avatars
 	const avatarURL = await GetAvatar(username, 'kick');
@@ -1244,27 +1283,35 @@ async function KickGift(data) {
 	);
 }
 
-async function KickGifts(data) {
+async function KickGiftedSubscriptions(data) {
 	if (!showKickSubs)
 		return;
 
 	// Set the text
-	const username = data.user;
-	const gifts = data.gifts;
-	
-	// Take the raw message and remove the first word which should be the username
-	const description = `gifted ${gifts} subs to the community!`;
+	const gifter = data.gifter_username;
+	const giftedUsers = data.gifted_usernames;
+
+	let description = '';
+	let attribute = '';
+
+	if (giftedUsers.length <= 1)
+	{
+		description = `gifted a sub to`;
+		attribute = `${giftedUsers[0]}`;
+	}
+	else
+		description = `gifted ${giftedUsers.length} subscription${giftedUsers.length === 1 ? '' : 's'} to the community!`;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username, 'kick');
+	const avatarURL = await GetAvatar(gifter, 'kick');
 
 	UpdateAlertBox(
 		'kick',
 		avatarURL,
-		`${username}`,
+		`${gifter}`,
 		description,
-		'',
-		'',
+		attribute,
+		gifter,
 		'',
 		kickSubAction,
 		data
@@ -1275,12 +1322,12 @@ async function KickRewardRedeemed(data) {
 	if (!showKickChannelPointRedemptions)
 		return;
 
-	const username = data.user;
-	const rewardName = data.rewardTitle;
-	const userInput = data.rewardUserInput;
+	const username = data.username;
+	const rewardName = data.reward_title;
+	const userInput = data.user_input;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.user, 'kick');
+	const avatarURL = await GetAvatar(username, 'kick');
 
 	UpdateAlertBox(
 		'kick',
@@ -1295,16 +1342,16 @@ async function KickRewardRedeemed(data) {
 	);
 }
 
-async function KickIncomingRaid(data) {
+async function KickStreamHost(data) {
 	if (!showKickHosts)
 		return;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.user, 'kick');
+	const avatarURL = await GetAvatar(data.host_username, 'kick');
 
 	// Set the text
-	const username = data.user;
-	const viewers = data.viewers;
+	const username = data.host_username;
+	const viewers = data.number_viewers;
 	
 	UpdateAlertBox(
 		'kick',
@@ -1649,6 +1696,54 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 
 }
 
+async function GetKickChatroomId(username) {
+	const url = `https://kick.com/api/v2/channels/${username}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+
+		const data = await response.json();
+		if (data.chatroom && data.chatroom.id) {
+			return data.chatroom.id;
+		} else {
+			throw new Error("Chatroom ID not found in response.");
+		}
+	} catch (error) {
+		console.error("Failed to fetch chatroom ID:", error.message);
+		return null;
+	}
+}
+
+async function GetKickSubBadges(username) {
+	const response = await fetch(`https://kick.com/api/v2/channels/${username}`);
+	const data = await response.json();
+
+	return data.subscriber_badges || [];
+}
+
+function GetKickBadgeURL(data) {
+	switch (data.type) {
+		case 'subscriber':
+			return CalculateKickSubBadge(data.count);
+		default:
+			return `icons/badges/kick-${data.type}.svg`;
+	}
+}
+
+function CalculateKickSubBadge(months) {
+  if (!Array.isArray(kickSubBadges)) return null;
+
+  // Filter for eligible badges, then get the one with the highest 'months'
+  const badge = kickSubBadges
+    .filter(b => b.months <= months)
+    .sort((a, b) => b.months - a.months)[0];
+
+  return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
+}
+
 ////////////////////
 // TEST FUNCTIONS //
 ////////////////////
@@ -1693,77 +1788,10 @@ function SetConnectionStatus(connected) {
 }
 
 let data = {
-  "giftId": 5655,
-  "repeatCount": 1,
-  "repeatEnd": true,
-  "groupId": "1750261118899",
-  "userId": "6955276871237370885",
-  "secUid": "MS4wLjABAAAAWFtVMVXKfBB_hnuByyirANl3y8R4o8PC9clvNivtbD5JvdS6JtmCo0GR9int0mNU",
-  "uniqueId": "deejayamme",
-  "nickname": "Amme",
-  "profilePictureUrl": "https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.webp?dr=10399&refresh_token=b162ebd3&x-expires=1750431600&x-signature=9bDYBHHAzrlaBnA9%2BkBW37toUrI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a",
-  "followRole": 0,
-  "userBadges": [
-    {
-      "type": "image",
-      "badgeSceneType": 6,
-      "displayType": 1,
-      "url": "https://p19-webcast.tiktokcdn.com/webcast-sg/new_top_gifter_version_2.png~tplv-obj.image"
-    },
-    {
-      "type": "privilege",
-      "privilegeId": "7138381861675357988",
-      "level": 22,
-      "badgeSceneType": 8
-    }
-  ],
-  "userSceneTypes": [
-    6,
-    8,
-    6
-  ],
-  "userDetails": {
-    "createTime": "0",
-    "bioDescription": "",
-    "profilePictureUrls": [
-      "https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.webp?dr=10399&refresh_token=b162ebd3&x-expires=1750431600&x-signature=9bDYBHHAzrlaBnA9%2BkBW37toUrI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a",
-      "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.webp?dr=10399&refresh_token=e43e92cc&x-expires=1750431600&x-signature=UD9nuFnspy%2B%2Bi0ouX2FfTf1EUX0%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a",
-      "https://p77-sign-va.tiktokcdn.com/tos-maliva-avt-0068/7332939462534447110~tplv-tiktokx-cropcenter:100:100.jpeg?dr=10399&refresh_token=32267bb8&x-expires=1750431600&x-signature=rEkdnHYpCSdnuS4IFZ7Xgg6qb0A%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=fdd36af4&idc=no1a"
-    ]
-  },
-  "followInfo": {
-    "followingCount": 9109,
-    "followerCount": 6426,
-    "followStatus": 0,
-    "pushStatus": 0
-  },
-  "isModerator": false,
-  "isNewGifter": false,
-  "isSubscriber": false,
-  "topGifterRank": 1,
-  "gifterLevel": 22,
-  "teamMemberLevel": 0,
-  "msgId": "7517314100029606678",
-  "createTime": "1750261122519",
-  "displayType": "webcast_aweme_gift_send_messageNew",
-  "label": "{0:user} sent {1:gift} × {2:string}",
-  "gift": {
-    "gift_id": 5655,
-    "repeat_count": 1,
-    "repeat_end": 1,
-    "gift_type": 1
-  },
-  "describe": "sent Rose",
-  "giftType": 1,
-  "diamondCount": 1,
-  "giftName": "Rose",
-  "giftPictureUrl": "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.png",
-  "timestamp": 1750261122520,
-  "receiverUserId": "7050235313499374598",
-  "originalName": "Rose",
-  "originalDescribe": "Sent Rose",
-  "tikfinityUserId": 1903738,
-  "tikfinityUsername": "nuttylmao"
+  "chatroom_id": 137726,
+  "optional_message": "",
+  "number_viewers": 334,
+  "host_username": "spoomenka"
 }
 
-TikTokGift(data);
+KickStreamHost(data);
