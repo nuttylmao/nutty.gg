@@ -64,6 +64,11 @@ const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
+const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
+const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
+const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
+const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
+
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
@@ -379,6 +384,9 @@ window.addEventListener('load', KickConnect);
 let tikfinityWebsocket = null;
 
 function TikfinityConnect() {
+	if (!enableTikTokSupport)
+		return;
+
 	if (tikfinityWebsocket) return; // Already connected
 
 	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
@@ -1400,6 +1408,9 @@ function KickUserBanned(data) {
 }
 
 async function TikTokChat(data) {
+	if (!showTikTokMessages)
+		return;
+
 	// Don't post messages starting with "!"
 	if (data.comment.startsWith("!") && excludeCommands)
 		return;
@@ -1498,6 +1509,9 @@ async function TikTokChat(data) {
 }
 
 async function TikTokGift(data) {
+	if (!showTikTokGifts)
+		return;
+
 	if (data.giftType === 1 && !data.repeatEnd) {
 		// Streak in progress => show only temporary
 		console.debug(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
@@ -1515,6 +1529,9 @@ async function TikTokGift(data) {
 }
 
 async function TikTokSubscribe(data) {
+	if (!showTikTokSubs)
+		return;
+
 	let username = data.nickname;
 
 	const message = `${username} subscribed on TikTok`;

@@ -305,6 +305,38 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showYouTubeMessages",
+			"label": "Chat Messages",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
+			"id": "showYouTubeSuperChats",
+			"label": "Super Chats",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
+			"id": "showYouTubeSuperStickers",
+			"label": "Super Stickers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
+			"id": "showYouTubeMemberships",
+			"label": "Memberships",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
 			"id": "enableKickSupport",
 			"label": "Enable Kick Support",
 			"description": "",
@@ -358,36 +390,39 @@
 			"group": "Which Kick messages do you want to see?"
 		},
 		{
-			"id": "showYouTubeMessages",
+			"id": "enableTikTokSupport",
+			"label": "Enable TikTok Support",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
+			"id": "showTikTokMessages",
 			"label": "Chat Messages",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "Which YouTube messages do you want to see?"
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
 		},
 		{
-			"id": "showYouTubeSuperChats",
-			"label": "Super Chats",
+			"id": "showTikTokGifts",
+			"label": "Gifts",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "Which YouTube messages do you want to see?"
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
 		},
 		{
-			"id": "showYouTubeSuperStickers",
-			"label": "Super Stickers",
+			"id": "showTikTokSubs",
+			"label": "New Subscribers",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "Which YouTube messages do you want to see?"
-		},
-		{
-			"id": "showYouTubeMemberships",
-			"label": "Memberships",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": true,
-			"group": "Which YouTube messages do you want to see?"
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
 		},
 		{
 			"id": "showStreamlabsDonations",

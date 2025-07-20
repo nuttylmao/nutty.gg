@@ -313,6 +313,57 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
+			"id": "showYouTubeSuperChats",
+			"label": "Super Chats",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "youtubeSuperChatAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showYouTubeSuperChats",
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "showYouTubeSuperStickers",
+			"label": "Super Stickers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "youtubeSuperStickerAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showYouTubeSuperStickers",
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "showYouTubeMemberships",
+			"label": "Memberships",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "youtubeMembershipAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showYouTubeMemberships",
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
 			"id": "enableKickSupport",
 			"label": "Enable Kick Support",
 			"description": "",
@@ -384,55 +435,48 @@
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
-			"id": "showYouTubeSuperChats",
-			"label": "Super Chats",
+			"id": "enableTikTokSupport",
+			"label": "Enable TikTok Support",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which TikTok alerts do you want to see?"
+		},
+		{
+			"id": "showTikTokGifts",
+			"label": "Gifts",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "Which YouTube alerts do you want to see?"
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok alerts do you want to see?"
 		},
 		{
-			"id": "youtubeSuperChatAction",
+			"id": "tiktokGiftAction",
 			"label": "",
 			"description": "Also run this Streamer.bot Action",
 			"type": "sb-actions",
 			"defaultValue": "",
-			"showIf": "showYouTubeSuperChats",
-			"group": "Which YouTube alerts do you want to see?"
+			"showIf": "showTikTokGifts",
+			"group": "Which TikTok alerts do you want to see?"
 		},
 		{
-			"id": "showYouTubeSuperStickers",
-			"label": "Super Stickers",
+			"id": "showTikTokSubs",
+			"label": "New Subscribers",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "Which YouTube alerts do you want to see?"
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok alerts do you want to see?"
 		},
 		{
-			"id": "youtubeSuperStickerAction",
+			"id": "tiktokSubAction",
 			"label": "",
 			"description": "Also run this Streamer.bot Action",
 			"type": "sb-actions",
 			"defaultValue": "",
-			"showIf": "showYouTubeSuperStickers",
-			"group": "Which YouTube alerts do you want to see?"
-		},
-		{
-			"id": "showYouTubeMemberships",
-			"label": "Memberships",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": true,
-			"group": "Which YouTube alerts do you want to see?"
-		},
-		{
-			"id": "youtubeMembershipAction",
-			"label": "",
-			"description": "Also run this Streamer.bot Action",
-			"type": "sb-actions",
-			"defaultValue": "",
-			"showIf": "showYouTubeMemberships",
-			"group": "Which YouTube alerts do you want to see?"
+			"showIf": "showTikTokSubs",
+			"group": "Which TikTok alerts do you want to see?"
 		},
 		{
 			"id": "showStreamlabsDonations",

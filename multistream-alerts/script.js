@@ -87,6 +87,13 @@ const youtubeSuperStickerAction = urlParams.get("youtubeSuperStickerAction") || 
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const youtubeMembershipAction = urlParams.get("youtubeMembershipAction") || "";
 
+// Which TikTok alerts do you want to see?
+const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
+const showTikTokGifts = GetBooleanParam("showTikTokGifts", true);
+const tiktokGiftAction = urlParams.get("tiktokGiftAction") || "";
+const showTikTokSubs = GetBooleanParam("showTikTokSubs", true);
+const tiktokSubAction = urlParams.get("tiktokSubAction") || "";
+
 // Which donation alerts do you want to see?
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", false);
 const streamlabsDonationAction = urlParams.get("streamlabsDonationAction") || "";
@@ -389,6 +396,9 @@ window.addEventListener('load', KickConnect);
 let tikfinityWebsocket = null;
 
 function TikfinityConnect() {
+	if (!enableTikTokSupport)
+		return;
+
 	if (tikfinityWebsocket) return; // Already connected
 
 	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
@@ -1367,6 +1377,9 @@ async function KickStreamHost(data) {
 }
 
 async function TikTokGift(data) {
+	if (!showTikTokGifts)
+		return;
+
 	// Set the text
 	const username = data.nickname;
 	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
@@ -1383,12 +1396,15 @@ async function TikTokGift(data) {
 		'',
 		username,
 		'',
-		'', //twitchSubAction,
+		tiktokGiftAction,
 		data
 	);
 }
 
 async function TikTokSubscribe(data) {
+	if (!showTikTokSubs)
+		return;
+
 	// Set the text
 	const username = data.nickname;
 	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
@@ -1404,7 +1420,7 @@ async function TikTokSubscribe(data) {
 		'',
 		username,
 		'',
-		'', //twitchSubAction,
+		tiktokSubAction,
 		data
 	);
 }
