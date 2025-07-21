@@ -126,10 +126,14 @@ li {
 }
 
 .avatar {
-	height: 2em;
-	margin: 1px;
-	transform: translate(0px, 0.25em);
-	border-radius: 50%;
+    width: 2em;                /* Set width equal to height */
+    height: 2em;
+    margin: 1px;
+    transform: translate(0px, 0.25em);
+    border-radius: 50%;
+    object-fit: cover;         /* Crop to fill the circle */
+    overflow: hidden;          /* Ensure no overflow outside the circle */
+    display: inline-block;     /* Just in case */
 }
 
 .timestamp,
@@ -196,8 +200,9 @@ li {
 #reply {
 	display: none;
 	overflow: hidden;
-	white-space: nowrap;
+	white-space: normal; /* Allow line wrapping */
 	text-overflow: ellipsis;
+	word-break: break-word; /* Break long words if necessary */
 	font-size: 0.7em;
 	opacity: 0.5;
 }
@@ -213,17 +218,10 @@ li {
 	border-radius: var(--border-radius);
 }
 
-#youtubeSuperSticker {
-	display: block;
-}
-
-#sticker-img {
-	height: 5em;
-}
-
-#stickerLabel {
-	text-align: center;
-	font-weight: 700;
+.youtube-super-sticker {
+	height: 2em;
+	margin: 1px;
+	transform: translate(0px, 0.25em);
 }
 
 .tiktok-gift {

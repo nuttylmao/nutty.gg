@@ -535,7 +535,7 @@ async function TwitchChatMessage(data) {
 		const replyUser = data.message.reply.userName;
 		const replyMsg = data.message.reply.msgBody;
 
-		replyDiv.style.display = 'block';
+		replyDiv.style.display = 'inline-block';
 		replyUserDiv.innerText = replyUser;
 		replyMsgDiv.innerText = replyMsg;
 	}
@@ -1376,18 +1376,18 @@ function YouTubeSuperSticker(data) {
 	// Set the card background colors
 	cardDiv.classList.add('youtube');
 
-	const stickerTemplate = document.getElementById('stickerTemplate');
+	avatarDiv.style.width = 'auto';
 
-	// Create a new instance of the template
-	const stickerInstance = stickerTemplate.content.cloneNode(true);
+	// Set the text
+	const user = data.user.name;
+	const amount = data.amount;
+	const stickerURL = FindFirstImageUrl(data);
+	const stickerImage = `<img src="${stickerURL}" class="youtube-super-sticker"/>`;
 
-	// Render sticker
-	stickerInstance.querySelector("#stickerImg").src = FindFirstImageUrl(data);
-	stickerInstance.querySelector("#stickerLabel").innerText = `${data.user.name} sent a Super Sticker (${data.amount})`;
+	avatarDiv.innerHTML = stickerImage;
+	titleDiv.innerHTML = `${user} sent a Super Sticker (${amount})`;
 
-	contentDiv.appendChild(stickerInstance);
-
-	AddMessageItem(instance, data.eventId);
+	AddMessageItem(instance);
 }
 
 function YouTubeNewSponsor(data) {
@@ -2104,7 +2104,7 @@ async function KickChatMessage(data) {
 		const replyUser = data.metadata.original_sender.username;
 		const replyMsg = data.metadata.original_message.content;
 
-		replyDiv.style.display = 'block';
+		replyDiv.style.display = 'inline-block';
 		replyUserDiv.innerText = replyUser;
 		replyMsgDiv.innerHTML = replaceEmotes(replyMsg);;
 	}
