@@ -126,7 +126,7 @@
 			"label": "Background Opacity",
 			"description": "",
 			"type": "number",
-			"defaultValue": "00",
+			"defaultValue": "0",
 			"min": 0,
 			"max": 1,
 			"step": ".01",
