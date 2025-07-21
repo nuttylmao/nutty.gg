@@ -535,7 +535,7 @@ async function TwitchChatMessage(data) {
 		const replyUser = data.message.reply.userName;
 		const replyMsg = data.message.reply.msgBody;
 
-		replyDiv.style.display = 'inline-block';
+		replyDiv.style.display = 'block';
 		replyUserDiv.innerText = replyUser;
 		replyMsgDiv.innerText = replyMsg;
 	}
@@ -2104,7 +2104,7 @@ async function KickChatMessage(data) {
 		const replyUser = data.metadata.original_sender.username;
 		const replyMsg = data.metadata.original_message.content;
 
-		replyDiv.style.display = 'inline-block';
+		replyDiv.style.display = 'block';
 		replyUserDiv.innerText = replyUser;
 		replyMsgDiv.innerHTML = replaceEmotes(replyMsg);;
 	}
