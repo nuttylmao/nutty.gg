@@ -320,6 +320,12 @@ async function KickConnect() {
 
 	const websocket = new WebSocket(kickPusherWsUrl);
 
+    // Reconnect
+    websocket.onclose = function () {
+        console.log(`Reconnecting to ${kickUsername}...`);
+        setTimeout(connectPusher, 5000);
+    };
+
 	websocket.onopen = function () {
 		console.log(`Kick successfully conntected to ${kickUsername}.`);
 	}
@@ -336,24 +342,10 @@ async function KickConnect() {
 				console.log(`[Pusher] Socket established with ID: ${socketData.socket_id}`);
 
 				// Now subscribe to a channel
-				let subscribeMessage = {
-					event: 'pusher:subscribe',
-					data: {
-						channel: `chatroom_${chatroomId}`
-					}
-				};
-
-				websocket.send(JSON.stringify(subscribeMessage));
-
-				// Now subscribe to a channel
-				subscribeMessage = {
-					event: 'pusher:subscribe',
-					data: {
-						channel: `chatrooms.${chatroomId}.v2`
-					}
-				};
-
-				websocket.send(JSON.stringify(subscribeMessage));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatroom_${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
 				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
 			}
 
