@@ -364,20 +364,11 @@
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
-			"id": "enableKickSupport",
-			"label": "Enable Kick Support",
-			"description": "",
-			"type": "checkbox",
-			"defaultValue": false,
-			"group": "Which Kick alerts do you want to see?"
-		},
-		{
 			"id": "kickUsername",
 			"label": "Kick Username",
 			"description": "",
 			"type": "text",
 			"defaultValue": "",
-			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
@@ -386,7 +377,6 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
@@ -404,7 +394,6 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
@@ -422,7 +411,6 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"showIf": "enableKickSupport",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{

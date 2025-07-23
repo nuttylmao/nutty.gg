@@ -70,7 +70,6 @@ const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
 // Which Kick alerts do you want to see?
-const enableKickSupport = GetBooleanParam("enableKickSupport", false);
 const kickUsername = urlParams.get("kickUsername") || "";
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const kickSubAction = urlParams.get("kickSubAction") || "";
@@ -309,7 +308,7 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 
 // Connect and handle Pusher WebSocket
 async function KickConnect() {
-	if (!enableKickSupport)
+	if (!kickUsername)
 		return;
 
 	// Channel to subscribe to (you'll need the correct channel name here)
