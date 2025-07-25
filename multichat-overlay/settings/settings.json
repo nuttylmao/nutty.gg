@@ -394,6 +394,15 @@
 			"group": "Which TikTok messages do you want to see?"
 		},
 		{
+			"id": "showTikTokFollows",
+			"label": "New Followers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
 			"id": "showTikTokGifts",
 			"label": "Gifts",
 			"description": "",

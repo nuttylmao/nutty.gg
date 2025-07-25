@@ -68,6 +68,7 @@ const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", tru
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
+const showTikTokFollows = GetBooleanParam("showTikTokFollows", false);
 const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
 const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
 const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
@@ -432,6 +433,9 @@ function TikfinityConnect() {
 		switch (event) {
 			case 'chat':
 				TikTokChat(data);
+				break;
+			case 'follow':
+				TikTokFollow(data);
 				break;
 			case 'gift':
 				TikTokGift(data);
@@ -2667,6 +2671,38 @@ function TikTokGift(data) {
 	AddMessageItem(instance, data.messageId);
 }
 
+
+function TikTokFollow(data) {
+	if (!showTikTokFollows)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('tiktok');
+
+	const user = data.nickname;
+	const tiktokIcon = `<img src="${data.profilePictureUrl}" class="platform"/>`;
+
+	titleDiv.innerHTML = `${tiktokIcon} ${user} followed you on TikTok`;
+
+	AddMessageItem(instance, data.msgId);
+}
+
+
+
 function TikTokSubscribe(data) {
 	if (!showTikTokSubs)
 		return;
@@ -2689,7 +2725,7 @@ function TikTokSubscribe(data) {
 	cardDiv.classList.add('tiktok');
 
 	const user = data.nickname;
-	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+	const tiktokIcon = `<img src="${data.profilePictureUrl}" class="platform"/>`;
 
 	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
 
