@@ -68,7 +68,7 @@ const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", tru
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
-const showTikTokFollows = GetBooleanParam("showTikTokFollows", false);
+const showTikTokFollows = GetBooleanParam("showTikTokFollows", true);
 const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
 const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
 const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
@@ -2694,9 +2694,9 @@ function TikTokFollow(data) {
 	cardDiv.classList.add('tiktok');
 
 	const user = data.nickname;
-	const tiktokIcon = `<img src="${data.profilePictureUrl}" class="platform"/>`;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
 
-	titleDiv.innerHTML = `${tiktokIcon} ${user} followed you on TikTok`;
+	titleDiv.innerHTML = `${user} followed`;
 
 	AddMessageItem(instance, data.msgId);
 }
@@ -2725,7 +2725,7 @@ function TikTokSubscribe(data) {
 	cardDiv.classList.add('tiktok');
 
 	const user = data.nickname;
-	const tiktokIcon = `<img src="${data.profilePictureUrl}" class="platform"/>`;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
 
 	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
 
