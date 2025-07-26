@@ -69,6 +69,7 @@ const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
 const showTikTokFollows = GetBooleanParam("showTikTokFollows", false);
+const showTikTokLikes = GetBooleanParam("showTikTokLikes", false);
 const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
 const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
 const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
@@ -434,9 +435,15 @@ function TikfinityConnect() {
 			case 'chat':
 				TikTokChat(data);
 				break;
+
+			case 'like':
+				TikTokLikes(data);
+				break;
+				
 			case 'follow':
 				TikTokFollow(data);
 				break;
+
 			case 'gift':
 				TikTokGift(data);
 				break;
@@ -2636,6 +2643,91 @@ async function TikTokChat(data) {
 	}
 }
 
+
+function TikTokFollow(data) {
+	if (!showTikTokFollows)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('tiktok');
+
+	const user = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+
+	//titleDiv.innerHTML = `${tiktokIcon} ${user} followed`;
+	titleDiv.innerHTML = `${user} followed`;
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+}
+
+
+/*
+*
+* Note to Nutty:
+* TikFinity only exposes the Like Count in batches of 15 at a time. >:(
+* So basically this code will get the latest element and adds the like count to it
+* and re-render them, preventing the "flood" it would otherwise cause.
+*
+*/
+
+function TikTokLikes(data) {
+	if (!showTikTokLikes)
+		return;
+
+
+	// Get the total number of likes
+	var likeCountTotal = parseInt(data.likeCount);
+
+	// Search for Previous Likes from the Same User
+    const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
+
+	// If found, fetches the previous likes, deletes the element
+    // and then creates a new count with a sum of the like count
+    if (previousLikeContainer) {
+        const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
+        if (likeCountElem) {
+            var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
+            likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
+            previousLikeContainer.remove();
+        }
+    }
+
+	// Get a reference to the template
+	const template = document.getElementById('tiktok-gift-template');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
+	const usernameSpan = instance.querySelector('#tiktok-gift-username');
+	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
+	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
+	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
+
+	avatarImg.src = data.profilePictureUrl;
+	usernameSpan.innerText = data.nickname;
+	giftNameSpan.innerText = 'Likes';
+	stickerImg.src = '';
+	repeatCountDiv.innerText = `x${likeCountTotal}`;
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+}
+
 function TikTokGift(data) {
 	if (!showTikTokGifts)
 		return;
@@ -2668,37 +2760,7 @@ function TikTokGift(data) {
 	stickerImg.src = data.giftPictureUrl;				// Set the sticker image URL
 	repeatCountDiv.innerText = `x${data.repeatCount}`;	// Set the number of gifts sent
 
-	AddMessageItem(instance, data.messageId);
-}
-
-
-function TikTokFollow(data) {
-	if (!showTikTokFollows)
-		return;
-
-	// Get a reference to the template
-	const template = document.getElementById('cardTemplate');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const cardDiv = instance.querySelector("#card");
-	const headerDiv = instance.querySelector("#header");
-	const avatarDiv = instance.querySelector("#avatar");
-	const iconDiv = instance.querySelector("#icon");
-	const titleDiv = instance.querySelector("#title");
-	const contentDiv = instance.querySelector("#content");
-
-	// Set the card background colors
-	cardDiv.classList.add('tiktok');
-
-	const user = data.nickname;
-	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
-
-	titleDiv.innerHTML = `${user} followed`;
-
-	AddMessageItem(instance, data.msgId);
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 }
 
 
@@ -2727,9 +2789,10 @@ function TikTokSubscribe(data) {
 	const user = data.nickname;
 	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
 
-	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
+	//titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
+	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed for ${data.subMonth} months`;
 
-	AddMessageItem(instance, data.msgId);
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 }
 
 function YouTubeThumbnailPreview(data) {

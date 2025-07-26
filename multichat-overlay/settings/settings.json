@@ -403,6 +403,15 @@
 			"group": "Which TikTok messages do you want to see?"
 		},
 		{
+			"id": "showTikTokLikes",
+			"label": "Likes",
+			"description": "Self-updating Likes",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
 			"id": "showTikTokGifts",
 			"label": "Gifts",
 			"description": "",
