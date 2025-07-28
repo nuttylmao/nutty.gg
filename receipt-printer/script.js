@@ -94,7 +94,7 @@ async function CustomEvent(data) {
 
                 const messageEl = document.createElement('div');
                 messageEl.innerHTML = data.message;
-                
+
                 // Render emotes
                 for (i in data.emotes) {
                     const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
@@ -298,50 +298,62 @@ async function CustomEvent(data) {
             break;
         case ('KickMassGiftSubscription'):
             {
-                avatarEl.src = ConvertWEBPToPNG(await GetAvatar(data.user, 'kick'));
+                // There is only one sub, so use the same template for a single gifted sub
+                if ('recipient.userName' in data) {
+                    avatarEl.src = ConvertWEBPToPNG(data["recipient.profilePicture"]);
+                    titleEl.innerText = `Gifted Sub`;
 
-                // Calculate how many subs were gived
-                let maxIndex = -1;
-                for (const key in data) {
-                    const match = key.match(/^recipient\.(\d+)\./);
-                    if (match) {
-                        const index = parseInt(match[1], 10);
-                        if (index > maxIndex) {
-                            maxIndex = index;
+                    const messageEl = document.createElement('div');
+                    messageEl.innerHTML = `<b>${data["recipient.userName"]}</b><br>received a sub from<br><b>${data.user}</b>!`;
+
+                    contentEl.appendChild(messageEl);
+                }
+                else {
+                    avatarEl.src = ConvertWEBPToPNG(await GetAvatar(data.user, 'kick'));
+
+                    // Calculate how many subs were gived
+                    let maxIndex = -1;
+                    for (const key in data) {
+                        const match = key.match(/^recipient\.(\d+)\./);
+                        if (match) {
+                            const index = parseInt(match[1], 10);
+                            if (index > maxIndex) {
+                                maxIndex = index;
+                            }
                         }
                     }
-                }
-                const totalGifts = maxIndex + 1;
+                    const totalGifts = maxIndex + 1;
 
-                titleEl.innerHTML = `${totalGifts} × Gifted Subs`;
-                subtitleEl.innerText = `${data.user}`;
+                    titleEl.innerHTML = `${totalGifts} × Gifted Subs`;
+                    subtitleEl.innerText = `${data.user}`;
 
-                const messageEl = document.createElement('div');
+                    const messageEl = document.createElement('div');
 
-                // Loop through each recipient and include it in the receipt
-                const recipients = {};
+                    // Loop through each recipient and include it in the receipt
+                    const recipients = {};
 
-                // Reconstruct recipient objects
-                for (const key in data) {
-                    const match = key.match(/^recipient\.(\d+)\.(.+)$/);
-                    if (match) {
-                        const index = match[1];
-                        const field = match[2];
+                    // Reconstruct recipient objects
+                    for (const key in data) {
+                        const match = key.match(/^recipient\.(\d+)\.(.+)$/);
+                        if (match) {
+                            const index = match[1];
+                            const field = match[2];
 
-                        if (!recipients[index]) {
-                            recipients[index] = {};
+                            if (!recipients[index]) {
+                                recipients[index] = {};
+                            }
+
+                            recipients[index][field] = data[key];
                         }
-
-                        recipients[index][field] = data[key];
                     }
-                }
 
-                // Loop through and print userName
-                for (const index in recipients) {
-                    messageEl.innerHTML += `${recipients[index].userName}<br>`;
-                }
+                    // Loop through and print userName
+                    for (const index in recipients) {
+                        messageEl.innerHTML += `${recipients[index].userName}<br>`;
+                    }
 
-                contentEl.appendChild(messageEl);
+                    contentEl.appendChild(messageEl);
+                }
             }
             break;
 
@@ -661,7 +673,7 @@ function IsValidUrl(string) {
 }
 
 function EscapeRegExp(string) {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
 
