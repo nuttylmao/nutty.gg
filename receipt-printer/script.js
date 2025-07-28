@@ -532,7 +532,10 @@ async function CustomEvent(data) {
 
     // Send it to the print routine!
     const receiptHTML = await GetRenderedHTML(instance);
-    client.doAction({ name: 'Receipt Printer | Print Routine' }, { receiptHTML: receiptHTML });
+    client.doAction({ name: 'Receipt Printer | Print Routine' }, {
+        receiptHTML: receiptHTML,
+        isTest: data.isTest
+    });
 }
 
 
