@@ -81,6 +81,7 @@ async function CustomEvent(data) {
     const avatarEl = instance.querySelector('#avatar');
     const titleEl = instance.querySelector('#title');
     const subtitleEl = instance.querySelector('#subtitle');
+    const iconEl = instance.querySelector('#icon');
     const dateEl = instance.querySelector('#date');
 
     // Set the main contents
@@ -126,6 +127,9 @@ async function CustomEvent(data) {
                 }
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'twitch');
             }
             break;
         case ('TwitchSub'):
@@ -138,6 +142,9 @@ async function CustomEvent(data) {
                 messageEl.innerHTML = '<b>First time subscriber!</b>';
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'twitch');
             }
             break;
         case ('TwitchReSub'):
@@ -152,13 +159,17 @@ async function CustomEvent(data) {
                     messageEl.innerHTML += `<br><br><i>${data.messageStripped}</i>`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'twitch');
             }
             break;
         case ('TwitchGiftSub'):
             {
                 // Don't put profile pictures for subs that come from Gift Bombs to avoid rate limits
                 if (data.fromGiftBomb)
-                    avatarEl.style.display = 'none';
+                    //avatarEl.style.display = 'none';
+                    return;
                 else
                     avatarEl.src = await GetAvatar(data.recipientUserName, 'twitch');
                 titleEl.innerText = `Gifted Sub`;
@@ -171,6 +182,9 @@ async function CustomEvent(data) {
                     messageEl.innerHTML += `<b>${data.user}</b>!`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'twitch');
             }
             break;
         case ('TwitchGiftBomb'):
@@ -183,15 +197,23 @@ async function CustomEvent(data) {
                 else
                     subtitleEl.innerHTML += `<br>${data.user}`;
 
+                const messageEl = document.createElement('div');
                 if (data.totalGifts > 1) {
-                    const messageEl = document.createElement('div');
-                    messageEl.innerHTML = `They've gifted <b>${data.totalGifts} subs</b> in total!`;
+                    messageEl.innerHTML = `They've gifted <b>${data.totalGifts} subs</b> in total!</br></br>`;
+                }
 
-                    contentEl.appendChild(messageEl);
-                }
-                else {
-                    contentEl.style.display = 'none';
-                }
+                // Get a list of all recipient users
+                Object.keys(data)
+                    .filter(key => /^gift\.recipientUser\d+$/.test(key))
+                    .forEach((key, index) => {
+                        const username = data[key];
+                        messageEl.innerHTML += `${username}</br>`;
+                    });
+
+                contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'twitch');
             }
             break;
         case ('TwitchRaid'):
@@ -202,6 +224,9 @@ async function CustomEvent(data) {
                 messageEl.innerHTML = `<b>${data.user}</b><br>is raiding with a party of<br><b>${data.viewers} viewers!</b>`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'twitch');
             }
             break;
 
@@ -217,6 +242,9 @@ async function CustomEvent(data) {
                 subtitleEl.innerText = `${data.user}`;
 
                 contentEl.style.display = 'none';
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'youtube');
             }
             break;
         case ('YouTubeGiftMembershipReceived'):
@@ -231,6 +259,9 @@ async function CustomEvent(data) {
                 messageEl.innerHTML = `<b>${data.user}</b><br>received a membership from<br><b>${data.gifterUser}</b>!`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'youtube');
             }
             break;
         case ('YouTubeSuperChat'):
@@ -248,6 +279,9 @@ async function CustomEvent(data) {
                     messageEl.innerHTML += `<br><br><i>${data.message}</i>`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'youtube');
             }
             break;
         case ('YouTubeSuperSticker'):
@@ -264,6 +298,9 @@ async function CustomEvent(data) {
                 messageEl.innerHTML = `<b>${data.user}</b><br>sent a Super Sticker!`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'youtube');
             }
             break;
             break;
@@ -283,6 +320,9 @@ async function CustomEvent(data) {
                     messageEl.innerHTML = '<b>First time subscriber!</b>';
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'kick');
             }
             break;
         case ('KickGiftSubscription'):
@@ -294,6 +334,9 @@ async function CustomEvent(data) {
                 messageEl.innerHTML = `<b>${data["recipient.userName"]}</b><br>received a sub from<br><b>${data.user}</b>!`;
 
                 contentEl.appendChild(messageEl);
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'kick');
             }
             break;
         case ('KickMassGiftSubscription'):
@@ -354,6 +397,9 @@ async function CustomEvent(data) {
 
                     contentEl.appendChild(messageEl);
                 }
+
+                // Set the platform icon
+                SetPlatformIcon(iconEl, 'kick');
             }
             break;
 
@@ -680,6 +726,14 @@ function IsValidUrl(string) {
 
 function EscapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+function SetPlatformIcon(el, platform) {
+    // Set the platform icon
+    let baseURL = window.location.href;
+    baseURL = baseURL.replace(/index\.html$/i, '');
+
+    el.src = `${baseURL}/icons/platforms/${platform}.png`;
 }
 
 
