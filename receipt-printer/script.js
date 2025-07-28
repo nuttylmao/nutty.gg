@@ -1,15 +1,3 @@
-////////////////
-// PARAMETERS //
-////////////////
-
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-
-const sbServerAddress = urlParams.get("address") || "127.0.0.1";
-const sbServerPort = urlParams.get("port") || "8080";
-
-
-
 ///////////////////
 // PAGE ELEMENTS //
 ///////////////////
@@ -37,19 +25,32 @@ const avatarMap = new Map();
 // STREAMER.BOT CLIENT //
 /////////////////////////
 
-const client = new StreamerbotClient({
+// Check local storage
+if (localStorage.getItem('sbServerAddress') === null)
+    localStorage.setItem('sbServerAddress', '127.0.0.1');
+if (localStorage.getItem('sbServerPort') === null)
+    localStorage.setItem('sbServerPort', '8080');
+
+document.getElementById('ip').value = localStorage.getItem('sbServerAddress');
+document.getElementById('port').value = localStorage.getItem('sbServerPort');
+
+let sbServerAddress = document.getElementById('ip').value;
+let sbServerPort = document.getElementById('port').value;
+
+let client = new StreamerbotClient({
     host: sbServerAddress,
     port: sbServerPort,
 
     onConnect: (data) => {
         console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
         console.debug(data);
-        SetConnectionStatus(true);
+
+        SetConnectionState(true);
     },
 
     onDisconnect: () => {
         console.error(`Streamer.bot disconnected from ${sbServerAddress}:${sbServerPort}`)
-        SetConnectionStatus(false);
+        SetConnectionState(false);
     }
 });
 
@@ -57,7 +58,6 @@ client.on('General.Custom', (response) => {
     console.debug(response.data);
     CustomEvent(response.data);
 })
-
 
 
 ////////////////////
@@ -552,8 +552,7 @@ async function CustomEvent(data) {
         // Custom Code Events
         case ('CustomCodeEvent'):
             {
-                switch (data.triggerCustomCodeEventName)
-                {
+                switch (data.triggerCustomCodeEventName) {
                     case ('kickIncomingRaid'):
                         {
                             avatarEl.src = ConvertWEBPToPNG(await GetAvatar(data.user, 'kick'));
@@ -764,22 +763,31 @@ function SetPlatformIcon(el, platform) {
 // STREAMER.BOT WEBSOCKET STATUS //
 ///////////////////////////////////
 
-// This function sets the visibility of the Streamer.bot status label on the overlay
-function SetConnectionStatus(connected) {
-    let statusContainer = document.getElementById("statusContainer");
-    if (connected) {
-        statusContainer.style.background = "#2FB774";
-        statusContainer.innerText = "Connected!";
-        statusContainer.style.opacity = 1;
-        setTimeout(() => {
-            statusContainer.style.transition = "all 2s ease";
-            statusContainer.style.opacity = 0;
-        }, 10);
+function SetConnectionState(isConnected) {
+    if (isConnected) {
+        document.getElementById('ip').disabled = true;
+        document.getElementById('port').disabled = true;
+        document.getElementById('connect-button').style.backgroundColor = '#e43b3b';
+        document.getElementById('connect-button').innerText = 'Disconnect';
+
+        localStorage.setItem('sbServerAddress', document.getElementById('ip').value);
+        localStorage.setItem('sbServerPort', document.getElementById('port').value);
     }
     else {
-        statusContainer.style.background = "#D12025";
-        statusContainer.innerText = "Connecting...";
-        statusContainer.style.transition = "";
-        statusContainer.style.opacity = 1;
+        document.getElementById('ip').disabled = false;
+        document.getElementById('port').disabled = false;
+        document.getElementById('connect-button').style.backgroundColor = '#3be477';
+        document.getElementById('connect-button').innerText = 'Connect';
+    }
+}
+
+function Connect() {
+    if (document.getElementById('ip').disabled)
+        client.disconnect();
+    else
+    {
+        client.options.host = document.getElementById('ip').value;
+        client.options.port = document.getElementById('port').value;
+        client.connect();
     }
 }

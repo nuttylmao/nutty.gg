@@ -2,11 +2,77 @@ body {
 	font-size: 16px;
 	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 	text-align: center;
+	color: white;
+
+	background-color: #282828;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
 }
 
-#header {
-
+label {
+	font-weight: 600;
 }
+
+button {
+	font-size: 1em;
+	font-weight: 500;
+	background-color: #3be477;
+	color: white;
+	opacity: 0.8;
+	border-width: 0;
+	border-radius: 0.25em;
+	padding: 0.25em 0.5em;
+	width: 100%;
+}
+
+button:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+
+button:disabled {
+	opacity: 0.5;
+	cursor: inherit;
+}
+
+input {
+	border-radius: 0.5em;
+	width: calc(100% - 20px);
+	margin: 10px 0px;
+	padding: 10px 10px;
+	background-color: #ffffff05;
+	border-width: 0px;
+	color: white;
+	font-size: 1em;
+}
+
+input:disabled {
+	opacity: 0.5;
+}
+
+textarea:focus, input:focus {
+    outline: none;
+}
+
+#connect-box {
+	font-size: 24px;
+	background-color: #181818;
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	padding: 2em;
+	border-radius: 0.5em;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+}
+
+#header {}
 
 #avatar {
 	height: 6em;
@@ -49,8 +115,7 @@ body {
 	text-transform: uppercase;
 }
 
-#footer {
-}
+#footer {}
 
 .emote {
 	height: 1em;

@@ -9,7 +9,18 @@
 </head>
 
 <body>
-	<div id="statusContainer">Connecting...</div>
+	<div id="connect-box">
+		<div class="field">
+			<label for="ip">IP Address</label>
+			<input type="text" id="ip" name="ip" placeholder="127.0.0.1" value="127.0.0.1">
+		</div>
+		<div class="field">
+			<label for="port">Port</label>
+			<input type="text" id="port" name="port" placeholder="8080" value="8080">
+		</div>
+		<button id="connect-button" onclick="Connect()">Connect</button>
+
+	</div>
 </body>
 
 <template id="receipt-template">
