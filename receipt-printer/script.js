@@ -135,7 +135,7 @@ async function CustomEvent(data) {
                 subtitleEl.innerText = `${data.user}`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerText = 'First time subscriber!';
+                messageEl.innerHTML = '<b>First time subscriber!</b>';
 
                 contentEl.appendChild(messageEl);
             }
@@ -278,9 +278,9 @@ async function CustomEvent(data) {
 
                 const messageEl = document.createElement('div');
                 if (data.duration > 1)
-                    messageEl.innerText = `${data.duration} months`;
+                    messageEl.innerText = `<b>${data.duration} months</b>`;
                 else
-                    messageEl.innerText = 'First time subscriber!';
+                    messageEl.innerHTML = '<b>First time subscriber!</b>';
 
                 contentEl.appendChild(messageEl);
             }
@@ -497,7 +497,7 @@ async function CustomEvent(data) {
                 subtitleEl.innerText = `${data["fw.nickname"]}`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerText = `Thanks for joining at the ${FormatCurrency(data["fw.amount"], data["fw.currency"])} tier!`;
+                messageEl.innerText = `Thanks for joining at the <b>${FormatCurrency(data["fw.amount"], data["fw.currency"])}</b> tier!`;
 
                 contentEl.appendChild(messageEl);
             }
