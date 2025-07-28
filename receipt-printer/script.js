@@ -277,8 +277,8 @@ async function CustomEvent(data) {
                 subtitleEl.innerText = `${data.user}`;
 
                 const messageEl = document.createElement('div');
-                if (data.monthsSubscribed > 1)
-                    messageEl.innerText = `${data.monthsSubscribed} months`;
+                if (data.duration > 1)
+                    messageEl.innerText = `${data.duration} months`;
                 else
                     messageEl.innerText = 'First time subscriber!';
 
