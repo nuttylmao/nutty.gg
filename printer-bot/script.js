@@ -65,7 +65,7 @@ client.on('General.Custom', (response) => {
 ////////////////////
 
 async function CustomEvent(data) {
-    if (data.actionName != 'Receipt Printer | Events')
+    if (data.actionName != 'Printer Bot | Events')
         return;
 
     // Get a reference to the template
@@ -600,7 +600,7 @@ async function CustomEvent(data) {
     // Send it to the print routine!
     const receiptHTML = await GetRenderedHTML(instance);
     console.log(receiptHTML);
-    client.doAction({ name: 'Receipt Printer | Print Routine' }, {
+    client.doAction({ name: 'Printer Bot | Print Routine' }, {
         receiptHTML: receiptHTML,
         isTest: data.isTest
     });
