@@ -408,14 +408,17 @@ async function CustomEvent(data) {
         // Fourthwall Events
         case ('FourthwallDonation'):
             {
-                const avatarURL = await GetAvatar(data.username, 'twitch');
+                const avatarURL = await GetAvatar(data["fw.username"], 'twitch');
                 if (IsValidUrl(avatarURL))
                     avatarEl.src = avatarURL;
                 else
                     avatarEl.style.display = 'none'
                 titleEl.style.fontSize = '2em';
-                titleEl.innerText = FormatCurrency(data.amount, data.currency);
-                subtitleEl.innerText = `${data.username}`;
+                titleEl.innerText = FormatCurrency(data["fw.amount"], data["fw.currency"]);
+                if (data["fw.username"])
+                    subtitleEl.innerText = `${data["fw.username"]}`;
+                else if (data["fw.email"])
+                    subtitleEl.innerText = `${data["fw.email"]}`;
 
                 if (data.message) {
                     const messageEl = document.createElement('div');
@@ -485,16 +488,16 @@ async function CustomEvent(data) {
             break;
         case ('FourthwallSubscriptionPurchased'):
             {
-                const avatarURL = await GetAvatar(data.nickname, 'twitch');
+                const avatarURL = await GetAvatar(data["fw.nickname"], 'twitch');
                 if (IsValidUrl(avatarURL))
                     avatarEl.src = avatarURL;
                 else
                     avatarEl.style.display = 'none'
                 titleEl.innerText = `New Member`;
-                subtitleEl.innerText = `${data.nickname}`;
+                subtitleEl.innerText = `${data["fw.nickname"]}`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerText = `Thanks for joining at the ${FormatCurrency(data.amount, data.currency)} tier!`;
+                messageEl.innerText = `Thanks for joining at the ${FormatCurrency(data["fw.amount"], data["fw.currency"])} tier!`;
 
                 contentEl.appendChild(messageEl);
             }
