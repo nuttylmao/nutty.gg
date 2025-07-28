@@ -540,12 +540,34 @@ async function CustomEvent(data) {
                 else
                     avatarEl.style.display = 'none'
                 titleEl.innerText = `New Member`;
-                subtitleEl.innerText = `${data["fw.nickname"]}`;
+                subtitleEl.innerHTML = `${data["fw.nickname"]}`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerText = `Thanks for joining at the <b>${FormatCurrency(data["fw.amount"], data["fw.currency"])}</b> tier!`;
+                messageEl.innerHTML = `Thanks for joining at the <b>${FormatCurrency(data["fw.amount"], data["fw.currency"])}</b> tier!`;
 
                 contentEl.appendChild(messageEl);
+            }
+            break;
+
+        // Custom Code Events
+        case ('CustomCodeEvent'):
+            {
+                switch (data.triggerCustomCodeEventName)
+                {
+                    case ('kickIncomingRaid'):
+                        {
+                            avatarEl.src = ConvertWEBPToPNG(await GetAvatar(data.user, 'kick'));
+
+                            const messageEl = document.createElement('div');
+                            messageEl.innerHTML = `<b>${data.user}</b><br>is hosting with a party of<br><b>${data.viewers} viewers!</b>`;
+
+                            contentEl.appendChild(messageEl);
+
+                            // Set the platform icon
+                            SetPlatformIcon(iconEl, 'kick');
+                        }
+                        break;
+                }
             }
             break;
 
