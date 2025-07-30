@@ -327,7 +327,7 @@ async function CustomEvent(data) {
             break;
         case ('KickGiftSubscription'):
             {
-                avatarEl.src = ConvertWEBPToPNG(data["recipient.profilePicture"]);
+                avatarEl.src = ConvertWEBPToPNG(await GetAvatar(data["recipient.userLogin"], 'kick'));
                 titleEl.innerText = `Gifted Sub`;
 
                 const messageEl = document.createElement('div');
@@ -343,7 +343,7 @@ async function CustomEvent(data) {
             {
                 // There is only one sub, so use the same template for a single gifted sub
                 if ('recipient.userName' in data) {
-                    avatarEl.src = ConvertWEBPToPNG(data["recipient.profilePicture"]);
+                    avatarEl.src = ConvertWEBPToPNG(await GetAvatar(data["recipient.userLogin"], 'kick'));
                     titleEl.innerText = `Gifted Sub`;
 
                     const messageEl = document.createElement('div');
