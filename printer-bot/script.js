@@ -466,9 +466,9 @@ async function CustomEvent(data) {
                 else if (data["fw.email"])
                     subtitleEl.innerText = `${data["fw.email"]}`;
 
-                if (data.message) {
+                if (data["fw.message"]) {
                     const messageEl = document.createElement('div');
-                    messageEl.innerHTML = `<i>${data.message}</i>`;
+                    messageEl.innerHTML = `<i>${data["fw.message"]}</i>`;
 
                     contentEl.appendChild(messageEl);
                 }
