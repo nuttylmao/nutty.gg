@@ -233,8 +233,8 @@ async function CustomEvent(data) {
         // YouTube Events
         case ('YouTubeNewSponsor'):
             {
-                if (data.profileImageUrl)
-                    avatarEl.src = data.profileImageUrl;
+                if (data.userProfileUrl)
+                    avatarEl.src = data.userProfileUrl;
                 else
                     avatarEl.style.display = 'none';
 
@@ -249,8 +249,8 @@ async function CustomEvent(data) {
             break;
         case ('YouTubeGiftMembershipReceived'):
             {
-                if (data.profileImageUrl)
-                    avatarEl.src = data.profileImageUrl;
+                if (data.gifterProfileUrl)
+                    avatarEl.src = data.gifterProfileUrl;
                 else
                     avatarEl.style.display = 'none';
                 titleEl.innerText = `Gifted Membership`;
@@ -266,8 +266,8 @@ async function CustomEvent(data) {
             break;
         case ('YouTubeSuperChat'):
             {
-                if (data.profileImageUrl)
-                    avatarEl.src = data.profileImageUrl;
+                if (data.userProfileUrl)
+                    avatarEl.src = data.userProfileUrl;
                 else
                     avatarEl.style.display = 'none';
                 titleEl.style.fontSize = '2em';
@@ -286,9 +286,8 @@ async function CustomEvent(data) {
             break;
         case ('YouTubeSuperSticker'):
             {
-                // TODO: Need to add image URL of Super Sticker
-                if (data.profileImageUrl)
-                    avatarEl.src = data.profileImageUrl;
+                if (data.stickerImageUrl)
+                    avatarEl.src = data.stickerImageUrl;
                 else
                     avatarEl.style.display = 'none';
                 titleEl.style.fontSize = '2em';
