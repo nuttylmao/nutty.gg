@@ -766,7 +766,7 @@ function TwitchUserBanned(data) {
 	const messagesToRemove = [];
 
 	// ID of the message to remove
-	const userId = data.user_id;
+	const userId = data.targetUser.id;
 
 	// Find the items to remove
 	for (let i = 0; i < messageList.children.length; i++) {
