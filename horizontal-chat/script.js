@@ -46,6 +46,7 @@ const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", tru
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
+const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
@@ -64,6 +65,7 @@ const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", tru
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
+const showTikTokFollows = GetBooleanParam("showTikTokFollows", false);
 const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
 const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
 const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
@@ -132,6 +134,11 @@ client.on('Twitch.Cheer', (response) => {
 client.on('Twitch.Announcement', (response) => {
 	console.debug(response.data);
 	TwitchAnnouncement(response.data);
+})
+
+client.on('Twitch.Follow', (response) => {
+	console.debug(response.data);
+	TwitchFollow(response.data);
 })
 
 client.on('Twitch.Sub', (response) => {
@@ -410,6 +417,9 @@ function TikfinityConnect() {
 			case 'chat':
 				TikTokChat(data);
 				break;
+			case 'follow':
+				TikTokFollow(data);
+				break;
 			case 'gift':
 				TikTokGift(data);
 				break;
@@ -624,6 +634,20 @@ async function TwitchAnnouncement(data) {
 	}
 
 	ShowAlert(message, background);
+}
+
+function TwitchFollow(data) {	
+	if (!showTwitchFollows)
+		return;
+	
+	// Set the text
+	let username = data.user_name;
+	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
+		username = `${data.user_name} (${data.user_login})`;
+	
+	const message = `${username} followed`;
+
+	ShowAlert(message, 'twitch');
 }
 
 async function TwitchSub(data) {
@@ -1499,7 +1523,16 @@ async function TikTokChat(data) {
 	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 }
 
-async function TikTokGift(data) {
+function TikTokFollow(data) {	
+	if (!showTikTokFollows)
+		return;
+
+	const message = `${data.nickname} followed`;
+
+	ShowAlert(message, 'tiktok');
+}
+
+function TikTokGift(data) {
 	if (!showTikTokGifts)
 		return;
 
@@ -1519,7 +1552,7 @@ async function TikTokGift(data) {
 	ShowAlert(message, 'tiktok');
 }
 
-async function TikTokSubscribe(data) {
+function TikTokSubscribe(data) {
 	if (!showTikTokSubs)
 		return;
 
