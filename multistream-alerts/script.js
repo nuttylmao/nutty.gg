@@ -70,7 +70,7 @@ const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
 // Which Kick alerts do you want to see?
-const kickUsername = urlParams.get("kickUsername") || "";
+let kickUsername = urlParams.get("kickUsername") || "";
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const kickSubAction = urlParams.get("kickSubAction") || "";
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
