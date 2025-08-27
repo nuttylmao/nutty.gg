@@ -520,18 +520,36 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set Shared Chat
-	const isSharedChat = data.isSharedChat;
-	if (isSharedChat) {
-		if (showTwitchSharedChat > 1) {
-			if (!data.sharedChat.primarySource) {
-				const sharedChatChannel = data.sharedChat.sourceRoom.name;
+	const isFromSharedChatGuest = data.isFromSharedChatGuest;
+	if (isFromSharedChatGuest) {
+		// if (showTwitchSharedChat > 1) {
+		// 	if (!data.sharedChat.primarySource) {
+		// 		const sharedChatChannel = data.sharedChat.sourceRoom.name;
+		// 		sharedChatDiv.style.display = 'block';
+		// 		sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
+		// 		messageContainerDiv.classList.add("highlightMessage");
+		// 	}
+		// }
+		// else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
+		// 	return;
+		
+		switch (showTwitchSharedChat)
+		{
+			// 2 = Show & Highlight
+			case 2:
+				// const sharedChatChannel = data.sharedChat.sourceRoom.name;		// Twitch removed the source channel for some reason?!?!
+				const sharedChatChannel = 'Shared Chat';
 				sharedChatDiv.style.display = 'block';
 				sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
 				messageContainerDiv.classList.add("highlightMessage");
-			}
+				break;
+			// 1 = Show but do not highlight
+			case 1:
+				break;
+			// 0 = Do not show
+			case 0:
+				return;
 		}
-		else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
-			return;
 	}
 
 	// Set Reply Message
