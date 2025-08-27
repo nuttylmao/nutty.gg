@@ -523,11 +523,22 @@ async function CustomEvent(data) {
                 });
                 messageEl.style.textAlign = 'left';
 
+                // Check if they left a custom message
+                let customMessageEl = document.createElement('div');
+                const customMessage = data["fw.statmessageus"];
+                if (customMessage)
+                {
+                    const txt = document.createElement("textarea");
+                    txt.innerHTML = customMessage;
+                    customMessageEl.innerHTML += `<br><i>${txt.value}</i>`;
+                }
+
                 // Add a cute thank you message because you're uwu like that
                 const thankYouEl = document.createElement('div');
                 thankYouEl.innerHTML += `<br><b>Thank you for your purchase!</b>`;
 
                 contentEl.appendChild(messageEl);
+                contentEl.appendChild(customMessageEl);
                 contentEl.appendChild(thankYouEl);
             }
             break;
