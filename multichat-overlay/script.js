@@ -55,7 +55,7 @@ const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPoin
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
-const kickUsername = urlParams.get("kickUsername") || "";
+let kickUsername = urlParams.get("kickUsername") || "";
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 // const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
@@ -84,6 +84,9 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 const furryMode = GetBooleanParam("furryMode", false);
 
 const animationSpeed = GetIntParam("animationSpeed", 0.1);
+
+// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
+kickUsername = kickUsername.replace(/_/g, "-");
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;

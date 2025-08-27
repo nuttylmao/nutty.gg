@@ -81,6 +81,9 @@ const furryMode = GetBooleanParam("furryMode", false);
 
 const animationSpeed = GetIntParam("animationSpeed", 0.5);
 
+// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
+kickUsername = kickUsername.replace(/_/g, "-");
+
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;

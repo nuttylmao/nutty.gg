@@ -107,6 +107,9 @@ const tipeeestreamDonationAction = urlParams.get("tipeeestreamDonationAction") |
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
 const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
 
+// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
+kickUsername = kickUsername.replace(/_/g, "-");
+
 // Set avatar visibility
 if (!showAvatar) {
 	avatarElement.style.display = 'none';
