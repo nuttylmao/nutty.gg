@@ -1369,6 +1369,15 @@ async function TikTokGift(data) {
 	if (!showTikTokGifts)
 		return;
 
+	if (data.giftType === 1 && !data.repeatEnd) {
+		// Streak in progress => show only temporary
+		console.debug(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
+		return;
+	}
+
+	// Streak ended or non-streakable gift => process the gift with final repeat_count
+	console.debug(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
+
 	// Set the text
 	const username = data.nickname;
 	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
