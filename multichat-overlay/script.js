@@ -10,6 +10,14 @@ const sbServerPort = urlParams.get("port") || "8080";
 const avatarMap = new Map();
 const pronounMap = new Map();
 
+/////////////////
+// GLOBAL VARS //
+/////////////////
+
+const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&?#].*)?$/;
+const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
+let kickSubBadges = [];
+
 /////////////
 // OPTIONS //
 /////////////
@@ -24,8 +32,11 @@ const showMessage = GetBooleanParam("showMessage", true);
 const font = urlParams.get("font") || "";
 const fontSize = urlParams.get("fontSize") || "30";
 const lineSpacing = urlParams.get("lineSpacing") || "1.7";
+const useChatBubbles = GetBooleanParam("useChatBubbles", false);
+const bubbleColor = urlParams.get("bubbleColor") || "#000000";
+const bubbleOpacity = urlParams.get("bubbleOpacity") || "0.9";
 const background = urlParams.get("background") || "#000000";
-const opacity = urlParams.get("opacity") || "0.85";
+const opacity = urlParams.get("opacity") || "0";
 
 const hideAfter = GetIntParam("hideAfter", 0);
 const excludeCommands = GetBooleanParam("excludeCommands", true);
@@ -34,18 +45,34 @@ const scrollDirection = GetIntParam("scrollDirection", 1);
 const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", false);
 const inlineChat = GetBooleanParam("inlineChat", false);
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
+const showYouTubeLinkPreviews = GetBooleanParam("showYouTubeLinkPreviews", true);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
+const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
+let kickUsername = urlParams.get("kickUsername") || "";
+const showKickMessages = GetBooleanParam("showKickMessages", true);
+// const showKickFollows = GetBooleanParam("showKickFollows", false);
+const showKickSubs = GetBooleanParam("showKickSubs", true);
+const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
+const showKickHosts = GetBooleanParam("showKickHosts", true);
+
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
+
+const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
+const showTikTokFollows = GetBooleanParam("showTikTokFollows", false);
+const showTikTokLikes = GetBooleanParam("showTikTokLikes", false);
+const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
+const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
+const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
 
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
@@ -57,6 +84,9 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 const furryMode = GetBooleanParam("furryMode", false);
 
 const animationSpeed = GetIntParam("animationSpeed", 0.1);
+
+// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
+kickUsername = kickUsername.replace(/_/g, "-");
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -130,6 +160,11 @@ client.on('Twitch.AutomaticRewardRedemption', (response) => {
 client.on('Twitch.Announcement', (response) => {
 	console.debug(response.data);
 	TwitchAnnouncement(response.data);
+})
+
+client.on('Twitch.Follow', (response) => {
+	console.debug(response.data);
+	TwitchFollow(response.data);
 })
 
 client.on('Twitch.Sub', (response) => {
@@ -272,10 +307,158 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	FourthwallGiftDrawEnded(response.data);
 })
 
-client.on('General.Custom', (response) => {
-	console.debug(response.data);
-	GeneralCustom(response.data);
-})
+
+
+///////////////////////////
+// KICK PUSHER WEBSOCKET //
+///////////////////////////
+
+// Connect and handle Pusher WebSocket
+async function KickConnect() {
+	if (!kickUsername)
+		return;
+
+	// Channel to subscribe to (you'll need the correct channel name here)
+	const chatroomId = await GetKickChatroomId(kickUsername);
+
+	// Cache subscriber badges
+	kickSubBadges = await GetKickSubBadges(kickUsername);
+
+	const websocket = new WebSocket(kickPusherWsUrl);
+
+    // Reconnect
+    websocket.onclose = function () {
+        console.log(`Reconnecting to ${kickUsername}...`);
+        setTimeout(connectPusher, 5000);
+    };
+
+	websocket.onopen = function () {
+		console.log(`Kick successfully conntected to ${kickUsername}.`);
+	}
+
+	websocket.onmessage = function (response) {
+		try {
+			let data = JSON.parse(response.data);
+
+			console.debug(data);
+
+			// When connection is established, subscribe to a channel
+			if (data.event === 'pusher:connection_established') {
+				const socketData = JSON.parse(data.data);
+				console.log(`[Pusher] Socket established with ID: ${socketData.socket_id}`);
+
+				// Now subscribe to a channel
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatroom_${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
+				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
+			}
+
+			// Event handlers
+			const eventArgs = JSON.parse(data.data);
+			const event = data.event.split('\\').pop();
+			switch (event) {
+				case 'ChatMessageEvent':
+					KickChatMessage(eventArgs);
+					break;
+				//// 'Follows' unsupported by pusher
+				// case 'FollowEvent':
+				// 	break;
+				case 'SubscriptionEvent':
+					KickSubscription(eventArgs);
+					break;
+				case 'GiftedSubscriptionsEvent':
+					KickGiftedSubscriptions(eventArgs);
+					break;
+				case 'RewardRedeemedEvent':
+					KickRewardRedeemed(eventArgs);
+					break;
+				case 'StreamHostEvent':
+					KickStreamHost(eventArgs);
+					break;
+				case 'MessageDeletedEvent':
+					KickMessageDeleted(eventArgs);
+					break;
+				case 'UserBannedEvent':
+					KickUserBanned(eventArgs);
+					break;
+			}
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+}
+
+// Try connect when window is loaded
+window.addEventListener('load', KickConnect);
+
+
+
+//////////////////////
+// TIKFINITY CLIENT //
+//////////////////////
+
+let tikfinityWebsocket = null;
+
+function TikfinityConnect() {
+	if (!enableTikTokSupport)
+		return;
+	
+	if (tikfinityWebsocket) return; // Already connected
+
+	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
+
+	tikfinityWebsocket.onopen = function () {
+		console.log(`TikFinity successfully connected...`)
+	}
+
+	tikfinityWebsocket.onclose = function () {
+		console.error(`TikFinity disconnected...`)
+		tikfinityWebsocket = null;
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onerror = function () {
+		console.error(`TikFinity failed for some reason...`)
+		tikfinityWebsocket = null;
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onmessage = function (response) {
+		let payload = JSON.parse(response.data);
+
+		let event = payload.event;
+		let data = payload.data;
+
+		console.debug('Event: ' + event);
+
+		switch (event) {
+			case 'chat':
+				TikTokChat(data);
+				break;
+
+			case 'like':
+				TikTokLikes(data);
+				break;
+				
+			case 'follow':
+				TikTokFollow(data);
+				break;
+
+			case 'gift':
+				TikTokGift(data);
+				break;
+			case 'subscribe':
+				TikTokSubscribe(data);
+				break;
+		}
+	}
+}
+
+// Try connect when window is loaded
+window.addEventListener('load', TikfinityConnect);
 
 
 
@@ -318,6 +501,17 @@ async function TwitchChatMessage(data) {
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
 
+	// Render bubbles
+	if (useChatBubbles) {
+		const opacity255 = Math.round(parseFloat(bubbleOpacity) * 255);
+		let hexOpacity = opacity255.toString(16);
+		if (hexOpacity.length < 2) {
+			hexOpacity = "0" + hexOpacity;
+		}
+		document.documentElement.style.setProperty('--bubble-color', `${bubbleColor}${hexOpacity}`);
+		messageContainerDiv.classList.add("bubble");
+	}
+
 	// Set First Time Chatter
 	const firstMessage = data.message.firstMessage;
 	if (firstMessage && showMessage) {
@@ -326,19 +520,36 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set Shared Chat
-	console.log(showTwitchSharedChat);
-	const isSharedChat = data.isSharedChat;
-	if (isSharedChat) {
-		if (showTwitchSharedChat > 1) {
-			if (!data.sharedChat.primarySource) {
-				const sharedChatChannel = data.sharedChat.sourceRoom.name;
+	const isFromSharedChatGuest = data.isFromSharedChatGuest;
+	if (isFromSharedChatGuest) {
+		// if (showTwitchSharedChat > 1) {
+		// 	if (!data.sharedChat.primarySource) {
+		// 		const sharedChatChannel = data.sharedChat.sourceRoom.name;
+		// 		sharedChatDiv.style.display = 'block';
+		// 		sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
+		// 		messageContainerDiv.classList.add("highlightMessage");
+		// 	}
+		// }
+		// else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
+		// 	return;
+		
+		switch (showTwitchSharedChat)
+		{
+			// 2 = Show & Highlight
+			case 2:
+				// const sharedChatChannel = data.sharedChat.sourceRoom.name;		// Twitch removed the source channel for some reason?!?!
+				const sharedChatChannel = 'Shared Chat';
 				sharedChatDiv.style.display = 'block';
 				sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
 				messageContainerDiv.classList.add("highlightMessage");
-			}
+				break;
+			// 1 = Show but do not highlight
+			case 1:
+				break;
+			// 0 = Do not show
+			case 0:
+				return;
 		}
-		else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
-			return;
 	}
 
 	// Set Reply Message
@@ -396,6 +607,7 @@ async function TwitchChatMessage(data) {
 	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
 
 	// Render platform
@@ -448,7 +660,7 @@ async function TwitchChatMessage(data) {
 	// Render avatars
 	if (showAvatar) {
 		const username = data.message.username;
-		const avatarURL = await GetAvatar(username);
+		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
@@ -461,8 +673,10 @@ async function TwitchChatMessage(data) {
 	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
-		if (lastPlatform == "twitch" && lastUserId == data.user.id)
+		if (lastPlatform == "twitch" && lastUserId == data.user.id) {
 			userInfoDiv.style.display = "none";
+			avatarDiv.innerHTML = '';
+		}
 	}
 
 	// Embed image
@@ -486,6 +700,14 @@ async function TwitchChatMessage(data) {
 	}
 	else {
 		AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
+	}
+
+	// Render YouTube links
+	if (youtubeRegex.test(message)) {
+		const videoId = ExtractYouTubeVideoId(message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
 	}
 }
 
@@ -519,8 +741,8 @@ async function TwitchAutomaticRewardRedemption(data) {
 	const gigaEmote = data.gigantified_emote.imageUrl;
 	const image = new Image();
 	image.src = gigaEmote;
-	image.style.padding = "20px 0px";
-	image.style.width = "50%";
+	image.style.padding = "0px 0px";
+	image.style.width = "10em";
 
 	image.onload = function () {
 		messageDiv.innerHTML = '';
@@ -591,6 +813,9 @@ async function TwitchAnnouncement(data) {
 	content.querySelector("#colon-separator").style.display = `inline`;
 	content.querySelector("#line-space").style.display = `none`;
 
+	// Remove the avatar
+	content.querySelector("#avatar").style.display = `none`;
+
 	// Render platform
 	content.querySelector("#platform").style.display = `none`;
 
@@ -615,9 +840,9 @@ async function TwitchAnnouncement(data) {
 		if (data.parts[i].type == `emote`) {
 			const emoteElement = `<img src="${data.parts[i].imageUrl}" class="emote"/>`;
 			const emoteName = EscapeRegExp(data.parts[i].text);
-	
+
 			let regexPattern = emoteName;
-	
+
 			// Check if the emote name consists only of word characters (alphanumeric and underscore)
 			if (/^\w+$/.test(emoteName)) {
 				regexPattern = `\\b${emoteName}\\b`;
@@ -626,7 +851,7 @@ async function TwitchAnnouncement(data) {
 				// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
 				regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
 			}
-	
+
 			const regex = new RegExp(regexPattern, 'g');
 			content.querySelector("#message").innerHTML = content.querySelector("#message").innerHTML.replace(regex, emoteElement);
 		}
@@ -634,6 +859,37 @@ async function TwitchAnnouncement(data) {
 
 	// Insert the modified template instance into the DOM
 	instance.querySelector("#content").appendChild(content);
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function TwitchFollow(data) {
+	if (!showTwitchFollows)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#contentDiv");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	// Set the text
+	let username = data.user_name;
+	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
+		username = `${data.user_name} (${data.user_login})`;
+
+	titleDiv.innerText = `${username} followed`;
 
 	AddMessageItem(instance, data.messageId);
 }
@@ -803,7 +1059,7 @@ async function TwitchRewardRedemption(data) {
 	if (showAvatar) {
 		// Render avatars
 		const username = data.user_login;
-		const avatarURL = await GetAvatar(username);
+		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
@@ -849,7 +1105,7 @@ async function TwitchRaid(data) {
 	if (showAvatar) {
 		// Render avatars
 		const username = data.from_broadcaster_user_login;
-		const avatarURL = await GetAvatar(username);
+		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
@@ -902,7 +1158,7 @@ function TwitchUserBanned(data) {
 	const messagesToRemove = [];
 
 	// ID of the message to remove
-	const userId = data.user_id;
+	const userId = data.targetUser.id;
 
 	// Find the items to remove
 	for (let i = 0; i < messageList.children.length; i++) {
@@ -925,7 +1181,7 @@ function TwitchChatCleared(data) {
 	}
 }
 
-function YouTubeMessage(data) {
+async function YouTubeMessage(data) {
 	if (!showYouTubeMessages)
 		return;
 
@@ -944,6 +1200,7 @@ function YouTubeMessage(data) {
 	const instance = template.content.cloneNode(true);
 
 	// Get divs
+	const messageContainerDiv = instance.querySelector("#messageContainer");
 	const userInfoDiv = instance.querySelector("#userInfo");
 	const avatarDiv = instance.querySelector("#avatar");
 	const timestampDiv = instance.querySelector("#timestamp");
@@ -951,6 +1208,17 @@ function YouTubeMessage(data) {
 	const badgeListDiv = instance.querySelector("#badgeList");
 	const usernameDiv = instance.querySelector("#username");
 	const messageDiv = instance.querySelector("#message");
+
+	// Render bubbles
+	if (useChatBubbles) {
+		const opacity255 = Math.round(parseFloat(bubbleOpacity) * 255);
+		let hexOpacity = opacity255.toString(16);
+		if (hexOpacity.length < 2) {
+			hexOpacity = "0" + hexOpacity;
+		}
+		document.documentElement.style.setProperty('--bubble-color', `${bubbleColor}${hexOpacity}`);
+		messageContainerDiv.classList.add("bubble");
+	}
 
 	// Set timestamp
 	if (showTimestamps) {
@@ -976,6 +1244,7 @@ function YouTubeMessage(data) {
 	if (inlineChat) {
 		instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
 
 	// Render platform
@@ -1070,6 +1339,14 @@ function YouTubeMessage(data) {
 	else {
 		AddMessageItem(instance, data.eventId, 'youtube', data.user.id);
 	}
+
+	// Render YouTube links
+	if (youtubeRegex.test(data.message)) {
+		const videoId = ExtractYouTubeVideoId(data.message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
+	}
 }
 
 function YouTubeSuperChat(data) {
@@ -1122,18 +1399,18 @@ function YouTubeSuperSticker(data) {
 	// Set the card background colors
 	cardDiv.classList.add('youtube');
 
-	const stickerTemplate = document.getElementById('stickerTemplate');
+	avatarDiv.style.width = 'auto';
 
-	// Create a new instance of the template
-	const stickerInstance = stickerTemplate.content.cloneNode(true);
+	// Set the text
+	const user = data.user.name;
+	const amount = data.amount;
+	const stickerURL = FindFirstImageUrl(data);
+	const stickerImage = `<img src="${stickerURL}" class="youtube-super-sticker"/>`;
 
-	// Render sticker
-	stickerInstance.querySelector("#stickerImg").src = FindFirstImageUrl(data);
-	stickerInstance.querySelector("#stickerLabel").innerText = `${data.user.name} sent a Super Sticker (${data.amount})`;
+	avatarDiv.innerHTML = stickerImage;
+	titleDiv.innerHTML = `${user} sent a Super Sticker (${amount})`;
 
-	contentDiv.appendChild(stickerInstance);
-
-	AddMessageItem(instance, data.eventId);
+	AddMessageItem(instance);
 }
 
 function YouTubeNewSponsor(data) {
@@ -1502,9 +1779,14 @@ function FourthwallOrderPlaced(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.classList.add('blank');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+	cardDiv.classList.add('fourthwall');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('blank');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
+
+	avatarDiv.style.width = 'auto';
 
 	// Set the text
 	let user = data.username;
@@ -1516,11 +1798,13 @@ function FourthwallOrderPlaced(data) {
 	const itemImageUrl = data.variants[0].image;
 	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
 
+	avatarDiv.innerHTML = fourthwallProductImage;
+
 	let contents = "";
 
-	contents += fourthwallProductImage;
+	// contents += fourthwallProductImage;
 
-	contents += "<br><br>";
+	// contents += "<br><br>";
 
 	// If there user did not provide a username, just say "Someone"
 	if (user == undefined)
@@ -1662,28 +1946,32 @@ function FourthwallGiftPurchase(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.classList.add('blank');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+	cardDiv.classList.add('fourthwall');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('blank');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
 
 	// Set the text
-	let user = data.username;
+	// let user = data.username;
 	const total = data.total;
 	const currency = data.currency;
 	const gifts = data.gifts.length;
 	const itemName = data.offer.name;
-	const itemImageUrl = data.offer.imageUrl;
-	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
-	const message = DecodeHTMLString(data.statmessageus);
+	// const itemImageUrl = data.offer.imageUrl;
+	// const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
+	// const message = DecodeHTMLString(data.statmessageus);
 
 	let contents = "";
 
-	contents += fourthwallProductImage;
+	// contents += fourthwallProductImage;
 
-	contents += "<br><br>";
+	// contents += "<br><br>";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `${user} gifted`;
+	// contents += `${user} gifted`;
+	contents += `Someone has gifted`;
 
 	// If there is more than one gifted item, display the number of gifts
 	if (gifts > 1)
@@ -1700,11 +1988,11 @@ function FourthwallGiftPurchase(data) {
 
 	titleDiv.innerHTML = contents;
 
-	// Add the custom message from the user
-	if (message.trim() != "")
-		contentDiv.innerHTML = `${message}`;
-	else
-		contentDiv.style.display = 'none'
+	// // Add the custom message from the user
+	// if (message.trim() != "")
+	// 	contentDiv.innerHTML = `${message}`;
+	// else
+	// 	contentDiv.style.display = 'none'
 
 	AddMessageItem(instance, data.id);
 }
@@ -1729,8 +2017,11 @@ function FourthwallGiftDrawStarted(data) {
 
 	// Set the card background colors
 	cardDiv.classList.add('fourthwall');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('fourthwall');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
 
 	// Set the text
 	const durationSeconds = data.durationSeconds;
@@ -1739,10 +2030,10 @@ function FourthwallGiftDrawStarted(data) {
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<h3>🎁 ${itemName} Giveaway!</h3>`;
+	contents += `🎁 ${itemName} Giveaway!`;
 
 	titleDiv.innerHTML = contents;
-	contentDiv.innerHTML = `Type !join in the next ${durationSeconds} seconds for your chance to win!`;
+	contentDiv.innerHTML = `Type 'join' in the next ${durationSeconds} seconds for your chance to win!`;
 	//contentDiv.style.display = `none`;
 
 	AddMessageItem(instance, data.id);
@@ -1768,13 +2059,16 @@ function FourthwallGiftDrawEnded(data) {
 
 	// Set the card background colors
 	cardDiv.classList.add('fourthwall');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('fourthwall');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
 
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<h3>🥳 GIVEAWAY ENDED 🥳</h3>`;
+	contents += `🥳 GIVEAWAY ENDED 🥳`;
 	//contents += `Congratulations ${GetWinnersList(data.gifts)}!`
 
 	titleDiv.innerHTML = contents;
@@ -1782,6 +2076,788 @@ function FourthwallGiftDrawEnded(data) {
 	//contentDiv.style.display = `none`;
 
 	AddMessageItem(instance, data.id);
+}
+
+async function KickChatMessage(data) {
+	if (!showKickMessages)
+		return;
+
+	// Don't post messages starting with "!"
+	if (data.content.startsWith("!") && excludeCommands)
+		return;
+
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.sender.username.toLowerCase()))
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('messageTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const messageContainerDiv = instance.querySelector("#messageContainer");
+	const firstMessageDiv = instance.querySelector("#firstMessage");
+	const sharedChatDiv = instance.querySelector("#sharedChat");
+	const sharedChatChannelDiv = instance.querySelector("#sharedChatChannel");
+	const replyDiv = instance.querySelector("#reply");
+	const replyUserDiv = instance.querySelector("#replyUser");
+	const replyMsgDiv = instance.querySelector("#replyMsg");
+	const userInfoDiv = instance.querySelector("#userInfo");
+	const avatarDiv = instance.querySelector("#avatar");
+	const timestampDiv = instance.querySelector("#timestamp");
+	const platformDiv = instance.querySelector("#platform");
+	const badgeListDiv = instance.querySelector("#badgeList");
+	const pronounsDiv = instance.querySelector("#pronouns");
+	const usernameDiv = instance.querySelector("#username");
+	const messageDiv = instance.querySelector("#message");
+
+	// Render bubbles
+	if (useChatBubbles) {
+		const opacity255 = Math.round(parseFloat(bubbleOpacity) * 255);
+		let hexOpacity = opacity255.toString(16);
+		if (hexOpacity.length < 2) {
+			hexOpacity = "0" + hexOpacity;
+		}
+		document.documentElement.style.setProperty('--bubble-color', `${bubbleColor}${hexOpacity}`);
+		messageContainerDiv.classList.add("bubble");
+	}
+
+	// // Set First Time Chatter
+	// const firstMessage = data.firstMessage;
+	// if (firstMessage && showMessage) {
+	// 	firstMessageDiv.style.display = 'block';
+	// 	messageContainerDiv.classList.add("highlightMessage");
+	// }
+
+	// Set Reply Message
+	const isReply = data.type == 'reply';
+	if (isReply && showMessage) {
+		const replyUser = data.metadata.original_sender.username;
+		const replyMsg = data.metadata.original_message.content;
+
+		replyDiv.style.display = 'block';
+		replyUserDiv.innerText = replyUser;
+		replyMsgDiv.innerHTML = replaceEmotes(replyMsg);;
+	}
+
+	// Set timestamp
+	if (showTimestamps) {
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
+
+	// Set the username info
+	if (showUsername) {
+		usernameDiv.innerText = data.sender.username;
+		usernameDiv.style.color = data.sender.identity.color;
+	}
+
+	// Set the message data
+	let message = data.content;
+
+	// Highlight mentions
+	const mentionRgx = new RegExp(`(^|\\s)@${kickUsername}(\\s|$)`, 'i');
+	const mention = mentionRgx.test(message);
+	if (mention && showMessage)
+		messageContainerDiv.classList.add("highlightMessage");
+
+	// Set furry mode
+	if (furryMode)
+		message = TranslateToFurry(message);
+
+	// Set message text
+	if (showMessage) {
+		messageDiv.innerText = message;
+	}
+
+	// Remove the line break
+	if (inlineChat) {
+		instance.querySelector("#colon-separator").style.display = `inline`;
+		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
+	}
+
+	// Render platform
+	if (showPlatform) {
+		const platformElements = `<img src="icons/platforms/kick.png" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
+
+	// Render badges
+	if (showBadges) {
+		badgeListDiv.innerHTML = "";
+		for (i in data.sender.identity.badges) {
+			const badge = new Image();
+			badge.src = GetKickBadgeURL(data.sender.identity.badges[i]);
+			badge.classList.add("badge");
+			badgeListDiv.appendChild(badge);
+		}
+	}
+
+	// Render emotes
+	function replaceEmotes(message) {
+		const emoteRegex = /\[emote:(\d+):([^\]]+)\]/g;
+
+		return message.replace(emoteRegex, (_, id, name) => {
+			const imgUrl = `https://files.kick.com/emotes/${id}/fullsize`;
+			return `<img src="${imgUrl}" alt="${name}" class="emote" />`;
+		});
+	}
+	messageDiv.innerHTML = replaceEmotes(message);
+
+	// Render avatars
+	if (showAvatar) {
+		const username = data.sender.slug;
+		const avatarURL = await GetAvatar(username, 'kick');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Hide the header if the same username sends a message twice in a row
+	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
+	const messageList = document.getElementById("messageList");
+	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
+		const lastPlatform = messageList.lastChild.dataset.platform;
+		const lastUserId = messageList.lastChild.dataset.userId;
+		if (lastPlatform == "kick" && lastUserId == data.sender.id)
+			userInfoDiv.style.display = "none";
+	}
+
+	// Embed image
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'kick') && IsImageUrl(message)) {
+		const image = new Image();
+
+		image.onload = function () {
+			image.style.padding = "20px 0px";
+			image.style.width = "100%";
+			messageDiv.innerHTML = '';
+			messageDiv.appendChild(image);
+
+			AddMessageItem(instance, data.id, 'kick', data.sender.id);
+		};
+
+		const urlObj = new URL(message);
+		urlObj.search = '';
+		urlObj.hash = '';
+
+		image.src = "https://external-content.duckduckgo.com/iu/?u=" + urlObj.toString();
+	}
+	else {
+		AddMessageItem(instance, data.id, 'kick', data.sender.id);
+	}
+
+	// Render YouTube links
+	if (youtubeRegex.test(message)) {
+		const videoId = ExtractYouTubeVideoId(message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
+	}
+}
+
+// async function KickFollow(data) {
+// 	if (!showKickFollows)
+// 		return;
+
+// 	// Get a reference to the template
+// 	const template = document.getElementById('cardTemplate');
+
+// 	// Create a new instance of the template
+// 	const instance = template.content.cloneNode(true);
+
+// 	// Get divs
+// 	const cardDiv = instance.querySelector("#card");
+// 	const headerDiv = instance.querySelector("#header");
+// 	const avatarDiv = instance.querySelector("#avatar");
+// 	const iconDiv = instance.querySelector("#icon");
+// 	const titleDiv = instance.querySelector("#title");
+// 	const contentDiv = instance.querySelector("#contentDiv");
+
+// 	// Set the card background colors
+// 	cardDiv.classList.add('kick');
+
+// 	// Set the text
+// 	let username = data.user;
+// 	titleDiv.innerText = `${username} followed`;
+
+// 	AddMessageItem(instance, data.messageId);
+// }
+
+async function KickSubscription(data) {
+	if (!showKickSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Set the card header
+	const badge = new Image();
+	badge.src = 'icons/platforms/kick.png';			//badge.src = CalculateKickSubBadge(data.months);
+	badge.classList.add("badge");
+	iconDiv.appendChild(badge);
+
+	// Set the text
+	const username = data.username;
+	const months = data.months;
+
+	if (months <= 1)
+		titleDiv.innerText = `${username} just subscribed for the first time!`;
+	else
+		titleDiv.innerText = `${username} resubscribed! (${months} months)`;
+
+	AddMessageItem(instance);
+}
+
+async function KickGiftedSubscriptions(data) {
+	if (!showKickSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Set the card header
+	const badge = new Image();
+	badge.src = 'icons/platforms/kick.png';
+	badge.classList.add("badge");
+	iconDiv.appendChild(badge);
+
+	// Set the text
+	const gifter = data.gifter_username;
+	const gifts = data.gifter_total;
+	const giftedUsers = data.gifted_usernames;
+	titleDiv.innerText = `${gifter} gifted ${giftedUsers.length} subscription${giftedUsers.length === 1 ? '' : 's'} to the community!`;
+	contentDiv.innerText = `${gifts === 1 ? '' : "They've gifted " + gifts + " subscription in the channel."}`;
+
+	if (giftedUsers.length > 1)
+		AddMessageItem(instance);
+
+	// Send individual notifications for every gifted user	
+	for (const username of data.gifted_usernames)
+		KickGiftToUser(gifter, username);
+}
+
+async function KickGiftToUser(gifter, username) {
+	if (!showKickSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Set the card header
+	const badge = new Image();
+	badge.src = 'icons/platforms/kick.png';
+	badge.classList.add("badge");
+	iconDiv.appendChild(badge);
+
+	// Set the text
+	titleDiv.innerText = `${gifter} gifted a sub to ${username}`;
+
+	AddMessageItem(instance);
+}
+
+async function KickRewardRedeemed(data) {
+	if (!showKickChannelPointRedemptions)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Render avatars
+	if (showAvatar) {
+		const username = data.username;
+		const avatarURL = await GetAvatar(username, 'kick');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Set the text
+	const username = data.username;
+	const rewardName = data.reward_title;
+	const userInput = data.user_input;
+
+	titleDiv.innerHTML = `${username} redeemed ${rewardName}`;
+	contentDiv.innerText = `${userInput}`;
+
+	AddMessageItem(instance, data.redeemId);
+}
+
+async function KickStreamHost(data) {
+	if (!showKickHosts)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('kick');
+
+	// Render avatars
+	if (showAvatar) {
+		const username = data.host_username;
+		const avatarURL = await GetAvatar(username, 'kick');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Set the text
+	const username = data.host_username;
+	const viewers = data.number_viewers;
+
+	titleDiv.innerText = `${username} is raiding`;
+	contentDiv.innerText = `with a party of ${viewers}`;
+
+	AddMessageItem(instance);
+}
+
+function KickMessageDeleted(data) {
+	const messageList = document.getElementById("messageList");
+
+	// Maintain a list of chat messages to delete
+	const messagesToRemove = [];
+
+	// ID of the message to remove
+	const messageId = data.message.id;
+
+	// Add a 200ms to ensure the automod doesn't delete the message before it's been added to the overlay
+	setTimeout(() => {
+		// Find the items to remove
+		for (let i = 0; i < messageList.children.length; i++) {
+			if (messageList.children[i].id === messageId) {
+				messagesToRemove.push(messageList.children[i]);
+			}
+		}
+
+		// Remove the items
+		messagesToRemove.forEach(item => {
+			item.style.opacity = 0;
+			item.style.height = 0;
+			setTimeout(function () {
+				messageList.removeChild(item);
+			}, 1000);
+		});
+	}, 500);
+}
+
+function KickUserBanned(data) {
+	const messageList = document.getElementById("messageList");
+
+	// Maintain a list of chat messages to delete
+	const messagesToRemove = [];
+
+	// ID of the message to remove
+	const userId = data.user.id;
+
+	// Find the items to remove
+	for (let i = 0; i < messageList.children.length; i++) {
+		if (messageList.children[i].dataset.userId.toString() == userId.toString()) {
+			messagesToRemove.push(messageList.children[i]);
+		}
+	}
+
+	// Remove the items
+	messagesToRemove.forEach(item => {
+		messageList.removeChild(item);
+	});
+}
+
+
+
+async function TikTokChat(data) {
+	if (!showTikTokMessages)
+		return;
+	
+	// Don't post messages starting with "!"
+	if (data.comment.startsWith("!") && excludeCommands)
+		return;
+
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.comment.toLowerCase()))
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('messageTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const messageContainerDiv = instance.querySelector("#messageContainer");
+	const firstMessageDiv = instance.querySelector("#firstMessage");
+	const sharedChatDiv = instance.querySelector("#sharedChat");
+	const sharedChatChannelDiv = instance.querySelector("#sharedChatChannel");
+	const replyDiv = instance.querySelector("#reply");
+	const replyUserDiv = instance.querySelector("#replyUser");
+	const replyMsgDiv = instance.querySelector("#replyMsg");
+	const userInfoDiv = instance.querySelector("#userInfo");
+	const avatarDiv = instance.querySelector("#avatar");
+	const timestampDiv = instance.querySelector("#timestamp");
+	const platformDiv = instance.querySelector("#platform");
+	const badgeListDiv = instance.querySelector("#badgeList");
+	const pronounsDiv = instance.querySelector("#pronouns");
+	const usernameDiv = instance.querySelector("#username");
+	const messageDiv = instance.querySelector("#message");
+
+	// Render bubbles
+	if (useChatBubbles) {
+		const opacity255 = Math.round(parseFloat(bubbleOpacity) * 255);
+		let hexOpacity = opacity255.toString(16);
+		if (hexOpacity.length < 2) {
+			hexOpacity = "0" + hexOpacity;
+		}
+		document.documentElement.style.setProperty('--bubble-color', `${bubbleColor}${hexOpacity}`);
+		messageContainerDiv.classList.add("bubble");
+	}
+
+	// Set timestamp
+	if (showTimestamps) {
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
+
+	// Set the username info
+	if (showUsername) {
+		usernameDiv.innerText = data.nickname;
+		usernameDiv.style.color = '#9e9e9e';
+	}
+
+	// Set the message data
+	let message = data.comment;
+
+	// Set furry mode
+	if (furryMode)
+		message = TranslateToFurry(message);
+
+	// Set message text
+	if (showMessage) {
+		messageDiv.innerText = message;
+	}
+
+	// Remove the line break
+	if (inlineChat) {
+		instance.querySelector("#colon-separator").style.display = `inline`;
+		instance.querySelector("#line-space").style.display = `none`;
+		instance.querySelector(".message-contents").style.alignItems = 'center';
+	}
+
+	// Render platform
+	if (showPlatform) {
+		const platformElements = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
+
+	// Render badges
+	if (showBadges) {
+		badgeListDiv.innerHTML = "";
+
+		if (data.isModerator) {
+			const badge = new Image();
+			badge.src = `icons/badges/youtube-moderator.svg`;
+			badge.style.filter = `invert(100%)`;
+			badge.style.opacity = 0.8;
+			badge.classList.add("badge");
+			badgeListDiv.appendChild(badge);
+		}
+
+		for (i in data.userBadges) {
+			if (data.userBadges[i].type == 'image') {
+				const badge = new Image();
+				badge.src = data.userBadges[i].url;
+				badge.classList.add("badge");
+				badgeListDiv.appendChild(badge);
+			}
+		}
+	}
+
+	// Render avatars
+	if (showAvatar) {
+		const avatar = new Image();
+		avatar.src = data.profilePictureUrl;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Hide the header if the same username sends a message twice in a row
+	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
+	const messageList = document.getElementById("messageList");
+	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
+		const lastPlatform = messageList.lastChild.dataset.platform;
+		const lastUserId = messageList.lastChild.dataset.userId;
+		if (lastPlatform == "tiktok" && lastUserId == data.userId) {
+			userInfoDiv.style.display = "none";
+			avatarDiv.innerHTML = '';
+		}
+	}
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+
+	// Render YouTube links
+	if (youtubeRegex.test(message)) {
+		const videoId = ExtractYouTubeVideoId(message);
+		const videoData = await GetYouTubeVideoData(videoId);
+
+		YouTubeThumbnailPreview(videoData);
+	}
+}
+
+
+function TikTokFollow(data) {
+	if (!showTikTokFollows)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('tiktok');
+
+	const user = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+
+	titleDiv.innerHTML = `${tiktokIcon} ${user} followed`;
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+}
+
+
+/*
+*
+* Note to Nutty:
+* TikFinity only exposes the Like Count in batches of 15 at a time. >:(
+* So basically this code will get the latest element and adds the like count to it
+* and re-render them, preventing the "flood" it would otherwise cause.
+*
+*/
+
+function TikTokLikes(data) {
+	if (!showTikTokLikes)
+		return;
+
+
+	// Get the total number of likes
+	var likeCountTotal = parseInt(data.likeCount);
+
+	// Search for Previous Likes from the Same User
+    const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
+
+	// If found, fetches the previous likes, deletes the element
+    // and then creates a new count with a sum of the like count
+    if (previousLikeContainer) {
+        const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
+        if (likeCountElem) {
+            var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
+            likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
+            previousLikeContainer.remove();
+        }
+    }
+
+	// Get a reference to the template
+	const template = document.getElementById('tiktok-gift-template');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
+	const usernameSpan = instance.querySelector('#tiktok-gift-username');
+	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
+	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
+	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
+
+	avatarImg.src = data.profilePictureUrl;
+	usernameSpan.innerText = data.nickname;
+	giftNameSpan.innerText = 'Likes';
+	stickerImg.src = '';
+	repeatCountDiv.innerText = `x${likeCountTotal}`;
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+}
+
+function TikTokGift(data) {
+	if (!showTikTokGifts)
+		return;
+
+	if (data.giftType === 1 && !data.repeatEnd) {
+		// Streak in progress => show only temporary
+		console.debug(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
+		return;
+	}
+
+	// Streak ended or non-streakable gift => process the gift with final repeat_count
+	console.debug(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
+
+	// Get a reference to the template
+	const template = document.getElementById('tiktok-gift-template');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
+	const usernameSpan = instance.querySelector('#tiktok-gift-username');
+	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
+	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
+	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
+
+	avatarImg.src = data.profilePictureUrl;				// Set the card header
+	usernameSpan.innerText = data.nickname;				// Set the username
+	giftNameSpan.innerText = data.giftName;				// Set the gift name
+	stickerImg.src = data.giftPictureUrl;				// Set the sticker image URL
+	repeatCountDiv.innerText = `x${data.repeatCount}`;	// Set the number of gifts sent
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+}
+
+
+
+function TikTokSubscribe(data) {
+	if (!showTikTokSubs)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('tiktok');
+
+	const user = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+
+	//titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed on TikTok`;
+	titleDiv.innerHTML = `${tiktokIcon} ${user} subscribed for ${data.subMonth} months`;
+
+	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+}
+
+function YouTubeThumbnailPreview(data) {
+	if (!showYouTubeLinkPreviews)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('thumbnail');
+
+	avatarDiv.style.width = 'auto';
+
+	// Set the text
+	const title = data.title;
+	const author = data.author;
+	const thumbnail = `<img src="${data.thumbnail}" class="youtubeThumbnail"/>`;
+
+	avatarDiv.innerHTML = thumbnail;
+	titleDiv.innerHTML = `${title}`;
+	contentDiv.innerHTML = `by ${author}`;
+
+	AddMessageItem(instance);
 }
 
 
@@ -1841,17 +2917,36 @@ function GetCurrentTimeFormatted() {
 	return formattedTime;
 }
 
-async function GetAvatar(username) {
-	if (avatarMap.has(username)) {
-		console.debug(`Avatar found for ${username}. Retrieving from hash map.`)
-		return avatarMap.get(username);
+async function GetAvatar(username, platform) {
+
+	// First, check if the username is hashed already
+	if (avatarMap.has(`${username}-${platform}`)) {
+		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
+		return avatarMap.get(`${username}-${platform}`);
 	}
-	else {
-		console.debug(`No avatar found for ${username}. Retrieving from Decapi.`)
-		let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-		let data = await response.text()
-		avatarMap.set(username, data);
-		return data;
+
+	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
+	switch (platform) {
+		case 'twitch':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
+				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
+				let data = await response.text();
+				avatarMap.set(`${username}-${platform}`, data);
+				return data;
+			}
+		case 'kick':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
+				let response = await fetch('https://kick.com/api/v2/channels/' + username);
+				console.log('https://kick.com/api/v2/channels/' + username)
+				let data = await response.json();
+				let avatarURL = data.user.profile_pic;
+				if (!avatarURL)
+					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+				avatarMap.set(`${username}-${platform}`, avatarURL);
+				return avatarURL;
+			}
 	}
 }
 
@@ -1885,6 +2980,11 @@ function IsImageUrl(url) {
 		// Return false if the URL is invalid.
 		return false;
 	}
+}
+
+function ExtractYouTubeVideoId(url) {
+	const match = url.match(youtubeRegex);
+	return match ? match[1] : null;
 }
 
 function AddMessageItem(element, elementID, platform, userId) {
@@ -1999,6 +3099,18 @@ function GetPermissionLevel(data, platform) {
 				return 15;
 			else
 				return 10;
+		case 'kick':
+			if (data.sender.identity.badges.some(item => item.type === 'broadcaster'))
+				return 40;
+			else if (data.sender.identity.badges.some(item => item.type === 'moderator'))
+				return 30;
+			else if (data.sender.identity.badges.some(item => item.type === 'vip') ||
+				data.sender.identity.badges.some(item => item.type === 'og'))
+				return 20;
+			else if (data.sender.identity.badges.some(item => item.type === 'subscriber'))
+				return 15;
+			else
+				return 10;
 		case 'youtube':
 			if (data.user.isOwner)
 				return 40;
@@ -2071,6 +3183,54 @@ function EscapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
+async function GetKickChatroomId(username) {
+	const url = `https://kick.com/api/v2/channels/${username}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+
+		const data = await response.json();
+		if (data.chatroom && data.chatroom.id) {
+			return data.chatroom.id;
+		} else {
+			throw new Error("Chatroom ID not found in response.");
+		}
+	} catch (error) {
+		console.error("Failed to fetch chatroom ID:", error.message);
+		return null;
+	}
+}
+
+async function GetKickSubBadges(username) {
+	const response = await fetch(`https://kick.com/api/v2/channels/${username}`);
+	const data = await response.json();
+
+	return data.subscriber_badges || [];
+}
+
+function GetKickBadgeURL(data) {
+	switch (data.type) {
+		case 'subscriber':
+			return CalculateKickSubBadge(data.count);
+		default:
+			return `icons/badges/kick-${data.type}.svg`;
+	}
+}
+
+function CalculateKickSubBadge(months) {
+  if (!Array.isArray(kickSubBadges)) return null;
+
+  // Filter for eligible badges, then get the one with the highest 'months'
+  const badge = kickSubBadges
+    .filter(b => b.months <= months)
+    .sort((a, b) => b.months - a.months)[0];
+
+  return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
+}
+
 
 
 ///////////////////////////////////
@@ -2097,147 +3257,24 @@ function SetConnectionStatus(connected) {
 	}
 }
 
+async function GetYouTubeVideoData(videoId) {
+	const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
 
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
 
+		const data = await response.json();
 
-
-
-
-function GeneralCustom(data) {
-	const target = data.target;
-	const type = data.type;
-
-	// Check the target for the message
-	const path = window.location.pathname;
-	const firstSegment = path.split('/')[1];
-	if (firstSegment != target)
-	    return;
-
-	switch (type)
-	{
-		case "message":
-			CustomMessage(data);
-			break;
-		case "alert":
-			CustomAlert(data);
-			break;
+		return {
+			title: data.title,
+			author: data.author_name,
+			thumbnail: data.thumbnail_url,
+		};
+	} catch (error) {
+		console.error('Error fetching YouTube video data:', error);
+		return null;
 	}
-}
-
-function CustomMessage(data) {
-	// Don't post messages starting with "!"
-	if (data.message.startsWith("!") && excludeCommands)
-		return;
-
-	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.username.toLowerCase()))
-		return;
-
-	// Get a reference to the template
-	const template = document.getElementById('messageTemplate');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const messageContainerDiv = instance.querySelector("#messageContainer");
-	const firstMessageDiv = instance.querySelector("#firstMessage");
-	const sharedChatDiv = instance.querySelector("#sharedChat");
-	const sharedChatChannelDiv = instance.querySelector("#sharedChatChannel");
-	const replyDiv = instance.querySelector("#reply");
-	const replyUserDiv = instance.querySelector("#replyUser");
-	const replyMsgDiv = instance.querySelector("#replyMsg");
-	const userInfoDiv = instance.querySelector("#userInfo");
-	const avatarDiv = instance.querySelector("#avatar");
-	const timestampDiv = instance.querySelector("#timestamp");
-	const platformDiv = instance.querySelector("#platform");
-	const badgeListDiv = instance.querySelector("#badgeList");
-	const pronounsDiv = instance.querySelector("#pronouns");
-	const usernameDiv = instance.querySelector("#username");
-	const messageDiv = instance.querySelector("#message");
-
-	// Set timestamp
-	if (showTimestamps) {
-		timestampDiv.classList.add("timestamp");
-		timestampDiv.innerText = GetCurrentTimeFormatted();
-	}
-
-	// Set the username info
-	if (showUsername) {
-		if (data.displayName.toLowerCase() == data.username.toLowerCase())
-			usernameDiv.innerText = data.displayName;
-		else
-			usernameDiv.innerText = `${data.displayName} (${data.username})`;
-		usernameDiv.style.color = data.userColor;
-	}
-
-	// Set the message data
-	let message = data.message;
-
-	// Set furry mode
-	if (furryMode)
-		message = TranslateToFurry(message);
-
-	// Set message text
-	if (showMessage) {
-		messageDiv.innerText = message;
-	}
-
-	// Remove the line break
-	if (inlineChat) {
-		instance.querySelector("#colon-separator").style.display = `inline`;
-		instance.querySelector("#line-space").style.display = `none`;
-	}
-
-	// Render platform
-	if (showPlatform) {
-		const platformElements = `<img src="${data.platform.icon}" class="platform"/>`;
-		platformDiv.innerHTML = platformElements;
-	}
-
-	// Render avatars
-	if (showAvatar) {
-		const avatar = new Image();
-		avatar.src = data.avatar;
-		avatar.classList.add("avatar");
-		avatarDiv.appendChild(avatar);
-	}
-
-	AddMessageItem(instance, data.msgId, data.platform.name, data.username);
-}
-
-function CustomAlert(data) {
-	// Get a reference to the template
-	const template = document.getElementById('cardTemplate');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const cardDiv = instance.querySelector("#card");
-	const headerDiv = instance.querySelector("#header");
-	const avatarDiv = instance.querySelector("#avatar");
-	const iconDiv = instance.querySelector("#icon");
-	const titleDiv = instance.querySelector("#title");
-	const contentDiv = instance.querySelector("#content");
-
-	// Set the card background colors
-	cardDiv.style.background = data.background;
-
-	// Set the card header
-	const icon = new Image();
-	icon.src = data.icon;
-	icon.classList.add("badge");
-	iconDiv.appendChild(icon);
-
-	// // Set the text
-	// let username = data.displayName;
-	// if (data.displayName.toLowerCase() != data.username.toLowerCase())
-	// 	username = `${data.displayName} (${data.username})`;
-
-	titleDiv.innerText = data.title;
-	contentDiv.innerText = data.content;
-
-	AddMessageItem(instance, data.messageId);
-
 }

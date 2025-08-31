@@ -24,6 +24,15 @@ const messageLabel = document.getElementById('message');
 let widgetLocked = false;						// Needed to lock animation from overlapping
 let alertQueue = [];
 
+/////////////////
+// GLOBAL VARS //
+/////////////////
+
+const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
+let kickSubBadges = [];
+
+
+
 /////////////
 // OPTIONS //
 /////////////
@@ -60,6 +69,15 @@ const twitchCheerAction = urlParams.get("twitchCheerAction") || "";
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
+// Which Kick alerts do you want to see?
+let kickUsername = urlParams.get("kickUsername") || "";
+const showKickSubs = GetBooleanParam("showKickSubs", true);
+const kickSubAction = urlParams.get("kickSubAction") || "";
+const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
+const kickChannelPointRedemptionAction = urlParams.get("kickChannelPointRedemptionAction") || "";
+const showKickHosts = GetBooleanParam("showKickHosts", true);
+const kickHostAction = urlParams.get("kickHostAction") || "";
+
 // Which YouTube alerts do you want to see?
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const youtubeSuperChatAction = urlParams.get("youtubeSuperChatAction") || "";
@@ -67,6 +85,13 @@ const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", tru
 const youtubeSuperStickerAction = urlParams.get("youtubeSuperStickerAction") || "";
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const youtubeMembershipAction = urlParams.get("youtubeMembershipAction") || "";
+
+// Which TikTok alerts do you want to see?
+const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
+const showTikTokGifts = GetBooleanParam("showTikTokGifts", true);
+const tiktokGiftAction = urlParams.get("tiktokGiftAction") || "";
+const showTikTokSubs = GetBooleanParam("showTikTokSubs", true);
+const tiktokSubAction = urlParams.get("tiktokSubAction") || "";
 
 // Which donation alerts do you want to see?
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", false);
@@ -81,6 +106,9 @@ const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", f
 const tipeeestreamDonationAction = urlParams.get("tipeeestreamDonationAction") || "";
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
 const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
+
+// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
+kickUsername = kickUsername.replace(/_/g, "-");
 
 // Set avatar visibility
 if (!showAvatar) {
@@ -102,7 +130,7 @@ if (useCustomBackground) {
 		hexOpacity = "0" + hexOpacity;
 	}
 	//document.body.style.background = `${background}${hexOpacity}`;
-	console.log(`${background}${hexOpacity}`);
+	//console.log(`${background}${hexOpacity}`);
 	document.documentElement.style.setProperty('--custom-background', `${background}${hexOpacity}`);
 }
 
@@ -277,6 +305,138 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 
 
 
+///////////////////////////
+// KICK PUSHER WEBSOCKET //
+///////////////////////////
+
+// Connect and handle Pusher WebSocket
+async function KickConnect() {
+	if (!kickUsername)
+		return;
+
+	// Channel to subscribe to (you'll need the correct channel name here)
+	const chatroomId = await GetKickChatroomId(kickUsername);
+
+	// Cache subscriber badges
+	kickSubBadges = await GetKickSubBadges(kickUsername);
+
+	const websocket = new WebSocket(kickPusherWsUrl);
+
+    // Reconnect
+    websocket.onclose = function () {
+        console.log(`Reconnecting to ${kickUsername}...`);
+        setTimeout(connectPusher, 5000);
+    };
+
+	websocket.onopen = function () {
+		console.log(`Kick successfully conntected to ${kickUsername}.`);
+	}
+
+	websocket.onmessage = function (response) {
+		try {
+			let data = JSON.parse(response.data);
+
+			console.debug(data);
+
+			// When connection is established, subscribe to a channel
+			if (data.event === 'pusher:connection_established') {
+				const socketData = JSON.parse(data.data);
+				console.log(`[Pusher] Socket established with ID: ${socketData.socket_id}`);
+
+				// Now subscribe to a channel
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatroom_${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
+				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
+			}
+
+			// Event handlers
+			const eventArgs = JSON.parse(data.data);
+			const event = data.event.split('\\').pop();
+			switch (event) {
+				//// 'Follows' unsupported by pusher
+				// case 'FollowEvent':
+				// 	break;
+				case 'SubscriptionEvent':
+					KickSubscription(eventArgs);
+					break;
+				case 'GiftedSubscriptionsEvent':
+					KickGiftedSubscriptions(eventArgs);
+					break;
+				case 'RewardRedeemedEvent':
+					KickRewardRedeemed(eventArgs);
+					break;
+				case 'StreamHostEvent':
+					KickStreamHost(eventArgs);
+					break;
+			}
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+}
+
+// Try connect when window is loaded
+window.addEventListener('load', KickConnect);
+
+
+
+//////////////////////
+// TIKFINITY CLIENT //
+//////////////////////
+
+let tikfinityWebsocket = null;
+
+function TikfinityConnect() {
+	if (!enableTikTokSupport)
+		return;
+
+	if (tikfinityWebsocket) return; // Already connected
+
+	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
+
+	tikfinityWebsocket.onopen = function () {
+		console.log(`TikFinity successfully connected...`)
+	}
+
+	tikfinityWebsocket.onclose = function () {
+		console.error(`TikFinity disconnected...`)
+		tikfinityWebsocket = null;
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onerror = function () {
+		console.error(`TikFinity failed for some reason...`)
+		tikfinityWebsocket = null;
+		setTimeout(TikfinityConnect, 1000); // Schedule a reconnect attempt
+	}
+
+	tikfinityWebsocket.onmessage = function (response) {
+		let payload = JSON.parse(response.data);
+
+		let event = payload.event;
+		let data = payload.data;
+
+		console.debug('Event: ' + event);
+
+		switch (event) {
+			case 'gift':
+				TikTokGift(data);
+				break;
+			case 'subscribe':
+				TikTokSubscribe(data);
+				break;
+		}
+	}
+}
+
+// Try connect when window is loaded
+window.addEventListener('load', TikfinityConnect);
+
+
+
 ///////////////////////
 // MULTICHAT OVERLAY //
 ///////////////////////
@@ -289,7 +449,7 @@ async function TwitchFollow(data) {
 	const username = data.user_name;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	UpdateAlertBox(
 		'twitch',
@@ -314,7 +474,7 @@ async function TwitchCheer(data) {
 	let message = data.message.message;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	// Render emotes
 	for (i in data.emotes) {
@@ -369,7 +529,7 @@ async function TwitchSub(data) {
 	const isPrime = data.is_prime;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	if (!isPrime)
 		UpdateAlertBox(
@@ -409,7 +569,7 @@ async function TwitchResub(data) {
 	const message = data.text;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 
 	if (!isPrime)
 		UpdateAlertBox(
@@ -453,7 +613,7 @@ async function TwitchGiftSub(data) {
 		return;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(username);
+	const avatarURL = await GetAvatar(username, 'twitch');
 	
 	let messageText = '';
 	if (cumlativeTotal > 0)
@@ -488,7 +648,7 @@ async function TwitchGiftBomb(data) {
 	const subTier = data.sub_tier.charAt(0);
 
 	// Render avatars
-	const avatarURL = await GetAvatar(login);
+	const avatarURL = await GetAvatar(login, 'twitch');
 
 	let message = ``;
 	if (totalGifts > 0)
@@ -518,7 +678,7 @@ async function TwitchRewardRedemption(data) {
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform" style="height: 1em"/>`;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.user_login);
+	const avatarURL = await GetAvatar(data.user_login, 'twitch');
 
 	UpdateAlertBox(
 		'twitch',
@@ -538,7 +698,7 @@ async function TwitchRaid(data) {
 		return;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.from_broadcaster_user_login);
+	const avatarURL = await GetAvatar(data.from_broadcaster_user_login, 'twitch');
 
 	// Set the text
 	const username = data.from_broadcaster_user_login;
@@ -988,18 +1148,17 @@ function FourthwallSubscriptionPurchased(data) {
 }
 
 function FourthwallGiftPurchase(data) {
-	console.log(data);
 	if (!showFourthwallAlerts)
 		return;
 
 	// Set the text
-	let user = data.username;
+	// let user = data.username;
 	const total = data.total;
 	const currency = data.currency;
 	const gifts = data.gifts.length;
 	const itemName = data.offer.name;
-	const itemImageUrl = data.offer.imageUrl;
-	const message = DecodeHTMLString(data.statmessageus);
+	// const itemImageUrl = data.offer.imageUrl;
+	// const message = DecodeHTMLString(data.statmessageus);
 
 	let contents = '';
 	let attributesText = '';
@@ -1019,12 +1178,12 @@ function FourthwallGiftPurchase(data) {
 
 	UpdateAlertBox(
 		'fourthwall',
-		itemImageUrl,
-		`${user}`,
-		`gifted ${contents}`,
+		'', // itemImageUrl,
+		`An item has been gifted!`,// `${user}`,
+		`${contents}`, // `gifted ${contents}`,
 		attributesText,
-		user,
-		message,
+		'', // user,
+		'', // message,
 		fourthwallAlertAction,
 		data
 	);
@@ -1042,7 +1201,7 @@ function FourthwallGiftDrawStarted(data) {
 		'fourthwall',
 		'',
 		`<span style="font-size: 1.2em">🎁 ${itemName} Giveaway!</span>`,
-		`Type !join in the next ${durationSeconds} seconds for your chance to win!`,
+		`Type 'join' in the next ${durationSeconds} seconds for your chance to win!`,
 		'',
 		'',
 		'',
@@ -1054,20 +1213,212 @@ function FourthwallGiftDrawStarted(data) {
 function FourthwallGiftDrawEnded(data) {
 	if (!showFourthwallAlerts)
 		return;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'fourthwall',
+		'',
 		`<span style="font-size: 1.2em">🥳 GIVEAWAY ENDED 🥳</span>`,
 		`Congratulations ${GetWinnersList(data.gifts)}!`,
 		'',
 		'',
 		'',
 		fourthwallAlertAction,
+		data
+	);
+}
+
+// async function KickFollow(data) {
+// 	if (!showKickFollows)
+// 		return;
+
+// 	// Set the text
+// 	const username = data.user;
+
+// 	// Render avatars
+// 	const avatarURL = await GetAvatar(username, 'kick');
+
+// 	UpdateAlertBox(
+// 		'kick',
+// 		avatarURL,
+// 		`${username}`,
+// 		`followed`,
+// 		'',
+// 		username,
+// 		'',
+// 		kickFollowAction,
+// 		data
+// 	);
+// }
+
+async function KickSubscription(data) {
+	if (!showKickSubs)
+		return;
+
+	// Set the text
+	const username = data.username;
+	const months = data.months;
+	
+	let description = '';
+	if (months <= 1)
+		description = `just subscribed for the first time!`;
+	else
+		description = `resubscribed!`;
+
+	const attribute = `${months} months`;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		description,
+		attribute,
+		username,
+		'',
+		kickSubAction,
+		data
+	);
+}
+
+async function KickGiftedSubscriptions(data) {
+	if (!showKickSubs)
+		return;
+
+	// Set the text
+	const gifter = data.gifter_username;
+	const giftedUsers = data.gifted_usernames;
+
+	let description = '';
+	let attribute = '';
+
+	if (giftedUsers.length <= 1)
+	{
+		description = `gifted a sub to`;
+		attribute = `${giftedUsers[0]}`;
+	}
+	else
+		description = `gifted ${giftedUsers.length} subscription${giftedUsers.length === 1 ? '' : 's'} to the community!`;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(gifter, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${gifter}`,
+		description,
+		attribute,
+		gifter,
+		'',
+		kickSubAction,
+		data
+	);
+}
+
+async function KickRewardRedeemed(data) {
+	if (!showKickChannelPointRedemptions)
+		return;
+
+	const username = data.username;
+	const rewardName = data.reward_title;
+	const userInput = data.user_input;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username} redeemed`,
+		`${rewardName}`,
+		'',
+		username,
+		userInput,
+		kickChannelPointRedemptionAction,
+		data
+	);
+}
+
+async function KickStreamHost(data) {
+	if (!showKickHosts)
+		return;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(data.host_username, 'kick');
+
+	// Set the text
+	const username = data.host_username;
+	const viewers = data.number_viewers;
+	
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		`is raiding with a party of ${viewers}`,
+		'',
+		username,
+		'',
+		kickHostAction,
+		data
+	);
+}
+
+async function TikTokGift(data) {
+	if (!showTikTokGifts)
+		return;
+
+	if (data.giftType === 1 && !data.repeatEnd) {
+		// Streak in progress => show only temporary
+		console.debug(`${data.uniqueId} is sending gift ${data.giftName} x${data.repeatCount}`);
+		return;
+	}
+
+	// Streak ended or non-streakable gift => process the gift with final repeat_count
+	console.debug(`${data.uniqueId} has sent gift ${data.giftName} x${data.repeatCount}`);
+
+	// Set the text
+	const username = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+	const giftImg = `<img src=${data.giftPictureUrl} style="height: 1em"/>`;
+	
+	// Render avatars
+	const avatarURL = 'icons/platforms/tiktok.png';
+
+	UpdateAlertBox(
+		'tiktok',
+		avatarURL,
+		`${username}`,
+		`sent ${giftImg}x${data.repeatCount}`,
+		'',
+		username,
+		'',
+		tiktokGiftAction,
+		data
+	);
+}
+
+async function TikTokSubscribe(data) {
+	if (!showTikTokSubs)
+		return;
+
+	// Set the text
+	const username = data.nickname;
+	const tiktokIcon = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+	
+	// Render avatars
+	const avatarURL = 'icons/platforms/tiktok.png';
+	
+	UpdateAlertBox(
+		'tiktok',
+		avatarURL,
+		`${username}`,
+		`subscribed on TikTok`,
+		'',
+		username,
+		'',
+		tiktokSubAction,
 		data
 	);
 }
@@ -1116,17 +1467,36 @@ function GetIntParam(paramName, defaultValue) {
 	return intValue;
 }
 
-async function GetAvatar(username) {
-	if (avatarMap.has(username)) {
-		console.debug(`Avatar found for ${username}. Retrieving from hash map.`)
-		return avatarMap.get(username);
+async function GetAvatar(username, platform) {
+
+	// First, check if the username is hashed already
+	if (avatarMap.has(`${username}-${platform}`)) {
+		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
+		return avatarMap.get(`${username}-${platform}`);
 	}
-	else {
-		console.debug(`No avatar found for ${username}. Retrieving from Decapi.`)
-		let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-		let data = await response.text()
-		avatarMap.set(username, data);
-		return data;
+
+	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
+	switch (platform) {
+		case 'twitch':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
+				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
+				let data = await response.text();
+				avatarMap.set(`${username}-${platform}`, data);
+				return data;
+			}
+		case 'kick':
+			{
+				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
+				let response = await fetch('https://kick.com/api/v2/channels/' + username);
+				console.log('https://kick.com/api/v2/channels/' + username)
+				let data = await response.json();
+				let avatarURL = data.user.profile_pic;
+				if (!avatarURL)
+					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+				avatarMap.set(`${username}-${platform}`, avatarURL);
+				return avatarURL;
+			}
 	}
 }
 
@@ -1340,6 +1710,54 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 
 }
 
+async function GetKickChatroomId(username) {
+	const url = `https://kick.com/api/v2/channels/${username}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+
+		const data = await response.json();
+		if (data.chatroom && data.chatroom.id) {
+			return data.chatroom.id;
+		} else {
+			throw new Error("Chatroom ID not found in response.");
+		}
+	} catch (error) {
+		console.error("Failed to fetch chatroom ID:", error.message);
+		return null;
+	}
+}
+
+async function GetKickSubBadges(username) {
+	const response = await fetch(`https://kick.com/api/v2/channels/${username}`);
+	const data = await response.json();
+
+	return data.subscriber_badges || [];
+}
+
+function GetKickBadgeURL(data) {
+	switch (data.type) {
+		case 'subscriber':
+			return CalculateKickSubBadge(data.count);
+		default:
+			return `icons/badges/kick-${data.type}.svg`;
+	}
+}
+
+function CalculateKickSubBadge(months) {
+  if (!Array.isArray(kickSubBadges)) return null;
+
+  // Filter for eligible badges, then get the one with the highest 'months'
+  const badge = kickSubBadges
+    .filter(b => b.months <= months)
+    .sort((a, b) => b.months - a.months)[0];
+
+  return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
+}
+
 ////////////////////
 // TEST FUNCTIONS //
 ////////////////////
@@ -1348,7 +1766,7 @@ async function testWidget()
 {
 	UpdateAlertBox(
 		'twitch',
-		await GetAvatar('nutty'),
+		await GetAvatar('nutty', 'twitch'),
 		`nutty`,
 		`subscribed with Tier 3`,
 		'',
@@ -1382,31 +1800,3 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
-
-// let data = {
-// 	cumulative_total: 77,
-// 	id: "6616253944106387595",
-// 	isTest: false,
-// 	messageId: "00e4258c-a880-4f11-a93c-4734ee92199f",
-// 	recipients: [
-// 	  {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-// 	],
-// 	sub_tier: "1000", // Usually "1000" = Tier 1
-// 	systemMessage: "thetrickster1973 is gifting 10 Tier 1 Subs to nutty's community! They've gifted a total of 77 in the channel!",
-// 	total: 10,
-// 	user: {
-// 	  badges: [{}, {}, {}],
-// 	  color: "#1E90FF",
-// 	  id: "52175891",
-// 	  login: "thetrickster1973",
-// 	  monthsSubscribed: 14,
-// 	  name: "thetrickster1973",
-// 	  role: 2, // 2 - VIP
-// 	  subscribed: true,
-// 	  type: "twitch"
-// 	}
-//   };
-
-// TwitchGiftBomb(data);
-
-//testWidget();

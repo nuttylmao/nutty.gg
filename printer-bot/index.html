@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="#" />
+	<link rel="stylesheet" href="./style.css" />
+	<script type="text/javascript" src="https://unpkg.com/@streamerbot/client/dist/streamerbot-client.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+</head>
+
+<body>
+	<div id="background">
+		<div id="connect-box">
+			<div class="field">
+				<label for="ip">IP Address</label>
+				<input type="text" id="ip" name="ip" placeholder="127.0.0.1" value="127.0.0.1">
+			</div>
+			<div class="field">
+				<label for="port">Port</label>
+				<input type="text" id="port" name="port" placeholder="8080" value="8080">
+			</div>
+			<button id="connect-button" onclick="Connect()">Connect</button>
+
+		</div>
+	</div>
+</body>
+
+<template id="receipt-template">
+	<!-- Header -->
+	<div id="header">
+		<img id="avatar">
+		<div>
+			<div id="title"></div>
+			<div id="subtitle"></div>
+		</div>
+	</div>
+
+	<!-- Contents -->
+	<div id="content">
+	</div>
+
+	<!-- Footer -->
+	<div id="footer">
+		<div id="date"></div>
+		<img id="icon" src="icons/platforms/twitch.png">
+	</div>
+</template>
+
+<script src="./script.js"></script>

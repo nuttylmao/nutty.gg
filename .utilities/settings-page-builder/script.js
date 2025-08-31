@@ -227,10 +227,23 @@ function LoadJSON(settingsJson) {
 			function UpdateSettingItemVisibility() {
 				data.settings.forEach(setting => {
 					if (setting.showIf) {
-						if (!document.getElementById(setting.showIf).checked)
-							document.getElementById(`item-${setting.id}`).style.display = 'none'
-						else
-							document.getElementById(`item-${setting.id}`).style.display = 'flex'
+						const parentElement = document.getElementById(setting.showIf);
+						let shouldShow = true;
+
+						// Walk up the chain of showIf dependencies
+						let currentSetting = setting;
+						while (currentSetting.showIf) {
+							const parentInput = document.getElementById(currentSetting.showIf);
+							if (!parentInput || !parentInput.checked) {
+								shouldShow = false;
+								break;
+							}
+
+							// Find the parent setting object (to keep walking up)
+							currentSetting = data.settings.find(s => s.id === currentSetting.showIf) || {};
+						}
+
+						document.getElementById(`item-${setting.id}`).style.display = shouldShow ? 'flex' : 'none';
 					}
 				});
 			}

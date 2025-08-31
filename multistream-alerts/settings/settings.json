@@ -364,6 +364,109 @@
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
+			"id": "kickUsername",
+			"label": "Kick Username",
+			"description": "",
+			"type": "text",
+			"defaultValue": "",
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "showKickSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "kickSubAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showKickSubs",
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "showKickChannelPointRedemptions",
+			"label": "Channel Point Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "kickChannelPointRedemptionAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showKickChannelPointRedemptions",
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "showKickHosts",
+			"label": "Hosts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "kickHostAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showKickHosts",
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "enableTikTokSupport",
+			"label": "Enable TikTok Support",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which TikTok alerts do you want to see?"
+		},
+		{
+			"id": "showTikTokGifts",
+			"label": "Gifts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok alerts do you want to see?"
+		},
+		{
+			"id": "tiktokGiftAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showTikTokGifts",
+			"group": "Which TikTok alerts do you want to see?"
+		},
+		{
+			"id": "showTikTokSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok alerts do you want to see?"
+		},
+		{
+			"id": "tiktokSubAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showTikTokSubs",
+			"group": "Which TikTok alerts do you want to see?"
+		},
+		{
 			"id": "showStreamlabsDonations",
 			"label": "Streamlabs Tips",
 			"description": "<a href=\"https://docs.streamer.bot/guide/integrations/streamlabs\" target=\"_blank\">Click to connect</a>",

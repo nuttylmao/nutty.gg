@@ -1,8 +1,8 @@
 * {
 	margin: 0;
 	padding: 0;
-	--margin: 40px;
-	--border-radius: 20px;
+	--margin: 20px;
+	--border-radius: 0.5em;
 	/* --line-spacing: 1.7em; */
 }
 
@@ -52,6 +52,7 @@ html {
 .normalScrollDirection {
 	bottom: 0;
 }
+
 .reverseScrollDirection {
 	display: flex;
 	top: 0;
@@ -92,17 +93,47 @@ li {
 	font-size: 0.7em;
 }
 
-.highlightMessage {
-	background: #adadad46;
-	padding: 20px 40px;
+.bubble {
+	background: var(--bubble-color) !important;
+	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 }
 
+.highlightMessage {
+	/* background: #adadad46 !important; */
+	background: #414141e5 !important;
+	box-shadow: inset 0 0 0 0.1em rgb(94, 94, 94);
+	padding: 0.5em 1em;
+	border-radius: var(--border-radius);
+}
+
+.message-contents {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+}
+
+.add-this-class-to-the-thing-to-make-all-the-text-centered-vertically-because-that-looks-much-better {
+	align-items: center;
+}
+
+#avatar {
+	width: 2em;
+}
+
+#avatar:empty {
+	display: none;
+}
+
 .avatar {
-	height: 2em;
-	margin: 1px;
-	transform: translate(0px, 0.25em);
-	border-radius: 50%
+    width: 2em;                /* Set width equal to height */
+    height: 2em;
+    margin: 1px;
+    transform: translate(0px, 0.25em);
+    border-radius: 50%;
+    object-fit: cover;         /* Crop to fill the circle */
+    overflow: hidden;          /* Ensure no overflow outside the circle */
+    display: inline-block;     /* Just in case */
 }
 
 .timestamp,
@@ -136,16 +167,22 @@ li {
 }
 
 .productImage {
-	height: 15em;
+	height: 3em;
 	border-radius: 0.25em;
 	transform: translate(0px, 0.25em);
 }
 
-.centerThatShitHomie {
+.youtubeThumbnail {
+	width: 5em;
+	border-radius: 0.25em;
+	transform: translate(0px, 0.25em);
+}
+
+/* .centerThatShitHomie {
 	display: inline-block;
 	width: 100%;
 	text-align: center;
-}
+} */
 
 #badgeList {
 	margin: 0px 5px;
@@ -163,8 +200,9 @@ li {
 #reply {
 	display: none;
 	overflow: hidden;
-	white-space: nowrap;
+	white-space: normal; /* Allow line wrapping */
 	text-overflow: ellipsis;
+	word-break: break-word; /* Break long words if necessary */
 	font-size: 0.7em;
 	opacity: 0.5;
 }
@@ -176,21 +214,53 @@ li {
 
 #card {
 	background: #adadad46;
-	padding: 20px 40px;
+	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
 }
 
-#youtubeSuperSticker {
-	display: block;
+.youtube-super-sticker {
+	height: 2em;
+	margin: 1px;
+	transform: translate(0px, 0.25em);
 }
 
-#sticker-img {
-	height: 5em;
+.tiktok-gift {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1em;
+	padding: 0.5em 1em;
+	border-radius: var(--border-radius);
+	max-width: 100%;
+	background: linear-gradient(#262626BF, #000000BF) !important;
 }
 
-#stickerLabel {
-	text-align: center;
-	font-weight: 700;
+.tiktok-gift-avatar {
+	height: 3em;
+	margin: 1px;
+	border-radius: 50%;
+	justify-content: left;
+	flex-shrink: 0;
+}
+
+.tiktok-gift-message {
+	flex-grow: 1;
+	white-space: nowrap;		/* keeps text in a single line */
+	overflow: hidden;			/* hides overflowed content */
+	text-overflow: ellipsis;	/* adds the "..." at the end */
+}
+
+.tiktok-gift-sticker {
+	height: 2.5em;
+	flex-shrink: 0;
+	justify-content: flex-end;
+}
+
+#tiktok-gift-repeat-count {
+	justify-content: flex-end;
+	font-size: 1.5em;
+	font-style: italic;
+	font-weight: 500;
 }
 
 /*****************/
@@ -221,6 +291,10 @@ li {
 	background: linear-gradient(#FF6C60BF, #FF0707BF) !important;
 }
 
+.kick {
+	background: linear-gradient(#53fc18BF, #005600BF) !important;
+}
+
 .streamlabs {
 	background: linear-gradient(#73dabbbf, #397765bf) !important;
 }
@@ -244,6 +318,19 @@ li {
 .fourthwall {
 	background: linear-gradient(#466edbbf, #1c56f5bf) !important;
 }
+
+.tiktok {
+	background: linear-gradient(#262626BF, #000000BF) !important;
+}
+
+.fourthwall {
+	background: linear-gradient(#466edbbf, #1c56f5bf) !important;
+}
+
+.thumbnail {
+	background: linear-gradient(#494949bf, #202020bf) !important;
+}
+
 
 .blank {
 	background: #adadad00 !important;

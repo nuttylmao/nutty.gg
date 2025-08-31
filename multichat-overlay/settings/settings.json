@@ -5,7 +5,7 @@
 			"label": "Show Platform",
 			"description": "",
 			"type": "checkbox",
-			"defaultValue": true,
+			"defaultValue": false,
 			"group": "Appearance"
 		},
 		{
@@ -71,7 +71,7 @@
 			"type": "number",
 			"min": 1,
 			"max": 120,
-			"defaultValue": 30,
+			"defaultValue": 20,
 			"group": "Appearance"
 		},
 		{
@@ -82,6 +82,35 @@
 			"min": 0,
 			"defaultValue": 1.7,
 			"step": ".1",
+			"group": "Appearance"
+		},
+		{
+			"id": "useChatBubbles",
+			"label": "Chat Bubbles",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Appearance"
+		},
+		{
+			"id": "bubbleColor",
+			"label": "Bubble Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#1d1d1d",
+			"showIf": "useChatBubbles",
+			"group": "Appearance"
+		},
+		{
+			"id": "bubbleOpacity",
+			"label": "Bubble Opacity",
+			"description": "",
+			"type": "number",
+			"defaultValue": "0.90",
+			"min": 0,
+			"max": 1,
+			"step": ".01",
+			"showIf": "useChatBubbles",
 			"group": "Appearance"
 		},
 		{
@@ -97,7 +126,7 @@
 			"label": "Background Opacity",
 			"description": "",
 			"type": "number",
-			"defaultValue": "0.85",
+			"defaultValue": "0",
 			"min": 0,
 			"max": 1,
 			"step": ".01",
@@ -198,6 +227,14 @@
 			"group": "General"
 		},
 		{
+			"id": "showYouTubeLinkPreviews",
+			"label": "Show YouTube Link Previews",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
 			"id": "showTwitchMessages",
 			"label": "Chat Messages",
 			"description": "",
@@ -211,6 +248,14 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
+			"id": "showTwitchFollows",
+			"label": "New Followers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
@@ -290,6 +335,99 @@
 			"type": "checkbox",
 			"defaultValue": true,
 			"group": "Which YouTube messages do you want to see?"
+		},
+		{
+			"id": "kickUsername",
+			"label": "Kick Username",
+			"description": "",
+			"type": "text",
+			"defaultValue": "",
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickMessages",
+			"label": "Chat Messages",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickChannelPointRedemptions",
+			"label": "Channel Point Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickHosts",
+			"label": "Hosts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "enableTikTokSupport",
+			"label": "Enable TikTok Support",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
+			"id": "showTikTokMessages",
+			"label": "Chat Messages",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
+			"id": "showTikTokFollows",
+			"label": "New Followers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
+			"id": "showTikTokLikes",
+			"label": "Likes",
+			"description": "Self-updating Likes",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
+			"id": "showTikTokGifts",
+			"label": "Gifts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
+		},
+		{
+			"id": "showTikTokSubs",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "enableTikTokSupport",
+			"group": "Which TikTok messages do you want to see?"
 		},
 		{
 			"id": "showStreamlabsDonations",
