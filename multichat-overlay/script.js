@@ -521,24 +521,14 @@ async function TwitchChatMessage(data) {
 
 	// Set Shared Chat
 	const isFromSharedChatGuest = data.isFromSharedChatGuest;
-	if (isFromSharedChatGuest) {
-		// if (showTwitchSharedChat > 1) {
-		// 	if (!data.sharedChat.primarySource) {
-		// 		const sharedChatChannel = data.sharedChat.sourceRoom.name;
-		// 		sharedChatDiv.style.display = 'block';
-		// 		sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
-		// 		messageContainerDiv.classList.add("highlightMessage");
-		// 	}
-		// }
-		// else if (!data.sharedChat.primarySource && showTwitchSharedChat == 0)
-		// 	return;
-		
+	if (isFromSharedChatGuest) {		
 		switch (showTwitchSharedChat)
 		{
 			// 2 = Show & Highlight
 			case 2:
-				// const sharedChatChannel = data.sharedChat.sourceRoom.name;		// Twitch removed the source channel for some reason?!?!
-				const sharedChatChannel = 'Shared Chat';
+				let sharedChatChannel = data.sharedChatSource.name;		// Twitch removed the source channel for some reason?!?!
+				if (sharedChatChannel.toLowerCase() != data.sharedChatSource.login.toLowerCase())
+					sharedChatChannel = `${sharedChatChannel} (${data.sharedChatSource.login})`;
 				sharedChatDiv.style.display = 'block';
 				sharedChatChannelDiv.innerHTML = `💬 ${sharedChatChannel}`;
 				messageContainerDiv.classList.add("highlightMessage");
