@@ -1167,7 +1167,7 @@ function FourthwallGiftPurchase(data) {
 	if (!showFourthwallAlerts)
 		return;
 
-	let user = data.username;
+	// let user = data.username;
 	const total = data.total;
 	const currency = data.currency;
 	const gifts = data.gifts.length;
@@ -1176,7 +1176,8 @@ function FourthwallGiftPurchase(data) {
 	let message = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	message += `${user} gifted`;
+	// message += `${user} gifted`;
+	message += `Someone has gifted`;
 
 	// If there is more than one gifted item, display the number of gifts
 	if (gifts > 1)
@@ -1202,10 +1203,9 @@ function FourthwallGiftDrawStarted(data) {
 	const itemName = data.offer.name;
 
 	let message = "";
-	message += `${user} gifted`;
 
 	// If the user ordered more than one item, write how many items they ordered
-	message += `🎁 ${itemName} Giveaway! • Type !join in the next ${durationSeconds} seconds for your chance to win!`;
+	message += `🎁 ${itemName} Giveaway! • Type 'join' in the next ${durationSeconds} seconds for your chance to win!`;
 
 	ShowAlert(message, 'fourthwall');
 }

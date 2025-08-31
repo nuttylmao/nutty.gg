@@ -130,7 +130,7 @@ if (useCustomBackground) {
 		hexOpacity = "0" + hexOpacity;
 	}
 	//document.body.style.background = `${background}${hexOpacity}`;
-	console.log(`${background}${hexOpacity}`);
+	//console.log(`${background}${hexOpacity}`);
 	document.documentElement.style.setProperty('--custom-background', `${background}${hexOpacity}`);
 }
 
@@ -1148,18 +1148,17 @@ function FourthwallSubscriptionPurchased(data) {
 }
 
 function FourthwallGiftPurchase(data) {
-	console.log(data);
 	if (!showFourthwallAlerts)
 		return;
 
 	// Set the text
-	let user = data.username;
+	// let user = data.username;
 	const total = data.total;
 	const currency = data.currency;
 	const gifts = data.gifts.length;
 	const itemName = data.offer.name;
-	const itemImageUrl = data.offer.imageUrl;
-	const message = DecodeHTMLString(data.statmessageus);
+	// const itemImageUrl = data.offer.imageUrl;
+	// const message = DecodeHTMLString(data.statmessageus);
 
 	let contents = '';
 	let attributesText = '';
@@ -1179,12 +1178,12 @@ function FourthwallGiftPurchase(data) {
 
 	UpdateAlertBox(
 		'fourthwall',
-		itemImageUrl,
-		`${user}`,
-		`gifted ${contents}`,
+		'', // itemImageUrl,
+		`An item has been gifted!`,// `${user}`,
+		`${contents}`, // `gifted ${contents}`,
 		attributesText,
-		user,
-		message,
+		'', // user,
+		'', // message,
 		fourthwallAlertAction,
 		data
 	);
@@ -1202,7 +1201,7 @@ function FourthwallGiftDrawStarted(data) {
 		'fourthwall',
 		'',
 		`<span style="font-size: 1.2em">🎁 ${itemName} Giveaway!</span>`,
-		`Type !join in the next ${durationSeconds} seconds for your chance to win!`,
+		`Type 'join' in the next ${durationSeconds} seconds for your chance to win!`,
 		'',
 		'',
 		'',
@@ -1214,14 +1213,10 @@ function FourthwallGiftDrawStarted(data) {
 function FourthwallGiftDrawEnded(data) {
 	if (!showFourthwallAlerts)
 		return;
-	
-	// Render avatars
-	if (showAvatar) {
-		avatar.src = '';
-	}
 
 	UpdateAlertBox(
 		'fourthwall',
+		'',
 		`<span style="font-size: 1.2em">🥳 GIVEAWAY ENDED 🥳</span>`,
 		`Congratulations ${GetWinnersList(data.gifts)}!`,
 		'',

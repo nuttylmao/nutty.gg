@@ -1946,28 +1946,32 @@ function FourthwallGiftPurchase(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.classList.add('blank');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+	cardDiv.classList.add('fourthwall');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('blank');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
 
 	// Set the text
-	let user = data.username;
+	// let user = data.username;
 	const total = data.total;
 	const currency = data.currency;
 	const gifts = data.gifts.length;
 	const itemName = data.offer.name;
-	const itemImageUrl = data.offer.imageUrl;
-	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
-	const message = DecodeHTMLString(data.statmessageus);
+	// const itemImageUrl = data.offer.imageUrl;
+	// const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
+	// const message = DecodeHTMLString(data.statmessageus);
 
 	let contents = "";
 
-	contents += fourthwallProductImage;
+	// contents += fourthwallProductImage;
 
-	contents += "<br><br>";
+	// contents += "<br><br>";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `${user} gifted`;
+	// contents += `${user} gifted`;
+	contents += `Someone has gifted`;
 
 	// If there is more than one gifted item, display the number of gifts
 	if (gifts > 1)
@@ -1984,11 +1988,11 @@ function FourthwallGiftPurchase(data) {
 
 	titleDiv.innerHTML = contents;
 
-	// Add the custom message from the user
-	if (message.trim() != "")
-		contentDiv.innerHTML = `${message}`;
-	else
-		contentDiv.style.display = 'none'
+	// // Add the custom message from the user
+	// if (message.trim() != "")
+	// 	contentDiv.innerHTML = `${message}`;
+	// else
+	// 	contentDiv.style.display = 'none'
 
 	AddMessageItem(instance, data.id);
 }
@@ -2013,8 +2017,11 @@ function FourthwallGiftDrawStarted(data) {
 
 	// Set the card background colors
 	cardDiv.classList.add('fourthwall');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('fourthwall');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
 
 	// Set the text
 	const durationSeconds = data.durationSeconds;
@@ -2023,10 +2030,10 @@ function FourthwallGiftDrawStarted(data) {
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<h3>🎁 ${itemName} Giveaway!</h3>`;
+	contents += `🎁 ${itemName} Giveaway!`;
 
 	titleDiv.innerHTML = contents;
-	contentDiv.innerHTML = `Type !join in the next ${durationSeconds} seconds for your chance to win!`;
+	contentDiv.innerHTML = `Type 'join' in the next ${durationSeconds} seconds for your chance to win!`;
 	//contentDiv.style.display = `none`;
 
 	AddMessageItem(instance, data.id);
@@ -2052,13 +2059,16 @@ function FourthwallGiftDrawEnded(data) {
 
 	// Set the card background colors
 	cardDiv.classList.add('fourthwall');
-	titleDiv.classList.add('centerThatShitHomie');
-	contentDiv.classList.add('centerThatShitHomie');
+
+	// // Set the card background colors
+	// cardDiv.classList.add('fourthwall');
+	// titleDiv.classList.add('centerThatShitHomie');
+	// contentDiv.classList.add('centerThatShitHomie');
 
 	let contents = "";
 
 	// If the user ordered more than one item, write how many items they ordered
-	contents += `<h3>🥳 GIVEAWAY ENDED 🥳</h3>`;
+	contents += `🥳 GIVEAWAY ENDED 🥳`;
 	//contents += `Congratulations ${GetWinnersList(data.gifts)}!`
 
 	titleDiv.innerHTML = contents;
