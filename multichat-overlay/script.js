@@ -212,6 +212,21 @@ client.on('Twitch.ChatCleared', (response) => {
 	TwitchChatCleared(response.data);
 })
 
+client.on('Twitch.SharedChatMessageDeleted', (response) => {
+	console.debug(response.data);
+	TwitchChatMessageDeleted(response.data);
+})
+
+client.on('Twitch.SharedChatUserBanned', (response) => {
+	console.debug(response.data);
+	TwitchUserBanned(response.data);
+})
+
+client.on('Twitch.SharedChatUserTimedout', (response) => {
+	console.debug(response.data);
+	TwitchUserBanned(response.data);
+})
+
 client.on('YouTube.Message', (response) => {
 	console.debug(response.data);
 	YouTubeMessage(response.data)
