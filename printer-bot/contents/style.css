@@ -1,0 +1,68 @@
+#settings {
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+}
+
+.setting input {
+	margin-left: auto;
+	width: 15em;
+}
+
+.setting {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5em;
+}
+
+
+
+/************************/
+/*** RECEIPT TEMPLATE ***/
+/************************/
+
+#receipt-container {
+	text-align: center;
+	color: black;
+}
+
+#receipt-header {}
+
+#receipt-content {
+	padding: 0.5em 0em;
+}
+
+#receipt-footer {}
+
+#receipt-avatar {
+	width: 6em;
+	height: 6em;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+#receipt-title {
+	font-weight: 900;
+	font-size: 1.5em;
+	text-transform: uppercase;
+}
+
+#receipt-subtitle {
+	font-weight: 700;
+	font-size: 1.2em;
+}
+
+#receipt-icon {
+	height: 1em;
+}
+
+#receipt-date {
+	margin: 0.5em 0em;
+	font-size: 0.7em;
+	text-transform: uppercase;
+}
+
+.emote {
+	height: 1em;
+}

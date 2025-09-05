@@ -1,0 +1,118 @@
+html,
+body {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+
+
+/**************/
+/*** HEADER ***/
+/**************/
+
+#header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 1em;
+	gap: 1em;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+}
+
+#header-end {
+	margin-left: auto;
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
+}
+
+#header-end button {
+	padding: 0.2em;
+}
+
+
+
+/*********************/
+/*** PAGE CONTENTS ***/
+/*********************/
+
+#content {
+	flex: 1;
+	overflow: auto;
+	margin: 1em;
+}
+
+
+
+/******************/
+/*** BLUR LAYER ***/
+/******************/
+
+#blur-layer {
+	position: fixed;
+	inset: 0;
+	/* top:0; left:0; bottom:0; right:0 */
+	backdrop-filter: blur(5px);
+	/* blur the content behind */
+	-webkit-backdrop-filter: blur(5px);
+	/* Safari support */
+	z-index: 1;
+	/* behind the modal */
+}
+
+
+
+/********************************/
+/*** STREAMER.BOT CONNECT BOX ***/
+/********************************/
+
+#sb-required-actions-dialog {
+	max-width: 30em;
+	display: none;
+}
+
+#sb-connect-button:enabled:hover {
+	background-color: #3be477;
+}
+
+#sb-error-label {
+	background: #a82d2e33;
+	border-radius: 0.5em;
+	padding: 1em;
+	color: #c65e5e;
+	display: none;
+}
+
+
+
+/******************************************/
+/*** STREAMER.BOT REQUIRED ACTIONS LIST ***/
+/******************************************/
+
+.sb-required-action {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.sb-required-action-found {
+	margin-left: auto;
+}
+
+#sb-import-code {
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0.5em;
+  font-family: monospace;
+  font-size: 1em;
+}
+
+#sb-import-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}

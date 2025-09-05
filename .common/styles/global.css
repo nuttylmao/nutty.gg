@@ -1,0 +1,278 @@
+/*****************/
+/*** VARIABLES ***/
+/*****************/
+
+:root {
+    --domain: nutty;
+    --background-color: #181818;
+    --accent-color: #2196f3;
+    --success-color: #3be477;
+    --button-color: #2e2e2e;
+    --dialog-background: #1d1d1d;
+    --callout-background: #181818;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Inter, system-ui, sans-serif;
+    color: white;
+    background-color: var(--background-color);
+}
+
+
+
+/************/
+/*** TEXT ***/
+/************/
+
+.title {
+	font-weight: 900;
+	font-size: 1.5em;
+	text-transform: uppercase;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+}
+
+.setting-description {
+	font-size: 0.9em;
+	font-weight: 100;
+}
+
+
+
+/***************/
+/*** DIVIDER ***/
+/***************/
+
+.divider {
+    border: none;
+    /* border-top: 0.1px solid #444444; */
+    margin: 0.3em 0;
+}
+
+
+
+/***************/
+/*** BUTTONS ***/
+/***************/
+
+button {
+    font-size: 1em;
+    font-weight: 600;
+    background-color: var(--button-color);
+    color: white;
+    opacity: 0.8;
+    border-width: 0;
+    border-radius: 0.5em;
+    border: 1px solid #404040;
+    padding: 0.5em 1em;
+    width: 100%;
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.3;
+    cursor: inherit;
+}
+
+
+
+/************************/
+/*** INPUT TEXT BOXES ***/
+/************************/
+
+input {
+    border-radius: 0.5em;
+    width: auto;
+    padding: 0.5em;
+    background-color: #171717;
+    border: 1px solid #404040;
+    color: white;
+    font-size: 0.9em;
+}
+
+input:disabled {
+    opacity: 0.5;
+}
+
+
+
+/***********************/
+/*** SLIDER SWITCHES ***/
+/***********************/
+
+/* Switch styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 3em;
+    height: 1.5em;
+    font-size: 1em;
+    overflow: hidden;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1.1em;
+    width: 1.1em;
+    left: 0.2em;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: white;
+    transition: 0.4s;
+
+}
+
+input:checked+.slider {
+    background-color: var(--accent-color);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--accent-color);
+}
+
+input:checked+.slider:before {
+    transform: translate(1.5em, -50%);
+    /* move knob across, stay centered */
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 1.5em;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+
+
+/******************/
+/*** SCROLLBARS ***/
+/******************/
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    /* Color of the tracking area */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #9f9f9f;
+    /* Color of the scroll thumb */
+    border-radius: 4px;
+    /* Roundness of the scroll thumb */
+    border: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #d1d1d1;
+    /* Color of the scroll thumb on hover */
+}
+
+
+
+/***************/
+/*** IFRAMES ***/
+/***************/
+
+iframe {
+    border-width: 0px;
+}
+
+
+
+/***************/
+/*** CALLOUT ***/
+/***************/
+
+.callout {
+	font-size: 0.9em;
+	font-weight: 100;
+	background-color: var(--callout-background);
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	padding: 1em;
+
+	border-radius: 0.5em;
+	border: 1px solid #40404080;
+}
+
+
+
+/**************/
+/*** DIALOG ***/
+/**************/
+
+.dialog {
+	font-size: 1em;
+	background-color: var(--dialog-background);
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	padding: 1em;
+
+	border-radius: 0.5em;
+	border: 1px solid #40404080;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* above overlay */
+}
+
+.dialog-nav-button {
+    background: transparent;
+    border: none;
+    font-size: 1.5em;
+    font-weight: 100;
+    padding: 0em;
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    position: fixed; /* fixed to viewport */
+    top: 0.5em;     /* small offset from top */
+    right: 0.5em;   /* small offset from right */
+}
+
+.dialog-nav-button:hover {
+    background: var(--button-color);
+}
