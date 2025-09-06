@@ -12,5 +12,5 @@ window.dockWrapper = document.getElementById('dock-wrapper');
 dockWrapper.src = `../../.common/core/widget-dock-core${configJson}`;
 
 dockWrapper.addEventListener('load', () => {
-    dockWrapper.contentWindow.content.src = window.location.href + '/contents';
+    dockWrapper.contentWindow.content.src = baseURL + '/contents';
 });

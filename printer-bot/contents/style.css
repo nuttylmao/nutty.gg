@@ -23,6 +23,7 @@
 /************************/
 
 #receipt-container {
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 	text-align: center;
 	color: black;
 }
@@ -36,8 +37,8 @@
 #receipt-footer {}
 
 #receipt-avatar {
-	width: 6em;
-	height: 6em;
+	width: 90%;
+	/* height: 10em; */
 	border-radius: 50%;
 	object-fit: cover;
 }
@@ -54,7 +55,7 @@
 }
 
 #receipt-icon {
-	height: 1em;
+	height: 2em;
 }
 
 #receipt-date {
