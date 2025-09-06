@@ -56,26 +56,28 @@
 
 	<!-- Streamer.bot Connect Dialog -->
 	<div id="sb-connect-dialog" class="dialog">
+		
+		<button class="dialog-nav-button" onclick="ClosenConnectDialog()">×</button>
 
-		<hr class="divider">
+		<div style="display: flex; flex-direction: row; align-items: center; gap: 1em">
+			<img src="../../resources/streamer.bot.png" style="height: 40px;" />
+			<label class="title">Streamer.bot</label>
+		</div>
 
 		<div style="display: flex; flex-direction: row; gap: 1em">
 			<div class="field">
-				<label for="sb-address">Address *</label>
+				<label for="sb-address">Address <span style="color: var(--mandatory-field-color);">*</span></label>
 				<input type="text" id="sb-address" name="sb-address" placeholder="127.0.0.1" value="127.0.0.1">
 			</div>
 			<div class="field">
-				<label for="sb-port">Port *</label>
+				<label for="sb-port">Port <span style="color: var(--mandatory-field-color);">*</span></label>
 				<input type="text" id="sb-port" name="sb-port" placeholder="8080" value="8080">
 			</div>
 		</div>
 		<div class="field">
 			<label for="sb-password">Password</label>
-			<label class="setting-description" for="sb-password">(Optional)</label>
 			<input type="password" id="sb-password" name="sb-password">
 		</div>
-
-		<hr class="divider">
 
 		<label id="sb-error-label"></label>
 

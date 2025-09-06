@@ -260,6 +260,11 @@ function OpenConnectDialog() {
     blurLayer.style.display = "block";
 }
 
+function ClosenConnectDialog() {
+    sbConnectDialog.style.display = "none";
+    blurLayer.style.display = "none";
+}
+
 function OpenRequiredActionsDialog() {
     sbRequiredActionsDialog.style.display = "flex";
     blurLayer.style.display = "block";
