@@ -37,8 +37,8 @@
 #receipt-footer {}
 
 #receipt-avatar {
-	width: 90%;
-	/* height: 10em; */
+	max-height: 15em;
+	max-width: 90%;
 	border-radius: 50%;
 	object-fit: cover;
 }
