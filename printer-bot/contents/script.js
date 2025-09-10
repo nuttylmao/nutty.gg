@@ -133,11 +133,11 @@ async function CustomEvent(data) {
                 titleEl.innerText = `Gifted Sub`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerHTML += `<b>${data.recipientUser}</b><br>received a ${data.tier} sub from<br>`;
                 if (data.anonymous)
-                    messageEl.innerHTML += `a mysterious admirer...`;
+                    messageEl.innerHTML += `<b>✦･ﾟ A mysterious admirer ･ﾟ✦</b><br>`;
                 else
-                    messageEl.innerHTML += `<b>${data.user}</b>!`;
+                    messageEl.innerHTML += `<b>${data.user}</b><br>`;
+                messageEl.innerHTML += `gifted a ${data.tier} sub to<br><b>${data.recipientUser}</b>`;
 
                 contentEl.appendChild(messageEl);
 
@@ -214,7 +214,7 @@ async function CustomEvent(data) {
                 titleEl.innerText = `Gifted Membership`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerHTML = `<b>${data.user}</b><br>received a membership from<br><b>${data.gifterUser}</b>!`;
+                messageEl.innerHTML = `<b>${data.gifterUser}</b><br>gifted a membership to<br><b>${data.user}</b>!`;
 
                 contentEl.appendChild(messageEl);
 
@@ -288,7 +288,7 @@ async function CustomEvent(data) {
                 titleEl.innerText = `Gifted Sub`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerHTML = `<b>${data["recipient.userName"]}</b><br>received a sub from<br><b>${data.user}</b>!`;
+                messageEl.innerHTML = `<b>${data.user}</b><br>gifted a sub to<br><b>${data["recipient.userName"]}</b>!`;
 
                 contentEl.appendChild(messageEl);
 
