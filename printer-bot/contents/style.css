@@ -58,6 +58,10 @@
 	height: 2em;
 }
 
+#receipt-icon:empty {
+  display: none;
+}
+
 #receipt-date {
 	margin: 0.5em 0em;
 	font-size: 0.7em;
