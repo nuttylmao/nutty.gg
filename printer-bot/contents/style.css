@@ -28,13 +28,13 @@
 	color: black;
 }
 
-#receipt-header {}
+/* #receipt-header {} */
 
 #receipt-content {
 	padding: 0.5em 0em;
 }
 
-#receipt-footer {}
+/* #receipt-footer {} */
 
 #receipt-avatar {
 	max-height: 15em;
