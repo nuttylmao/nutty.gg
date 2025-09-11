@@ -2725,10 +2725,10 @@ function TikTokLikes(data) {
 
 
 	// Get the total number of likes
-	var likeCountTotal = parseInt(data.likeCount);
+	let likeCountTotal = parseInt(data.likeCount);
+	let sumLikes = 0;
 
 	// Search for Previous Likes from the Same User
-    //const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
     const previousLikeContainer = document.querySelector(`.likes[data-user-identifier="${data.userId}"]`);	
 
 	// If found, fetches the previous likes, deletes the element
@@ -2736,9 +2736,13 @@ function TikTokLikes(data) {
     if (previousLikeContainer) {
         const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
         if (likeCountElem) {
-            var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
-            likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
-            previousLikeContainer.parentElement.parentElement.remove();
+			const liLikeContainer = previousLikeContainer.parentElement?.parentElement
+			if (liLikeContainer) {
+				var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''), 10);
+				sumLikes = Math.floor(likeCountPrev + likeCountTotal);
+				//console.log(`[User ${data.userId}] likeCountPrev: ${likeCountPrev}, likeCountToAdd: ${likeCountTotal}, sumLikes: ${sumLikes}`);
+            	previousLikeContainer.parentElement.parentElement.remove();
+			}
         }
     }
 
@@ -2768,7 +2772,7 @@ function TikTokLikes(data) {
 	usernameSpan.innerText = data.nickname;
 	giftNameSpan.innerText = 'Likes';
 	stickerImg.src = '';
-	repeatCountDiv.innerText = `x${likeCountTotal}`;
+	repeatCountDiv.innerText = `x${sumLikes}`;
 
 	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 }
