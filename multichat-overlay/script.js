@@ -2728,7 +2728,8 @@ function TikTokLikes(data) {
 	var likeCountTotal = parseInt(data.likeCount);
 
 	// Search for Previous Likes from the Same User
-    const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
+    //const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
+    const previousLikeContainer = document.querySelector(`.likes[data-user-identifier="${data.userId}"]`);	
 
 	// If found, fetches the previous likes, deletes the element
     // and then creates a new count with a sum of the like count
@@ -2737,7 +2738,7 @@ function TikTokLikes(data) {
         if (likeCountElem) {
             var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
             likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
-            previousLikeContainer.remove();
+            previousLikeContainer.parentElement.parentElement.remove();
         }
     }
 
@@ -2746,6 +2747,15 @@ function TikTokLikes(data) {
 
 	// Create a new instance of the template
 	const instance = template.content.cloneNode(true);
+	
+	// gets the GiftElement
+	const giftElement = instance.querySelector('.tiktok-gift');
+
+	// adds the like class
+	giftElement.classList.add('likes');
+
+	// and assigns the user id
+	giftElement.dataset.userIdentifier = data.userId;
 
 	// Get divs
 	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
