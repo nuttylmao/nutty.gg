@@ -2725,8 +2725,7 @@ function TikTokLikes(data) {
 
 
 	// Get the total number of likes
-	let likeCountTotal = parseInt(data.likeCount);
-	let sumLikes = 0;
+	let likeCount = parseInt(data.likeCount);
 
 	// Search for Previous Likes from the Same User
     const previousLikeContainer = document.querySelector(`.likes[data-user-identifier="${data.userId}"]`);	
@@ -2738,43 +2737,50 @@ function TikTokLikes(data) {
         if (likeCountElem) {
 			const liLikeContainer = previousLikeContainer.parentElement?.parentElement
 			if (liLikeContainer) {
-				var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''), 10);
-				sumLikes = Math.floor(likeCountPrev + likeCountTotal);
-				//console.log(`[User ${data.userId}] likeCountPrev: ${likeCountPrev}, likeCountToAdd: ${likeCountTotal}, sumLikes: ${sumLikes}`);
-            	previousLikeContainer.parentElement.parentElement.remove();
+				
+				let prevLikeCount = parseInt(likeCountElem.textContent.replace('x', ''), 10);
+				let likeCountUpdate = Math.floor(prevLikeCount + likeCount);
+				let likeCountDiv = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
+
+				likeCountDiv.innerText = `x${likeCountUpdate}`;
+				
+				const parent = liLikeContainer.parentElement;
+				if (parent) { parent.appendChild(liLikeContainer); }
 			}
         }
     }
 
-	// Get a reference to the template
-	const template = document.getElementById('tiktok-gift-template');
+	else {
+		// Get a reference to the template
+		const template = document.getElementById('tiktok-gift-template');
 
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-	
-	// gets the GiftElement
-	const giftElement = instance.querySelector('.tiktok-gift');
+		// Create a new instance of the template
+		const instance = template.content.cloneNode(true);
+		
+		// gets the GiftElement
+		const giftElement = instance.querySelector('.tiktok-gift');
 
-	// adds the like class
-	giftElement.classList.add('likes');
+		// adds the like class
+		giftElement.classList.add('likes');
 
-	// and assigns the user id
-	giftElement.dataset.userIdentifier = data.userId;
+		// and assigns the user id
+		giftElement.dataset.userIdentifier = data.userId;
 
-	// Get divs
-	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
-	const usernameSpan = instance.querySelector('#tiktok-gift-username');
-	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
-	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
-	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
+		// Get divs
+		const avatarImg = instance.querySelector('.tiktok-gift-avatar');
+		const usernameSpan = instance.querySelector('#tiktok-gift-username');
+		const giftNameSpan = instance.querySelector('#tiktok-gift-name');
+		const stickerImg = instance.querySelector('.tiktok-gift-sticker');
+		const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
 
-	avatarImg.src = data.profilePictureUrl;
-	usernameSpan.innerText = data.nickname;
-	giftNameSpan.innerText = 'Likes';
-	stickerImg.src = '';
-	repeatCountDiv.innerText = `x${sumLikes}`;
+		avatarImg.src = data.profilePictureUrl;
+		usernameSpan.innerText = data.nickname;
+		giftNameSpan.innerText = 'Likes';
+		stickerImg.src = '';
+		repeatCountDiv.innerText = `x${likeCount}`;
 
-	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+		AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
+	}
 }
 
 function TikTokGift(data) {
