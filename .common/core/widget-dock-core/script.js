@@ -7,6 +7,7 @@ const urlParams = new URLSearchParams(queryString);
 
 const configJson = urlParams.get("config") || "";
 
+
 ///////////////////
 // PAGE ELEMENTS //
 ///////////////////
@@ -22,17 +23,24 @@ const sbRequiredActionsSuccessLabel = document.getElementById('sb-required-actio
 const sbRequiredActionsFailureLabel = document.getElementById('sb-required-actions-failure');
 const sbRequiredActionsFailureSubtext = document.getElementById('sb-required-actions-failure-subtext');
 
-
 const sbRequiredActionsList = document.getElementById('sb-required-actions-list');
 const sbImportCodeLabel = document.getElementById('sb-import-code');
 const sbImportCopyButton = document.getElementById('sb-import-copy-button');
-
 
 const sbActionsButton = document.getElementById('sb-actions-button');
 const sbStatusButton = document.getElementById('sb-status-button');
 const sbStatusIcon = document.getElementById('sb-status-icon');
 
 const blurLayer = document.getElementById('blur-layer');
+
+const contentIFrame = document.getElementById('content');
+
+
+//////////////////////
+// GLOBAL VARIABLES //
+//////////////////////
+
+let sbClientListeners;
 
 
 
@@ -54,7 +62,7 @@ const sbServerAddress = sbAddressInput.value;
 const sbServerPort = sbPortInput.value;
 const sbServerPassword = sbPasswordInput.value;
 
-window.sbClient = new StreamerbotClient({
+sbClient = new StreamerbotClient({
     host: sbServerAddress,
     port: sbServerPort,
     password: sbServerPassword,
@@ -65,6 +73,16 @@ window.sbClient = new StreamerbotClient({
         console.debug(data);
 
         SetConnectionState(true);
+
+        // Notify iframe
+        contentIFrame.addEventListener("load", () => {
+            NotifyTheContentIFrameThatSBHasConnectedSuccessfullySoItCanDoStuff(data);
+        });
+        NotifyTheContentIFrameThatSBHasConnectedSuccessfullySoItCanDoStuff();
+
+        // Idk why but listeners get cleared when re-connecting, so copy them back in
+        if (sbClientListeners)
+            sbClient.listeners = sbClientListeners;
     },
 
     onDisconnect: () => {
@@ -89,7 +107,7 @@ function SetConnectionState(isConnected) {
         sbErrorLabel.style.display = 'none';
         sbStatusIcon.src = 'icons/connected.svg';
 
-        sbStatusButton.title = `Connected to ${window.sbClient.info.name} (${window.sbClient.info.version})`;
+        sbStatusButton.title = `Connected to ${sbClient.info.name} (${sbClient.info.version})`;
 
         // Check required actions
         CheckRequiredActions();
@@ -157,7 +175,7 @@ async function CheckRequiredActions() {
                     // Iterate over required SB actions and check if they're present
                     config.requiredSbActions.forEach(req => {
                         const exists = response.actions.some(act => act.id === req.id);
-                        
+
                         console.debug(`${req.name}: ${exists ? 'Found' : 'Missing'}`)
 
                         // As soon as one is found that doesn't exist, throw up warning
@@ -188,8 +206,7 @@ async function CheckRequiredActions() {
                         sbRequiredActionsList.appendChild(item);
                     });
                 }
-                else
-                {
+                else {
                     // There are no required actions, so hide the button
                     sbActionsButton.style.display = 'none';
                 }
@@ -199,8 +216,7 @@ async function CheckRequiredActions() {
 }
 
 function SetRequiredActionState(isSuccess) {
-    if (isSuccess)
-    {
+    if (isSuccess) {
         sbRequiredActionsSuccessLabel.style.display = 'block';
         sbRequiredActionsFailureLabel.style.display = 'none';
         sbRequiredActionsFailureSubtext.style.display = 'none';
@@ -209,12 +225,11 @@ function SetRequiredActionState(isSuccess) {
 
         sbActionsButton.textContent = '✅';
     }
-    else
-    {
+    else {
         sbRequiredActionsSuccessLabel.style.display = 'none';
         sbRequiredActionsFailureLabel.style.display = 'block';
         sbRequiredActionsFailureSubtext.style.display = 'block';
-        
+
         sbActionsButton.title = `You are missing Streamer.bot actions`;
 
         sbActionsButton.textContent = '⚠️';
@@ -228,7 +243,8 @@ function SetRequiredActionState(isSuccess) {
 // PAGE INTERACTIONS //
 ///////////////////////
 
-function Connect() {
+function Connect() {   
+    sbClientListeners = sbClient.listeners;
     sbClient.options.host = sbAddressInput.value;
     sbClient.options.port = sbPortInput.value;
     sbClient.options.password = sbPasswordInput.value;
@@ -240,7 +256,7 @@ function CopyImportCode() {
     navigator.clipboard.writeText(textToCopy)
         .then(() => {
             console.debug('Copied to clipboard!');
-            
+
             // Click feedback
             const root = document.documentElement;
             const successColor = getComputedStyle(root).getPropertyValue('--success-color').trim();
@@ -273,4 +289,11 @@ function OpenRequiredActionsDialog() {
 function CloseRequiredActionsDialog() {
     sbRequiredActionsDialog.style.display = "none";
     blurLayer.style.display = "none";
+}
+
+function NotifyTheContentIFrameThatSBHasConnectedSuccessfullySoItCanDoStuff(data) {
+    contentIFrame.contentWindow.postMessage(
+        { type: "sbClientConnected", data },
+        "*" // replace with iframe origin for security if needed
+    );
 }

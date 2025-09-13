@@ -304,7 +304,7 @@ async function CustomEvent(data) {
                     titleEl.innerText = `Gifted Sub`;
 
                     const messageEl = document.createElement('div');
-                    messageEl.innerHTML = `<b>${data["recipient.userName"]}</b><br>received a sub from<br><b>${data.user}</b>!`;
+                    messageEl.innerHTML = `<b>${data.user}</b><br>gifted a sub to<br><b>${data["recipient.userName"]}</b>!`;
 
                     contentEl.appendChild(messageEl);
                 }

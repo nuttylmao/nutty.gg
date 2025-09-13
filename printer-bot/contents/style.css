@@ -1,3 +1,7 @@
+body {
+	margin: 1em;
+}
+
 #settings {
 	display: flex;
 	flex-direction: column;
@@ -58,7 +62,8 @@
 	height: 2em;
 }
 
-#receipt-icon:empty {
+#receipt-icon:not([src]),
+#receipt-icon[src=""] {
   display: none;
 }
 

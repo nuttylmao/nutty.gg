@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="../../../.common/styles/global.css" />
+    <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+
+	<!-- Update All Button -->
+    <button onclick="OpenUpdateAllDialog()">
+        <img src="https://api.iconify.design/material-symbols:edit-square-outline.svg?color=%23ffffff"> Update All
+    </button>
+
+    <!-- List of all broadcasts -->
+    <div id="broadcast-list">
+    </div>
+
+    <label id="youtube-warning" class="setting-attribute"><i>YouTube stream info can only be updated while live</i></label>
+
+	<!-- Blur Layer -->
+	<div id="blur-layer" class="blur"></div>
+
+    <!-- Update All Popup -->
+    <div id="update-all-dialog" class="dialog">
+        <button class="dialog-nav-button" onclick="CloseUpdateAllDialog()">×</button>
+        
+        <label class="title" style="text-align: center;">Stream Info</label>
+
+        <div class="field">
+            <label>Title</label>
+            <input type="text" id="update-all-title-input" placeholder="My First Stream #RoadToAffiliate">
+        </div>
+
+        <div class="field">
+            <label>Category</label>
+            <input type="text" id="update-all-category-input" placeholder="Just Chatting">
+        </div>
+
+        <button onclick="UpdateAllSubmit()">Update All</button>
+    </div>
+
+    <!-- Update Twitch Popup -->
+    <div id="update-twitch-dialog" class="dialog">
+        <button class="dialog-nav-button" onclick="CloseUpdateTwitchDialog()">×</button>
+        
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 1em;">
+            <img src="icons/platforms/twitch.png" class="platform-icon">
+            <label class="title" style="text-align: center;">Stream Info</label>
+        </div>
+
+        <div class="field">
+            <label>Title</label>
+            <input type="text" id="update-twitch-title-input" placeholder="My First Stream #RoadToAffiliate">
+        </div>
+
+        <div class="field">
+            <label>Category</label>
+            <input type="text" id="update-twitch-category-input" placeholder="Just Chatting">
+        </div>
+
+        <div class="field">
+            <label>Tags</label>
+            <input type="text" id="update-twitch-tags-input" placeholder="Retro, Speedrun, CreamTeam">
+        </div>
+
+        <button onclick="UpdateTwitchSubmit()">Update</button>
+    </div>
+
+    <!-- Update Kick Popup -->
+    <div id="update-kick-dialog" class="dialog">
+        <button class="dialog-nav-button" onclick="CloseUpdateKickDialog()">×</button>
+        
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 1em;">
+            <img src="icons/platforms/kick.png" class="platform-icon">
+            <label class="title" style="text-align: center;">Stream Info</label>
+        </div>
+
+        <div class="field">
+            <label>Title</label>
+            <input type="text" id="update-kick-title-input" placeholder="My First Stream #RoadToAffiliate">
+        </div>
+
+        <div class="field">
+            <label>Category</label>
+            <input type="text" id="update-kick-category-input" placeholder="Just Chatting">
+        </div>
+
+        <button onclick="UpdateKickSubmit()">Update</button>
+    </div>
+
+    <!-- Update YouTube Popup -->
+    <div id="update-youtube-dialog" class="dialog">
+        <button class="dialog-nav-button" onclick="CloseUpdateYouTubeDialog()">×</button>
+        
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 1em;">
+            <img src="icons/platforms/youtube.png" class="platform-icon">
+            <label class="title" style="text-align: center;">Stream Info</label>
+        </div>
+
+        <div class="field">
+            <label>Title</label>
+            <input type="text" id="update-youtube-title-input" placeholder="My First Stream #RoadToAffiliate">
+        </div>
+
+        <div class="field">
+            <label>Description</label>
+            <textarea type="text" id="update-youtube-description-input" placeholder="I'm describing so hard right now..." class="textarea-description"></textarea>
+        </div>
+
+        <div class="field">
+            <label>Category</label>
+            <input type="text" id="update-youtube-category-input" placeholder="Gaming">
+        </div>
+
+        <div class="field">
+            <label>Tags</label>
+            <input type="text" id="update-youtube-tags-input" placeholder="Retro, Speedrun, CreamTeam">
+        </div>
+
+        <div class="field">
+            <label>Visibility</label>
+            <select id="update-youtube-privacy-select">
+                <option value="private">Private</option>
+                <option value="unlisted">Unlisted</option>
+                <option value="public">Public</option>
+            </select>
+        </div>
+
+        <button onclick="UpdateYouTubeSubmit()">Update</button>
+    </div>
+</body>
+
+</html>
+
+<!-- Broadcast Template -->
+<template id="broadcast-template">
+    <div class="broadcast">
+        <img class="platform-icon" id="platform-icon" src="icons/platforms/twitch.png"/>
+
+        <div class="broadcast-info">
+            <label id="broadcast-title"></label>
+            <label id="broadcast-category" class="setting-description"></label>
+            <label id="kick-warning" class="setting-attribute"><br><i>Current stream info only available when live — Showing last known stream title</i></label>
+        </div>
+
+        <div id="broadcast-buttons">
+            <button id="broadcast-stream-button" class="icon-button" title="Open Stream"><img class="button-icon" src="https://api.iconify.design/streamline:button-play-solid.svg?color=%23ffffff"></button>
+            <button id="broadcast-dashboard-button" class="icon-button" title="Dashboard"><img class="button-icon" src="https://api.iconify.design/gridicons:popout.svg?color=%23ffffff"></button>
+            <button id="broadcast-edit-button" class="icon-button flip-that-shit-homie" title="Edit">✎</button>
+        </div>
+    </div>
+</template>
+
+<script src="script.js"></script>
