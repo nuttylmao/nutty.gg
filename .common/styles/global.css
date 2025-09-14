@@ -101,14 +101,12 @@ button:disabled {
 }
 
 .icon-button {
-    margin-left: auto;
     width: 1em;
     height: 1em;
 
     background: transparent;
     border: none;
-    font-size: 1.5em;
-    font-weight: 100;
+    font-size: 1.1em;
     padding: 1em;
     border-radius: 50%;
 }

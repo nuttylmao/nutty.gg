@@ -7,6 +7,7 @@ const sbActionUpdateStreamInfo = '1c58eff0-e98a-4fab-86f0-6f5cee1d3ab3';
 const sbActionOpenUrl = '14da1d44-6e29-4582-92c3-2c59388be57e';
 
 let currentBroadcastId = '';
+let runningActionId = '';
 
 
 ///////////////////
@@ -32,6 +33,7 @@ window.addEventListener("message", (event) => {
 });
 
 window.parent.sbClient.on('General.Custom', (response) => {
+    console.debug(response.data);
     GeneralCustom(response.data);
 })
 
@@ -42,6 +44,10 @@ window.parent.sbClient.on('General.Custom', (response) => {
 ///////////////////////////////
 
 async function GeneralCustom(data) {
+    // Only run if response matches the ID of the corresponding FetchBroadcasts() call
+    if (runningActionId != data.runningActionId)
+        return;
+
     switch(data.actionId) {
         case sbActionFetchBroadcasts:            
             {
@@ -55,11 +61,19 @@ async function GeneralCustom(data) {
                 const broadcasterInfo = await window.parent.sbClient.getBroadcaster();
                 if (broadcasterInfo.platforms.youtube)
                 {
+                    // Only show the warning if there are 0 monitored broadcasts
                     const ytBroadcastCount = data.broadcastList.filter(b => b.platform === "youtube").length;
                     if (ytBroadcastCount <= 0)
-                        youtubeWarning.style.display = 'inline';
+                        youtubeWarning.style.display = 'flex';
                     else
                         youtubeWarning.style.display = 'none';
+
+                    // Set the URL to the livestreaming dashboard
+                    const broadcastButton = youtubeWarning.querySelector('#broadcast-dashboard-button');
+                    broadcastButton.onclick = function() {
+                        //window.open(data.streamUrl, '_blank');
+                        OpenURL(`https://studio.youtube.com/channel/${broadcasterInfo.platforms.youtube.broadcastUserId}/livestreaming`);
+                    };
                 }
                 else
                     youtubeWarning.style.display = 'none';
@@ -81,7 +95,8 @@ async function GeneralCustom(data) {
 
 async function FetchBroadcasts() {
     // Fetch from Streamer.bot
-    await window.parent.sbClient.doAction({ id: sbActionFetchBroadcasts});
+    const response = await window.parent.sbClient.doAction({ id: sbActionFetchBroadcasts});
+    runningActionId = response.args.runningActionId;
 }
 
 async function AddBroadcast(data) {

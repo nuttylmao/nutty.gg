@@ -5,13 +5,13 @@ body {
 	margin: 1em;
 }
 
-button {
-	gap: 0.5em;
-}
-
 #broadcast-list {
     display: flex;
 	flex-direction: column;
+	gap: 0.5em;
+}
+
+button {
 	gap: 0.5em;
 }
 
@@ -36,7 +36,6 @@ button {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	/* gap: 1em; */
 	margin-left: auto;
 }
 
@@ -74,5 +73,4 @@ button {
 
 #youtube-warning  {
 	display: none;
-	text-align: center;
 }

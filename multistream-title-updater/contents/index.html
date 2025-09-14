@@ -13,11 +13,26 @@
         <img src="https://api.iconify.design/material-symbols:edit-square-outline.svg?color=%23ffffff"> Update All
     </button>
 
-    <!-- List of all broadcasts -->
-    <div id="broadcast-list">
-    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.5em;">
+        <!-- List of all broadcasts -->
+        <div id="broadcast-list">
+        </div>
 
-    <label id="youtube-warning" class="setting-attribute"><i>YouTube stream info can only be updated while live</i></label>
+        <!-- YouTube warning -->
+        <div id="youtube-warning" class="broadcast">
+            <img class="platform-icon" id="platform-icon" src="icons/platforms/youtube.png"/>
+
+            <div class="broadcast-info">
+                <label class="setting-attribute">
+                    <i>YouTube stream info can only be updated while live</i>
+                </label>
+            </div>
+
+            <div id="broadcast-buttons">
+                <button id="broadcast-dashboard-button" class="icon-button" title="Dashboard"><img class="button-icon" src="https://api.iconify.design/gridicons:popout.svg?color=%23ffffff"></button>
+            </div>
+        </div>
+    </div>
 
 	<!-- Blur Layer -->
 	<div id="blur-layer" class="blur"></div>
@@ -137,12 +152,12 @@
 <!-- Broadcast Template -->
 <template id="broadcast-template">
     <div class="broadcast">
-        <img class="platform-icon" id="platform-icon" src="icons/platforms/twitch.png"/>
+        <img class="platform-icon" id="platform-icon" src=""/>
 
         <div class="broadcast-info">
             <label id="broadcast-title"></label>
             <label id="broadcast-category" class="setting-description"></label>
-            <label id="kick-warning" class="setting-attribute"><br><i>Current stream info only available when live — Showing last known stream title</i></label>
+            <label id="kick-warning" class="setting-attribute"><br><i>Stream info only available when live — Showing last known stream title</i></label>
         </div>
 
         <div id="broadcast-buttons">
