@@ -7,12 +7,14 @@
     --background-color: #181818;
     --accent-color: #2196f3;
     --success-color: #3be477;
+    --confirm-flash: #3be47680;
     --button-color: #2e2e2e;
     --dialog-background: #1d1d1d;
     --callout-background: #181818;
     --error-background: #a82d2e33;
     --error-color: #c65e5e;
     --mandatory-field-color: #c93f3f;
+    --error-text-color: #c93f3f;
 }
 
 
@@ -99,7 +101,7 @@ button:hover {
 
 button:disabled {
     opacity: 0.3;
-    cursor: inherit;
+    cursor: not-allowed;
 }
 
 .icon-button {

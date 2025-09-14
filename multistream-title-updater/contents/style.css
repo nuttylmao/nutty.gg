@@ -25,6 +25,8 @@ button {
 	flex-direction: row;
 	align-items: center;
 	gap: 1em;
+	
+    transition: 0.4s;
 }
 
 .broadcast-info {
@@ -73,4 +75,11 @@ button {
 
 #youtube-warning  {
 	display: none;
+}
+
+.char-limit {
+	margin-left: auto;
+    text-align: right;
+    font-size: 0.8em;
+    opacity: 0.7;
 }
