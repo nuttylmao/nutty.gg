@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="#" />
+	<link rel="stylesheet" href="../../styles/global.css" />
+	<link rel="stylesheet" href="./style.css" />
+	<script type="text/javascript" src="https://unpkg.com/@streamerbot/client/dist/streamerbot-client.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+</head>
+
+<body>
+
+	<!-- Header -->
+	<div id="header">
+		<img src="../../resources/logo.png" style="height: 40px;" />
+		<label id="title" class="title"></label>
+		<div id="header-end">
+			<button id="sb-actions-button" class="icon-button" onclick="OpenRequiredActionsDialog()">
+			</button>
+			<button id="sb-status-button" class="icon-button" onclick="OpenConnectDialog()">
+				<img id="sb-status-icon" style="height: 1em;" />
+			</button>
+		</div>
+	</div>
+
+	<!-- Page Contents -->
+	<iframe id="content">
+	</iframe>
+
+	<!-- Blur Layer -->
+	<div id="blur-layer" class="blur"></div>
+
+	<!-- Streamer.bot Required Actions Dialog -->
+	<div id="sb-required-actions-dialog" class="dialog">
+		
+		<button class="dialog-nav-button" onclick="CloseRequiredActionsDialog()">×</button>
+
+		<label id="sb-required-actions-success">✅ All actions found</label>
+
+		<label id="sb-required-actions-failure"><span>⚠️</span> You are missing Streamer.bot actions</label>
+		<label id="sb-required-actions-failure-subtext" class="setting-description">The following actions were not found in Streamer.bot:</label>
+
+		<div id="sb-required-actions-list" class="callout">
+		</div>
+
+		<label class="setting-description">Please import the following </label>
+
+		<div id="sb-import-wrapper">
+			<label id="sb-import-code" class="callout"></label>
+			<button id="sb-import-copy-button" onclick="CopyImportCode()">Copy</button>
+		</div>
+		
+		<button onclick="CheckRequiredActions()">Check Again</button>
+	</div>
+
+	<!-- Streamer.bot Connect Dialog -->
+	<div id="sb-connect-dialog" class="dialog">
+		
+		<button class="dialog-nav-button" onclick="ClosenConnectDialog()">×</button>
+
+		<div style="display: flex; flex-direction: row; align-items: center; gap: 1em">
+			<img src="../../resources/streamer.bot.png" style="height: 40px;" />
+			<label class="title">Streamer.bot</label>
+		</div>
+
+		<div style="display: flex; flex-direction: row; gap: 1em">
+			<div class="field">
+				<label for="sb-address">Address <span style="color: var(--mandatory-field-color);">*</span></label>
+				<input type="text" id="sb-address" name="sb-address" placeholder="127.0.0.1" value="127.0.0.1">
+			</div>
+			<div class="field">
+				<label for="sb-port">Port <span style="color: var(--mandatory-field-color);">*</span></label>
+				<input type="text" id="sb-port" name="sb-port" placeholder="8080" value="8080">
+			</div>
+		</div>
+		<div class="field">
+			<label for="sb-password">Password</label>
+			<input type="password" id="sb-password" name="sb-password">
+		</div>
+
+		<label id="sb-error-label"></label>
+
+		<button id="sb-connect-button" onclick="Connect()">Connect</button>
+	</div>
+</body>
+
+<script src="./script.js"></script>
