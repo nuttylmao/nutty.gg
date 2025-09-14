@@ -146,6 +146,8 @@ async function AddBroadcast(data) {
         }
         else
         {
+            data.title = '';
+            data.category = '';
             kickWarningEl.style.display = 'inline';
         }
     }
