@@ -243,7 +243,7 @@ function SetRequiredActionState(isSuccess) {
 // PAGE INTERACTIONS //
 ///////////////////////
 
-function Connect() {   
+function Connect() {
     sbClientListeners = sbClient.listeners;
     sbClient.options.host = sbAddressInput.value;
     sbClient.options.port = sbPortInput.value;
