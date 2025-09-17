@@ -69,6 +69,13 @@ button {
 	color: yellow;
 }
 
+.setting {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5em;
+}
+
 #kick-warning {
 	display: none;
 }

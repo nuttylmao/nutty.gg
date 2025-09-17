@@ -25,6 +25,8 @@
             <div class="broadcast-info">
                 <label class="setting-attribute">
                     <i>YouTube stream info can only be updated while live</i>
+                    <br>
+                    <i><span id="youtube-title-on-broadcast-start-label"></span></i>
                 </label>
             </div>
 
@@ -57,6 +59,17 @@
         <div class="field">
             <label>Category</label>
             <input type="text" id="all-category-input" placeholder="Leave empty to keep current category">
+        </div>
+
+        <div id="include-youtube-setting-wrapper" class="setting">
+            <div>
+                <div class="setting-label">Include YouTube</div>
+                <div class="setting-description">Update YouTube title as soon as broadcast starts</div>
+            </div>
+            <label class="switch" style="margin-left: auto;">
+                <input type="checkbox" id="include-youtube-setting" name="include-youtube-setting" checked>
+                <span class="slider round"></span>
+            </label>
         </div>
 
         <button id="all-submit-button" onclick="UpdateAllSubmit()">Update All</button>
@@ -211,7 +224,7 @@
         <div class="broadcast-info">
             <label id="broadcast-title"></label>
             <label id="broadcast-category" class="setting-description"></label>
-            <label id="kick-warning" class="setting-attribute"><br><i>Stream info only available when live — Showing
+            <label id="kick-warning" class="setting-attribute"><br><i>Most up to date stream info only available when live — Showing
                     last known stream title</i></label>
         </div>
 
