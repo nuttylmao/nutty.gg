@@ -154,7 +154,7 @@ async function FetchKickInfo() {
         let kickData = {
             platform: 'kick',
             id: 'kick',
-            streamUrl: `https://www.kick.com/${userLogin}`,
+            streamUrl: `https://www.kick.com/${userLogin.replaceAll('_', '-')}`,
             dashboardUrl: 'https://dashboard.kick.com/stream',
             userLogin: userLogin
         }
