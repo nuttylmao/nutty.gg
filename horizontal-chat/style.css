@@ -76,6 +76,10 @@ html {
 	/* background-color: red; */
 }
 
+#alertBoxContent img {
+  height: 1.2em;
+}
+
 #background {
 	position: absolute;
 	bottom: 0;

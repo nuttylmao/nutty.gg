@@ -58,6 +58,7 @@ const showKickMessages = GetBooleanParam("showKickMessages", true);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
 const showKickHosts = GetBooleanParam("showKickHosts", true);
+const showKickGifts = GetBooleanParam("showKickGifts", true);
 
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
@@ -301,7 +302,9 @@ async function KickConnect() {
 		return;
 
 	// Channel to subscribe to (you'll need the correct channel name here)
-	const chatroomId = await GetKickChatroomId(kickUsername);
+    const kickIds = await GetKickIds(kickUsername);
+    const chatroomId = kickIds.chatroomId;
+    const channelId = kickIds.channelId;
 
 	// Cache subscriber badges
 	kickSubBadges = await GetKickSubBadges(kickUsername);
@@ -334,6 +337,7 @@ async function KickConnect() {
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `channel_${channelId}` } }));
 				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
 			}
 
@@ -364,6 +368,9 @@ async function KickConnect() {
 					break;
 				case 'UserBannedEvent':
 					KickUserBanned(eventArgs);
+					break;
+				case 'KicksGifted':
+					KickKicksGifted(eventArgs);
 					break;
 			}
 		}
@@ -1425,6 +1432,18 @@ function KickUserBanned(data) {
 	});
 }
 
+function KickKicksGifted(data) {
+	if (!showKickGifts)
+		return;
+
+	const kicksImg = `<img src=icons/badges/kick-kicks.svg class="platform"/>`;
+	const giftImg = `<img src=https://files.kick.com/kicks/gifts/${data.gift.gift_id.replace('_', '-')}.webp class="platform"/>`;
+
+	const message = ` ${giftImg} ${data.sender.username} sent ${data.gift.name} ${kicksImg} ${data.gift.amount}`;
+
+	ShowAlert(message, 'kick');
+}
+
 async function TikTokChat(data) {
 	if (!showTikTokMessages)
 		return;
@@ -1863,25 +1882,25 @@ function EscapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-async function GetKickChatroomId(username) {
-	const url = `https://kick.com/api/v2/channels/${username}`;
+async function GetKickIds(username) {
+    const url = `https://kick.com/api/v2/channels/${username}`;
 
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(`HTTP error ${response.status}`);
-		}
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
+        }
 
-		const data = await response.json();
-		if (data.chatroom && data.chatroom.id) {
-			return data.chatroom.id;
-		} else {
-			throw new Error("Chatroom ID not found in response.");
-		}
-	} catch (error) {
-		console.error("Failed to fetch chatroom ID:", error.message);
-		return null;
-	}
+        const data = await response.json();
+        if (data.chatroom && data.chatroom.id) {
+            return { chatroomId: data.chatroom.id, channelId: data.chatroom.channel_id };
+        } else {
+            throw new Error("Chatroom ID not found in response.");
+        }
+    } catch (error) {
+        console.error("Failed to fetch chatroom ID:", error.message);
+        return null;
+    }
 }
 
 async function GetKickSubBadges(username) {

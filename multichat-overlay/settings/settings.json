@@ -377,6 +377,14 @@
 			"group": "Which Kick messages do you want to see?"
 		},
 		{
+			"id": "showKickGifts",
+			"label": "Gifts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
 			"id": "enableTikTokSupport",
 			"label": "Enable TikTok Support",
 			"description": "",

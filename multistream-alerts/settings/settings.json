@@ -423,6 +423,23 @@
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
+			"id": "showKickGifts",
+			"label": "Gifts",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "kickGiftAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showKickGifts",
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
 			"id": "enableTikTokSupport",
 			"label": "Enable TikTok Support",
 			"description": "",

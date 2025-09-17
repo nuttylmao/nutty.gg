@@ -224,17 +224,18 @@ li {
 	transform: translate(0px, 0.25em);
 }
 
+.kick-gift,
 .tiktok-gift {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 1em;
-	padding: 0.5em 1em;
+	padding: 0.5em;
 	border-radius: var(--border-radius);
 	max-width: 100%;
-	background: linear-gradient(#262626BF, #000000BF) !important;
 }
 
+.kick-gift-avatar,
 .tiktok-gift-avatar {
 	height: 3em;
 	margin: 1px;
@@ -243,17 +244,37 @@ li {
 	flex-shrink: 0;
 }
 
+.kick-gift-contents,
 .tiktok-gift-message {
 	flex-grow: 1;
-	white-space: nowrap;		/* keeps text in a single line */
-	overflow: hidden;			/* hides overflowed content */
-	text-overflow: ellipsis;	/* adds the "..." at the end */
+	/* white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; */
+	gap: 1em;
+}
+
+.kick-gift-contents {
+	/* text-align: center; */
+}
+
+#kick-gift-message {
+	font-size: 0.9em;
+}
+
+.kick-gift-sticker,
+.tiktok-gift-sticker {
+	flex-shrink: 0;
+	justify-content: flex-end;
+
+	filter: drop-shadow(5px 5px 5px #00000060);
 }
 
 .tiktok-gift-sticker {
 	height: 2.5em;
-	flex-shrink: 0;
-	justify-content: flex-end;
+}
+
+.kick-gift-sticker {
+	height: 5em;
 }
 
 #tiktok-gift-repeat-count {
@@ -292,7 +313,7 @@ li {
 }
 
 .kick {
-	background: linear-gradient(#53fc18, #005600) !important;
+	background: linear-gradient(#32b602, #005600) !important;
 }
 
 .streamlabs {
