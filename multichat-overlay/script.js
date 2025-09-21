@@ -16,6 +16,17 @@ const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|e
 const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
 
+/////////////////
+// CSS OPTIONS //
+/////////////////
+
+const randomYouTubeColors = getComputedStyle(document.documentElement).getPropertyValue('--random-youtube-colors').trim() === '1';
+const youtubeColor = getComputedStyle(document.documentElement).getPropertyValue('--youtube-color').trim();
+const youtubeCustomSubIcon = getComputedStyle(document.documentElement)
+  .getPropertyValue('--youtube-custom-sub-icon')
+  .trim()
+  .replace(/^["']|["']$/g, ''); // removes surrounding quotes
+
 /////////////
 // OPTIONS //
 /////////////
@@ -114,7 +125,6 @@ switch (scrollDirection) {
 
 // Set the animation speed
 document.documentElement.style.setProperty('--animation-speed', `${animationSpeed}s`);
-
 
 
 
@@ -1240,7 +1250,10 @@ async function YouTubeMessage(data) {
 	// Set the message data
 	if (showUsername) {
 		usernameDiv.innerText = data.user.name;
-		usernameDiv.style.color = "#f70000";	// YouTube users do not have colors, so just set it to red
+		if (randomYouTubeColors)
+			usernameDiv.style.color = StringToHex(data.user.name);
+		else
+			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
 
 	if (showMessage) {
@@ -1283,9 +1296,13 @@ async function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isSponsor && showBadges) {
+	// if (data.user.isSponsor && showBadges) {
+	if (!data.user.isSponsor && showBadges) {
 		const badge = new Image();
-		badge.src = `icons/badges/youtube-member.svg`;
+		if (youtubeCustomSubIcon)
+			badge.src = youtubeCustomSubIcon;
+		else
+			badge.src = `icons/badges/youtube-member.svg`;
 		badge.style.filter = `invert(100%)`;
 		badge.style.opacity = 0.8;
 		badge.classList.add("badge");

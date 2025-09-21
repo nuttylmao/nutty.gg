@@ -220,3 +220,23 @@ function TranslateToFurry(sentence) {
 function EscapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
+
+// Given a string, return a random hex code. The same input always results in the same output
+function StringToHex(str) {
+    // Simple hash function to convert string to a number
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        hash |= 0; // Convert to 32bit integer
+    }
+
+    // Convert hash to a hex color
+    let color = '#';
+    for (let i = 0; i < 3; i++) {
+        // Extract each byte and convert to 2-digit hex
+        const value = (hash >> (i * 8)) & 0xFF;
+        color += value.toString(16).padStart(2, '0');
+    }
+
+    return color;
+}
