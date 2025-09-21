@@ -8,6 +8,7 @@ const sbActionOpenUrl = '14da1d44-6e29-4582-92c3-2c59388be57e';
 
 let currentBroadcastId = '';
 let runningActionId = '';
+let youtubeTitleOnBroadcastStart = '';
 
 
 ///////////////////
@@ -21,6 +22,9 @@ const updateKickDialog = document.getElementById('update-kick-dialog');
 const updateYouTubeDialog = document.getElementById('update-youtube-dialog');
 const broadcastList = document.getElementById('broadcast-list');
 const youtubeWarning = document.getElementById('youtube-warning');
+const includeYouTubeSettingWrapper = document.getElementById('include-youtube-setting-wrapper');
+const includeYouTubeSetting = document.getElementById('include-youtube-setting');
+const youtubeTitleOnBroadcastStartLabel = document.getElementById('youtube-title-on-broadcast-start-label');
 
 
 
@@ -35,6 +39,21 @@ window.addEventListener("message", (event) => {
 window.parent.sbClient.on('General.Custom', (response) => {
     console.debug(response.data);
     GeneralCustom(response.data);
+})
+
+window.parent.sbClient.on('YouTube.BroadcastStarted', (response) => {
+    console.debug(response.data);
+    YouTubeBroadcastStarted(response.data);
+})
+
+window.parent.sbClient.on('Twitch.StreamUpdate', (response) => {
+    console.debug(response.data);
+    FetchBroadcasts();
+})
+
+window.parent.sbClient.on('YouTube.BroadcastUpdated', (response) => {
+    console.debug(response.data);
+    FetchBroadcasts();
 })
 
 
@@ -64,9 +83,17 @@ async function GeneralCustom(data) {
                     // Only show the warning if there are 0 monitored broadcasts
                     const ytBroadcastCount = data.broadcastList.filter(b => b.platform === "youtube").length;
                     if (ytBroadcastCount <= 0)
+                    {
                         youtubeWarning.style.display = 'flex';
+                        includeYouTubeSettingWrapper.style.display = 'flex';
+                        includeYouTubeSetting.checked = true;
+                    }
                     else
+                    {
                         youtubeWarning.style.display = 'none';
+                        includeYouTubeSettingWrapper.style.display = 'none';
+                        includeYouTubeSetting.checked = false;
+                    }
 
                     // Set the URL to the livestreaming dashboard
                     const broadcastButton = youtubeWarning.querySelector('#broadcast-dashboard-button');
@@ -83,7 +110,7 @@ async function GeneralCustom(data) {
                 const childDivs = broadcastList.querySelectorAll(":scope > div");
                 childDivs.forEach(childDiv => {
                     var result = data.broadcastList.find(obj => {
-                        return obj.id === childDiv.id
+                        return `id-${obj.id}` === childDiv.id;
                     })
                     if (result == null)
                         childDiv.remove();
@@ -93,17 +120,58 @@ async function GeneralCustom(data) {
     }
 }
 
+function YouTubeBroadcastStarted(data) {
+    if (!includeYouTubeSetting.checked)
+        return;
+
+    setTimeout(async () => {
+        await window.parent.sbClient.doAction(
+            action = {
+                id: sbActionUpdateStreamInfo
+            },
+            args = {
+                platform: 'youtube',
+                title: youtubeTitleOnBroadcastStart,
+                broadcastId: data.id
+            }
+        );
+    }, 1000);
+}
+
 async function FetchBroadcasts() {
     // Fetch from Streamer.bot
     const response = await window.parent.sbClient.doAction({ id: sbActionFetchBroadcasts});
     runningActionId = response.args.runningActionId;
 }
 
+async function FetchKickInfo() {
+    // Fetch from Streamer.bot
+    const broadcasterInfo = await window.parent.sbClient.getBroadcaster();
+    
+    if (broadcasterInfo.platforms.kick) {
+        const userLogin = broadcasterInfo.platforms.kick.broadcasterLogin;
+
+        let kickData = {
+            platform: 'kick',
+            id: 'kick',
+            streamUrl: `https://www.kick.com/${userLogin.replaceAll('_', '-')}`,
+            dashboardUrl: 'https://dashboard.kick.com/stream',
+            userLogin: userLogin
+        }
+        AddBroadcast(kickData);
+    }
+    else {
+        const kickBroadcastDiv = document.getElementById('id-kick');
+        if (kickBroadcastDiv)
+            kickBroadcastDiv.remove();
+    }
+}
+
 async function AddBroadcast(data) {
     // Get a reference to the template
     const template = document.getElementById('broadcast-template');
 
-    const existingDiv = broadcastList.querySelector(`#${data.id}`);
+    const existingDiv = broadcastList.querySelector(`#id-${data.id}`);
 
     // Create a new instance of the template
     let instance;
@@ -112,7 +180,7 @@ async function AddBroadcast(data) {
         instance = existingDiv;
     else {
         instance = template.content.firstElementChild.cloneNode(true);
-        instance.id = data.id;
+        instance.id = `id-${data.id}`;
         broadcastList.appendChild(instance);
     }
 
@@ -283,6 +351,18 @@ async function UpdateAllSubmit() {
             category: document.getElementById('all-category-input').value
         }
     );
+
+    // Set the YouTube title for next broadcast start
+    if (includeYouTubeSetting.checked)
+    {
+        youtubeTitleOnBroadcastStart = document.getElementById('all-title-input').value;
+        if (youtubeTitleOnBroadcastStart)
+            youtubeTitleOnBroadcastStartLabel.textContent = `Title will be set to '${youtubeTitleOnBroadcastStart}' when broadcast starts.`;
+    }
+    else {
+        youtubeTitleOnBroadcastStart = '';
+        youtubeTitleOnBroadcastStartLabel.textContent = '';
+    }
 
     CloseUpdateAllDialog();
 }
@@ -543,4 +623,4 @@ ValidateYouTubeDialog();
 // REFRESH BROADCAST LIST //
 ////////////////////////////
 
-setInterval(FetchBroadcasts, 5000);
+setInterval(FetchKickInfo, 5000);

@@ -3,7 +3,6 @@
 //////////////////////
 
 const sbActionPrintRoutine = '5c756513-a1d0-4285-9dbc-21ad34491310';
-const avatarMap = new Map();
 
 
 
@@ -581,45 +580,6 @@ async function CustomEvent(data) {
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
-
-async function GetAvatar(username, platform) {
-
-    // First, check if the username is hashed already
-    if (avatarMap.has(`${username}-${platform}`)) {
-        console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
-        return avatarMap.get(`${username}-${platform}`);
-    }
-
-    // If code reaches this point, the username hasn't been hashed, so retrieve avatar
-    switch (platform) {
-        case 'twitch':
-            {
-                console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
-                let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-                let data = await response.text();
-                avatarMap.set(`${username}-${platform}`, data);
-                return data;
-            }
-        case 'kick':
-            {
-                console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
-                try {
-                    let response = await fetch('https://kick.com/api/v2/channels/' + username);
-                    console.log('https://kick.com/api/v2/channels/' + username)
-                    let data = await response.json();
-                    let avatarURL = data.user.profile_pic;
-                    if (!avatarURL)
-                        avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-                    avatarMap.set(`${username}-${platform}`, avatarURL);
-                    return avatarURL;
-                }
-                catch (error) {
-                    console.debug(error);
-                    return 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-                }
-            }
-    }
-}
 
 async function GetRenderedHTML(fragment) {
     if (!(fragment instanceof DocumentFragment)) {
