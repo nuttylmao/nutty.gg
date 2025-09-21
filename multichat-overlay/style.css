@@ -253,9 +253,9 @@ li {
 	gap: 1em;
 }
 
-.kick-gift-contents {
-	/* text-align: center; */
-}
+/* .kick-gift-contents {
+	text-align: center;
+} */
 
 #kick-gift-message {
 	font-size: 0.9em;

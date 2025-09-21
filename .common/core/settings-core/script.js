@@ -460,45 +460,6 @@ function OpenLoadSettingsPopup() {
 // HELPER FUNCTIONS //
 //////////////////////
 
-function GetBooleanParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // Parameter not found
-	}
-
-	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
-
-	if (lowercaseValue === 'true') {
-		return true;
-	} else if (lowercaseValue === 'false') {
-		return false;
-	} else {
-		return paramValue; // Return original string if not 'true' or 'false'
-	}
-}
-
-function GetIntParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // or undefined, or a default value, depending on your needs
-	}
-
-	console.log(paramValue);
-
-	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
-
-	if (isNaN(intValue)) {
-		return null; // or handle the error in another way, e.g., throw an error
-	}
-
-	return intValue;
-}
-
-
 // Handle first window interaction
 window.addEventListener('message', (event) => {
 	if (event.origin === new URL(widgetPreview.src).origin && event.data === 'iframe-interacted') {

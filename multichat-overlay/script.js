@@ -7,8 +7,6 @@ const urlParams = new URLSearchParams(queryString);
 
 const sbServerAddress = urlParams.get("address") || "127.0.0.1";
 const sbServerPort = urlParams.get("port") || "8080";
-const avatarMap = new Map();
-const pronounMap = new Map();
 
 /////////////////
 // GLOBAL VARS //
@@ -55,7 +53,7 @@ const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPoin
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
-let kickUsername = urlParams.get("kickUsername") || "";
+const kickUsername = urlParams.get("kickUsername") || "";
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 // const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
@@ -85,9 +83,6 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 const furryMode = GetBooleanParam("furryMode", false);
 
 const animationSpeed = GetIntParam("animationSpeed", 0.1);
-
-// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
-kickUsername = kickUsername.replace(/_/g, "-");
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -340,20 +335,20 @@ async function KickConnect() {
 		return;
 
 	// Channel to subscribe to (you'll need the correct channel name here)
-    const kickIds = await GetKickIds(kickUsername);
-    const chatroomId = kickIds.chatroomId;
-    const channelId = kickIds.channelId;
+	const kickIds = await GetKickIds(kickUsername);
+	const chatroomId = kickIds.chatroomId;
+	const channelId = kickIds.channelId;
 
 	// Cache subscriber badges
 	kickSubBadges = await GetKickSubBadges(kickUsername);
 
 	const websocket = new WebSocket(kickPusherWsUrl);
 
-    // Reconnect
-    websocket.onclose = function () {
-        console.log(`Reconnecting to ${kickUsername}...`);
-        setTimeout(connectPusher, 5000);
-    };
+	// Reconnect
+	websocket.onclose = function () {
+		console.log(`Reconnecting to ${kickUsername}...`);
+		setTimeout(connectPusher, 5000);
+	};
 
 	websocket.onopen = function () {
 		console.log(`Kick successfully conntected to ${kickUsername}.`);
@@ -371,11 +366,11 @@ async function KickConnect() {
 				console.log(`[Pusher] Socket established with ID: ${socketData.socket_id}`);
 
 				// Now subscribe to a channel
-                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatroom_${chatroomId}` } }));
-                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
-                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
-                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
-                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `channel_${channelId}` } }));
+				websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatroom_${chatroomId}` } }));
+				websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
+				websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
+				websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
+				websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `channel_${channelId}` } }));
 				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
 			}
 
@@ -432,7 +427,7 @@ let tikfinityWebsocket = null;
 function TikfinityConnect() {
 	if (!enableTikTokSupport)
 		return;
-	
+
 	if (tikfinityWebsocket) return; // Already connected
 
 	tikfinityWebsocket = new WebSocket("ws://localhost:21213/");
@@ -469,7 +464,7 @@ function TikfinityConnect() {
 			case 'like':
 				TikTokLikes(data);
 				break;
-				
+
 			case 'follow':
 				TikTokFollow(data);
 				break;
@@ -548,9 +543,8 @@ async function TwitchChatMessage(data) {
 
 	// Set Shared Chat
 	const isFromSharedChatGuest = data.isFromSharedChatGuest;
-	if (isFromSharedChatGuest) {		
-		switch (showTwitchSharedChat)
-		{
+	if (isFromSharedChatGuest) {
+		switch (showTwitchSharedChat) {
 			// 2 = Show & Highlight
 			case 2:
 				let sharedChatChannel = data.sharedChatSource.name;		// Twitch removed the source channel for some reason?!?!
@@ -2548,7 +2542,7 @@ async function KickKicksGifted(data) {
 	const amountDiv = instance.querySelector('#kick-gift-amount');
 	const messageDiv = instance.querySelector('#kick-gift-message');
 
-	avatarImg.src = await GetAvatar(data.sender.username.replace('_', '-'), 'kick');			// Set the card header
+	avatarImg.src = await GetAvatar(data.sender.username, 'kick');			// Set the card header
 	usernameSpan.innerText = data.sender.username;							// Set the username
 	usernameSpan.style.color = data.sender.username_color;
 	giftNameSpan.innerText = data.gift.name;								// Set the gift name
@@ -2586,7 +2580,7 @@ function KickUserBanned(data) {
 async function TikTokChat(data) {
 	if (!showTikTokMessages)
 		return;
-	
+
 	// Don't post messages starting with "!"
 	if (data.comment.startsWith("!") && excludeCommands)
 		return;
@@ -2769,18 +2763,18 @@ function TikTokLikes(data) {
 	var likeCountTotal = parseInt(data.likeCount);
 
 	// Search for Previous Likes from the Same User
-    const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
+	const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
 
 	// If found, fetches the previous likes, deletes the element
-    // and then creates a new count with a sum of the like count
-    if (previousLikeContainer) {
-        const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
-        if (likeCountElem) {
-            var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
-            likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
-            previousLikeContainer.remove();
-        }
-    }
+	// and then creates a new count with a sum of the like count
+	if (previousLikeContainer) {
+		const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
+		if (likeCountElem) {
+			var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
+			likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
+			previousLikeContainer.remove();
+		}
+	}
 
 	// Get a reference to the template
 	const template = document.getElementById('tiktok-gift-template');
@@ -2912,111 +2906,6 @@ function YouTubeThumbnailPreview(data) {
 // HELPER FUNCTIONS //
 //////////////////////
 
-function GetBooleanParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // Parameter not found
-	}
-
-	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
-
-	if (lowercaseValue === 'true') {
-		return true;
-	} else if (lowercaseValue === 'false') {
-		return false;
-	} else {
-		return paramValue; // Return original string if not 'true' or 'false'
-	}
-}
-
-function GetIntParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // or undefined, or a default value, depending on your needs
-	}
-
-	console.log(paramValue);
-
-	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
-
-	if (isNaN(intValue)) {
-		return null; // or handle the error in another way, e.g., throw an error
-	}
-
-	return intValue;
-}
-
-function GetCurrentTimeFormatted() {
-	const now = new Date();
-	let hours = now.getHours();
-	const minutes = String(now.getMinutes()).padStart(2, '0');
-	const ampm = hours >= 12 ? 'PM' : 'AM';
-
-	hours = hours % 12;
-	hours = hours ? hours : 12; // the hour '0' should be '12'
-
-	const formattedTime = `${hours}:${minutes} ${ampm}`;
-	return formattedTime;
-}
-
-async function GetAvatar(username, platform) {
-
-	// First, check if the username is hashed already
-	if (avatarMap.has(`${username}-${platform}`)) {
-		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
-		return avatarMap.get(`${username}-${platform}`);
-	}
-
-	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
-	switch (platform) {
-		case 'twitch':
-			{
-				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
-				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-				let data = await response.text();
-				avatarMap.set(`${username}-${platform}`, data);
-				return data;
-			}
-		case 'kick':
-			{
-				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
-				let response = await fetch('https://kick.com/api/v2/channels/' + username);
-				console.log('https://kick.com/api/v2/channels/' + username)
-				let data = await response.json();
-				let avatarURL = data.user.profile_pic;
-				if (!avatarURL)
-					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-				avatarMap.set(`${username}-${platform}`, avatarURL);
-				return avatarURL;
-			}
-	}
-}
-
-async function GetPronouns(platform, username) {
-	if (pronounMap.has(username)) {
-		console.debug(`Pronouns found for ${username}. Retrieving from hash map.`)
-		return pronounMap.get(username);
-	}
-	else {
-		console.debug(`No pronouns found for ${username}. Retrieving from alejo.io.`)
-		const response = await client.getUserPronouns(platform, username);
-		const userFound = response.pronoun.userFound;
-		const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
-
-		pronounMap.set(username, pronouns);
-
-		return pronouns;
-	}
-}
-
-// function IsImageUrl(url) {
-// 	return url.match(/^http.*\.(jpeg|jpg|gif|png)$/) != null;
-// }
-
 function IsImageUrl(url) {
 	try {
 		const { pathname } = new URL(url);
@@ -3083,12 +2972,6 @@ function AddMessageItem(element, elementID, platform, userId) {
 		}
 
 	}, 200);
-}
-
-function DecodeHTMLString(html) {
-	var txt = document.createElement("textarea");
-	txt.innerHTML = html;
-	return txt.value;
 }
 
 // I used Gemini for this shit so if it doesn't work, blame Google
@@ -3186,77 +3069,6 @@ function GetWinnersList(gifts) {
 	}
 }
 
-function TranslateToFurry(sentence) {
-	const words = sentence.toLowerCase().split(/\b/);
-
-	const furryWords = words.map(word => {
-		if (/\w+/.test(word)) {
-			let newWord = word;
-
-			// Common substitutions
-			newWord = newWord.replace(/l/g, 'w');
-			newWord = newWord.replace(/r/g, 'w');
-			newWord = newWord.replace(/th/g, 'f');
-			newWord = newWord.replace(/you/g, 'yous');
-			newWord = newWord.replace(/my/g, 'mah');
-			newWord = newWord.replace(/me/g, 'meh');
-			newWord = newWord.replace(/am/g, 'am');
-			newWord = newWord.replace(/is/g, 'is');
-			newWord = newWord.replace(/are/g, 'are');
-			newWord = newWord.replace(/very/g, 'vewy');
-			newWord = newWord.replace(/pretty/g, 'pwetty');
-			newWord = newWord.replace(/little/g, 'wittle');
-			newWord = newWord.replace(/nice/g, 'nyce');
-
-			// Random additions
-			if (Math.random() < 0.15) {
-				newWord += ' nya~';
-			} else if (Math.random() < 0.1) {
-				newWord += ' >w<';
-			} else if (Math.random() < 0.05) {
-				newWord += ' owo';
-			}
-
-			return newWord;
-		}
-		return word;
-	});
-
-	return furryWords.join('');
-}
-
-function EscapeRegExp(string) {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-}
-
-async function GetKickIds(username) {
-    const url = `https://kick.com/api/v2/channels/${username}`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.chatroom && data.chatroom.id) {
-            return { chatroomId: data.chatroom.id, channelId: data.chatroom.channel_id };
-        } else {
-            throw new Error("Chatroom ID not found in response.");
-        }
-    } catch (error) {
-        console.error("Failed to fetch chatroom ID:", error.message);
-        return null;
-    }
-}
-
-async function GetKickSubBadges(username) {
-	const response = await fetch(`https://kick.com/api/v2/channels/${username}`);
-	const data = await response.json();
-
-	return data.subscriber_badges || [];
-}
-
 function GetKickBadgeURL(data) {
 	switch (data.type) {
 		case 'subscriber':
@@ -3267,14 +3079,14 @@ function GetKickBadgeURL(data) {
 }
 
 function CalculateKickSubBadge(months) {
-  if (!Array.isArray(kickSubBadges)) return null;
+	if (!Array.isArray(kickSubBadges)) return null;
 
-  // Filter for eligible badges, then get the one with the highest 'months'
-  const badge = kickSubBadges
-    .filter(b => b.months <= months)
-    .sort((a, b) => b.months - a.months)[0];
+	// Filter for eligible badges, then get the one with the highest 'months'
+	const badge = kickSubBadges
+		.filter(b => b.months <= months)
+		.sort((a, b) => b.months - a.months)[0];
 
-  return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
+	return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
 }
 
 
