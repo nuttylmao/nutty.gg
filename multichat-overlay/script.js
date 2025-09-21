@@ -2760,42 +2760,63 @@ function TikTokLikes(data) {
 
 
 	// Get the total number of likes
-	var likeCountTotal = parseInt(data.likeCount);
+	let likeCount = parseInt(data.likeCount);
 
 	// Search for Previous Likes from the Same User
-	const previousLikeContainer = document.querySelector(`li[data-user-id="${data.userId}"]`);
+  const previousLikeContainer = document.querySelector(`.likes[data-user-identifier="${data.userId}"]`);	
 
-	// If found, fetches the previous likes, deletes the element
-	// and then creates a new count with a sum of the like count
-	if (previousLikeContainer) {
-		const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
-		if (likeCountElem) {
-			var likeCountPrev = parseInt(likeCountElem.textContent.replace('x', ''));
-			likeCountTotal = Math.floor(likeCountPrev + likeCountTotal);
-			previousLikeContainer.remove();
-		}
+  // If found, fetches the previous likes, deletes the element
+  // and then creates a new count with a sum of the like count
+  if (previousLikeContainer) {
+      const likeCountElem = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
+      if (likeCountElem) {
+          const liLikeContainer = previousLikeContainer.parentElement?.parentElement;
+          if (liLikeContainer) {
+              let prevLikeCount = parseInt(likeCountElem.textContent.replace('x', ''), 10);
+              let likeCountUpdate = Math.floor(prevLikeCount + likeCount);
+              let likeCountDiv = previousLikeContainer.querySelector('#tiktok-gift-repeat-count');
+
+              likeCountDiv.innerText = `x${likeCountUpdate}`;
+
+              const parent = liLikeContainer.parentElement;
+              if (parent) { 
+                  parent.appendChild(liLikeContainer); 
+              }
+          }
+      }
+  }
+
+	else {
+		// Get a reference to the template
+		const template = document.getElementById('tiktok-gift-template');
+
+		// Create a new instance of the template
+		const instance = template.content.cloneNode(true);
+		
+		// gets the GiftElement
+		const giftElement = instance.querySelector('.tiktok-gift');
+
+		// adds the like class
+		giftElement.classList.add('likes');
+
+		// and assigns the user id
+		giftElement.dataset.userIdentifier = data.userId;
+
+		// Get divs
+		const avatarImg = instance.querySelector('.tiktok-gift-avatar');
+		const usernameSpan = instance.querySelector('#tiktok-gift-username');
+		const giftNameSpan = instance.querySelector('#tiktok-gift-name');
+		const stickerImg = instance.querySelector('.tiktok-gift-sticker');
+		const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
+
+		avatarImg.src = data.profilePictureUrl;
+		usernameSpan.innerText = data.nickname;
+		giftNameSpan.innerText = 'Likes';
+		stickerImg.src = '';
+		repeatCountDiv.innerText = `x${likeCount}`;
+
+		AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 	}
-
-	// Get a reference to the template
-	const template = document.getElementById('tiktok-gift-template');
-
-	// Create a new instance of the template
-	const instance = template.content.cloneNode(true);
-
-	// Get divs
-	const avatarImg = instance.querySelector('.tiktok-gift-avatar');
-	const usernameSpan = instance.querySelector('#tiktok-gift-username');
-	const giftNameSpan = instance.querySelector('#tiktok-gift-name');
-	const stickerImg = instance.querySelector('.tiktok-gift-sticker');
-	const repeatCountDiv = instance.querySelector('#tiktok-gift-repeat-count');
-
-	avatarImg.src = data.profilePictureUrl;
-	usernameSpan.innerText = data.nickname;
-	giftNameSpan.innerText = 'Likes';
-	stickerImg.src = '';
-	repeatCountDiv.innerText = `x${likeCountTotal}`;
-
-	AddMessageItem(instance, data.msgId, 'tiktok', data.userId);
 }
 
 function TikTokGift(data) {
