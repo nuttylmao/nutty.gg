@@ -591,6 +591,17 @@ async function TwitchChatMessage(data) {
 		avatarDiv.appendChild(avatar);
 	}
 
+	// Custom styling for subs
+	if (data.message.subscriber) {
+		usernameDiv.classList.add('sub-glow')
+	}
+
+	// Custom styling for mods
+	// 3 = Moderator
+	if (role == 3) {
+		usernameDiv.classList.add('moderator-glow')
+	}
+
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
 	if (groupConsecutiveMessages && messageList.children.length > 0) {
@@ -937,6 +948,17 @@ function YouTubeMessage(data) {
 		avatar.src = data.user.profileImageUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
+	}
+
+	// Custom styling for subs
+	if (data.user.isSponsor) {
+		usernameDiv.classList.add('sub-glow')
+	}
+
+	// Custom styling for mods
+	// 3 = Moderator
+	if (data.user.isModerator) {
+		usernameDiv.classList.add('moderator-glow')
 	}
 
 	// Hide the header if the same username sends a message twice in a row

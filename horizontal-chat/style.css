@@ -114,7 +114,7 @@ html {
 
 li {
 	list-style: none;
-	overflow: hidden;
+	/* overflow: hidden; */
 	max-width: 0px;
 	transition: all 1s ease-in-out;
 }
