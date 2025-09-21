@@ -1,20 +1,81 @@
+<!DOCTYPE html>
 
 <head>
-    <meta charset="UTF-8">
-	<link rel="stylesheet" href="../.common/styles/global.css" />
-    <link rel="icon" href="../../.resources/logo.png" type="image/png">
-    <title>nutty</title>
-    <style>
-        #dock-wrapper {
-            width: 100vw;
-            height: 100vh;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="#" />
+	<link rel="stylesheet" href="./style.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xz/fonts@1/serve/metropolis.min.css" />
 </head>
 
 <body>
-    <iframe id="dock-wrapper"></iframe>
-    <script src="script.js"></script>
+	<div id="refreshContainer">Refreshed</div>
+
+	<div id="instructionsContainer">
+		<div id="streamerbotConnectInstructions" style="display: none;">
+			<div style="padding: 10px 20px;">
+				Please connect to Streamer.bot.
+				<br>
+				Click <a class="hyperlinks" href="https://nuttylmao.notion.site/Multistream-Title-Updater-e2fb7b24c7514f9cbd943729f54be1d9" target="_blank">here</a> for instructions.
+			</div>
+		</div>
+		<div id="missingActionsInstructions" style="display: none; ">
+			<div style="padding: 10px 20px;">
+				Streamer.bot is connected, but you are missing actions.
+				Please import <label style="color: #ffb700;">multistream-title-updater.nut</label> and refresh the page.
+				Click <a class="hyperlinks" href="https://nuttylmao.notion.site/Multistream-Title-Updater-e2fb7b24c7514f9cbd943729f54be1d9" target="_blank">here</a> for instructions.
+			</div>
+		</div>
+	</div>
+
+
+	<div id="mainContainer">
+		
+		<div class="straightUpIloveCum">
+			<div id="title" style="font-size: 20px;">Update Titles</div>
+			<button id="infoIcon" style="padding: 0px 10px;">
+				<img src="info.svg" height="16px"/>
+			</button>
+			<img src="disconnected.svg" id="connectionStatusIcon"/>
+		</div>
+
+		<br/>
+
+		<div id="ThisIsWhereAllTheCoolStuffHappens">
+			<div>
+				<input type="text" id="titleInput" class="textBox"><br><br>
+				<div class="straightUpIloveCum">
+					<input type="submit" id="submitButton" class="button submitButton" value="UPDATE ALL">
+					<input type="submit" id="refreshButton" class="button" value="REFRESH">
+				</div>
+			</div>
+			
+			<br/>
+	
+			<div id="fieldsContainer">
+			</div>
+	
+			
+			<template id="platformTemplate">
+				<div class="broadcastBox">
+					<button id="platformIconButton" style="padding: 0px 10px;">
+						<img id="icon" height="20px" style="padding: 0px 10px 0px 0px;"/>
+					</button>
+					<input type="text" class="textBox platformTitle">
+					<input type="submit" class="button submitButton platformSubmitButton" value="UPDATE">
+				</div>
+			</template>
+		</div>
+
+		
+		<div id="noYouTubeStreamsInstructions" style="display: none; text-align: center; margin: 10px; font-weight: bold; opacity: 0.5;">
+			<div>
+				⚠️ YouTube titles can only be updated after the stream has started ⚠️
+				<br><br>
+				Please start your stream to update YouTube titles
+			</div>
+		</div>
+	</div>
 </body>
 
-</html>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
+<script src="./script.js"></script>
