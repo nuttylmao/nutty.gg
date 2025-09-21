@@ -19,17 +19,6 @@ let alertQueue = [];
 const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
 
-/////////////////
-// CSS OPTIONS //
-/////////////////
-
-const randomYouTubeColors = getComputedStyle(document.documentElement).getPropertyValue('--random-youtube-colors').trim() === '1';
-const youtubeColor = getComputedStyle(document.documentElement).getPropertyValue('--youtube-color').trim();
-const youtubeCustomSubIcon = getComputedStyle(document.documentElement)
-  .getPropertyValue('--youtube-custom-sub-icon')
-  .trim()
-  .replace(/^["']|["']$/g, ''); // removes surrounding quotes
-
 /////////////
 // OPTIONS //
 /////////////
@@ -87,7 +76,20 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
+////////////////////
+// HIDDEN OPTIONS //
+////////////////////
+
 const animationSpeed = GetIntParam("animationSpeed", 0.5);
+const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", false);
+const youtubeColor = urlParams.get("youtubeColor") || "#f70000";
+const youtubeCustomSubIcon = urlParams.get("youtubeCustomSubIcon") || "";
+
+
+
+////////////////
+// PAGE SETUP //
+////////////////
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -1796,3 +1798,57 @@ function SetConnectionStatus(connected) {
 		statusContainer.style.opacity = 1;
 	}
 }
+
+let data = {
+    "message": "Dat quality 👀",
+    "emotes": [
+      {
+        "type": "Twemoji",
+        "name": "👀",
+        "startIndex": 12,
+        "endIndex": 13,
+        "imageUrl": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.0/assets/72x72/1f440.png"
+      }
+    ],
+    "parts": [
+      {
+        "text": "Dat quality 👀"
+      }
+    ],
+    "broadcast": {
+      "id": "x6kgY3g_64U",
+      "channelId": "UCI5t_ve3cr5a1_3rrmbp6jQ",
+      "liveChatId": "KicKGFVDSTV0X3ZlM2NyNWExXzNycm1icDZqURILeDZrZ1kzZ182NFU",
+      "title": "Testing 1440p Enhanced Broadcasting 👀👀",
+      "description": "🔥 *DOWNLOAD MY CUSTOM WIDGETS FOR YOUR STREAM*\n*https://nutty.gg*\n\n📸 *Streaming gear I use*\nhttps://nutty.gg/gear\n\n🎙️ *Elgato Products*\nhttps://elgato.sjv.io/oqZN09 - 5% OFF with code \"nutty\"\n\n🖼️ *Nerd Or Die*\nhttps://nerdordie.com/shop/ref/nuttylmao - 15% OFF with code \"nutty\"\n\n🎵 *Epidemic Sound - Royalty Free Music + Sound FX*\nhttp://share.epidemicsound.com/nutty\n\n✉️ *Business Inquiries Only*\nnuttylmao@gmail.com\n\n*Socials*\nhttps://www.youtube.com/nuttylmao\nhttps://www.twitch.tv/nutty\nhttps://twitter.com/nuttylmao\nhttps://discord.gg/V4rvjrb\nhttps://www.patreon.com/nuttylmao",
+      "categoryId": "20",
+      "privacy": "unlisted",
+      "publishedAt": "2025-09-19T14:21:41Z",
+      "scheduledStartTime": "2025-09-19T14:25:14.3844374Z",
+      "scheduledEndTime": "2025-09-19T14:25:14.3844374Z",
+      "actualStartTime": "2025-09-19T14:25:14.3844374Z",
+      "actualEndTime": "2025-09-19T14:25:14.3844374Z",
+      "tags": [
+        "nutty"
+      ],
+      "defaultLanguage": "en",
+      "defaultAudioLanguage": "en",
+      "status": "live"
+    },
+    "eventId": "LCC.EhwKGkNJX2gwODJLNVk4REZYVEN3Z1FkWkZvREdR",
+    "user": {
+      "id": "UCI5t_ve3cr5a1_3rrmbp6jQ",
+      "url": "http://www.youtube.com/channel/UCI5t_ve3cr5a1_3rrmbp6jQ",
+      "name": "nutty",
+      "profileImageUrl": "https://yt3.ggpht.com/_blHaUIZf6nNjjTwdM5XFBusQVBr-KDat0H3w1v4Yeni_ZAPGQBg5ExckFXwzStcW36YzxEz=s88-c-k-c0x00ffffff-no-rj",
+      "isOwner": true,
+      "isModerator": false,
+      "isSponsor": false,
+      "isVerified": false
+    },
+    "publishedAt": "2025-09-20T00:55:38.715543+10:00"
+  }
+
+ setTimeout(() => {
+	YouTubeMessage(data);
+ }, 1000);
