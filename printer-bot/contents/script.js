@@ -532,6 +532,25 @@ async function CustomEvent(data) {
                             SetPlatformIcon(iconEl, 'kick');
                         }
                         break;
+                    case ('kickKicksGifted'):
+                        {
+                            if (data.giftType != 'LEVEL_UP')
+                                return;
+
+                            avatarEl.src = ConvertWEBPToPNG(`https://files.kick.com/kicks/gifts/${data.gift.toLowerCase().replace(/ /g, "-")}.webp`);
+                            avatarEl.style.borderRadius = '0px';
+                            titleEl.innerText = `${data.amount} KICKS`;
+                            subtitleEl.innerText = `${data.sender}`;
+
+                            const messageEl = document.createElement('div');
+                            messageEl.innerHTML = data.message;
+
+                            contentEl.appendChild(messageEl);
+
+                            // Set the platform icon
+                            SetPlatformIcon(iconEl, 'kick');
+                        }
+                        break;
                 }
             }
             break;
@@ -705,6 +724,22 @@ let data = {
     "userName": "nutty",
     "userType": "twitch"
 }
+
+// let data = {
+//     "__source": "CustomCodeEvent",
+//     "actionName": "Printer Bot | Events",
+//     "triggerCustomCodeEventName": "kickKicksGifted",
+//     "amount": 100,
+//     "message": "Eat my ass",
+//     "gift": "Flex",
+//     "giftType": "LEVEL_UP",
+//     "giftTier": "LEVEL_UP",
+//     "sender": "DJSUSAN00",
+//     "senderId": "170168",
+//     "senderColor": "#1475E1",
+//     "eventSource": "kick",
+//     "fromKick": true
+// }
 
 async function TestPrint() {
     CustomEvent(data);
