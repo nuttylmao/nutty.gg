@@ -517,6 +517,7 @@ async function TwitchChatMessage(data) {
 	// Set the message data
 	let message = data.message.message;
 	const messageColor = data.message.color;
+	const role = data.message.role;
 
 	// Set furry mode
 	if (furryMode)
