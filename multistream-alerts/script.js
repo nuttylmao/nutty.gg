@@ -7,7 +7,6 @@ const urlParams = new URLSearchParams(queryString);
 
 const sbServerAddress = urlParams.get("address") || "127.0.0.1";
 const sbServerPort = urlParams.get("port") || "8080";
-const avatarMap = new Map();
 
 const mainContainer = document.getElementById('mainContainer');
 const alertBox = document.getElementById('alertBox');
@@ -70,13 +69,15 @@ const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
 
 // Which Kick alerts do you want to see?
-let kickUsername = urlParams.get("kickUsername") || "";
+const kickUsername = urlParams.get("kickUsername") || "";
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const kickSubAction = urlParams.get("kickSubAction") || "";
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
 const kickChannelPointRedemptionAction = urlParams.get("kickChannelPointRedemptionAction") || "";
 const showKickHosts = GetBooleanParam("showKickHosts", true);
 const kickHostAction = urlParams.get("kickHostAction") || "";
+const showKickGifts = GetBooleanParam("showKickGifts", true);
+const kickGiftAction = urlParams.get("kickGiftAction") || "";
 
 // Which YouTube alerts do you want to see?
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
@@ -106,9 +107,6 @@ const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", f
 const tipeeestreamDonationAction = urlParams.get("tipeeestreamDonationAction") || "";
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
 const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
-
-// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
-kickUsername = kickUsername.replace(/_/g, "-");
 
 // Set avatar visibility
 if (!showAvatar) {
@@ -315,7 +313,9 @@ async function KickConnect() {
 		return;
 
 	// Channel to subscribe to (you'll need the correct channel name here)
-	const chatroomId = await GetKickChatroomId(kickUsername);
+    const kickIds = await GetKickIds(kickUsername);
+    const chatroomId = kickIds.chatroomId;
+    const channelId = kickIds.channelId;
 
 	// Cache subscriber badges
 	kickSubBadges = await GetKickSubBadges(kickUsername);
@@ -348,6 +348,7 @@ async function KickConnect() {
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `channel_${channelId}` } }));
 				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
 			}
 
@@ -369,6 +370,9 @@ async function KickConnect() {
 					break;
 				case 'StreamHostEvent':
 					KickStreamHost(eventArgs);
+					break;
+				case 'KicksGifted':
+					KickKicksGifted(eventArgs);
 					break;
 			}
 		}
@@ -1365,6 +1369,32 @@ async function KickStreamHost(data) {
 	);
 }
 
+async function KickKicksGifted(data) {
+	if (!showKickGifts)
+		return;
+
+	// Set the text
+	const username = data.sender.username;
+	const tiktokIcon = `<img src="icons/platforms/kick.png" class="platform"/>`;
+	// const giftImg = `<img src=https://files.kick.com/kicks/gifts/${data.gift.gift_id.replace('_', '-')}.webp style="height: 1em"/>`;
+	const kickKicksIcon = `<img src=icons/badges/kick-kicks.svg style="height: 0.8em"/>`;
+	
+	// Render avatars
+	const avatarURL = `https://files.kick.com/kicks/gifts/${data.gift.gift_id.replace('_', '-')}.webp`;
+
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		`sent ${kickKicksIcon} ${data.gift.amount}`,
+		'',
+		username,
+		data.message,
+		kickGiftAction,
+		data
+	);
+}
+
 async function TikTokGift(data) {
 	if (!showTikTokGifts)
 		return;
@@ -1428,83 +1458,6 @@ async function TikTokSubscribe(data) {
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
-
-function GetBooleanParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // Parameter not found
-	}
-
-	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
-
-	if (lowercaseValue === 'true') {
-		return true;
-	} else if (lowercaseValue === 'false') {
-		return false;
-	} else {
-		return paramValue; // Return original string if not 'true' or 'false'
-	}
-}
-
-function GetIntParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // or undefined, or a default value, depending on your needs
-	}
-
-	console.log(paramValue);
-
-	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
-
-	if (isNaN(intValue)) {
-		return null; // or handle the error in another way, e.g., throw an error
-	}
-
-	return intValue;
-}
-
-async function GetAvatar(username, platform) {
-
-	// First, check if the username is hashed already
-	if (avatarMap.has(`${username}-${platform}`)) {
-		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
-		return avatarMap.get(`${username}-${platform}`);
-	}
-
-	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
-	switch (platform) {
-		case 'twitch':
-			{
-				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
-				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-				let data = await response.text();
-				avatarMap.set(`${username}-${platform}`, data);
-				return data;
-			}
-		case 'kick':
-			{
-				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
-				let response = await fetch('https://kick.com/api/v2/channels/' + username);
-				console.log('https://kick.com/api/v2/channels/' + username)
-				let data = await response.json();
-				let avatarURL = data.user.profile_pic;
-				if (!avatarURL)
-					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-				avatarMap.set(`${username}-${platform}`, avatarURL);
-				return avatarURL;
-			}
-	}
-}
-
-function DecodeHTMLString(html) {
-	var txt = document.createElement("textarea");
-	txt.innerHTML = html;
-	return txt.value;
-}
 
 // I used Gemini for this shit so if it doesn't work, blame Google
 function FindFirstImageUrl(jsonObject) {
@@ -1708,43 +1661,6 @@ function UpdateAlertBox(platform, avatarURL, headerText, descriptionText, attrib
 
 	}, hideAfter * 1000);
 
-}
-
-async function GetKickChatroomId(username) {
-	const url = `https://kick.com/api/v2/channels/${username}`;
-
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(`HTTP error ${response.status}`);
-		}
-
-		const data = await response.json();
-		if (data.chatroom && data.chatroom.id) {
-			return data.chatroom.id;
-		} else {
-			throw new Error("Chatroom ID not found in response.");
-		}
-	} catch (error) {
-		console.error("Failed to fetch chatroom ID:", error.message);
-		return null;
-	}
-}
-
-async function GetKickSubBadges(username) {
-	const response = await fetch(`https://kick.com/api/v2/channels/${username}`);
-	const data = await response.json();
-
-	return data.subscriber_badges || [];
-}
-
-function GetKickBadgeURL(data) {
-	switch (data.type) {
-		case 'subscriber':
-			return CalculateKickSubBadge(data.count);
-		default:
-			return `icons/badges/kick-${data.type}.svg`;
-	}
 }
 
 function CalculateKickSubBadge(months) {

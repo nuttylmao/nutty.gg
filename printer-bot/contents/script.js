@@ -3,7 +3,6 @@
 //////////////////////
 
 const sbActionPrintRoutine = '5c756513-a1d0-4285-9dbc-21ad34491310';
-const avatarMap = new Map();
 
 
 
@@ -533,6 +532,25 @@ async function CustomEvent(data) {
                             SetPlatformIcon(iconEl, 'kick');
                         }
                         break;
+                    case ('kickKicksGifted'):
+                        {
+                            if (data.giftType != 'LEVEL_UP')
+                                return;
+
+                            avatarEl.src = ConvertWEBPToPNG(`https://files.kick.com/kicks/gifts/${data.gift.toLowerCase().replace(/ /g, "-")}.webp`);
+                            avatarEl.style.borderRadius = '0px';
+                            titleEl.innerText = `${data.amount} KICKS`;
+                            subtitleEl.innerText = `${data.sender}`;
+
+                            const messageEl = document.createElement('div');
+                            messageEl.innerHTML = data.message;
+
+                            contentEl.appendChild(messageEl);
+
+                            // Set the platform icon
+                            SetPlatformIcon(iconEl, 'kick');
+                        }
+                        break;
                 }
             }
             break;
@@ -581,45 +599,6 @@ async function CustomEvent(data) {
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
-
-async function GetAvatar(username, platform) {
-
-    // First, check if the username is hashed already
-    if (avatarMap.has(`${username}-${platform}`)) {
-        console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
-        return avatarMap.get(`${username}-${platform}`);
-    }
-
-    // If code reaches this point, the username hasn't been hashed, so retrieve avatar
-    switch (platform) {
-        case 'twitch':
-            {
-                console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
-                let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-                let data = await response.text();
-                avatarMap.set(`${username}-${platform}`, data);
-                return data;
-            }
-        case 'kick':
-            {
-                console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
-                try {
-                    let response = await fetch('https://kick.com/api/v2/channels/' + username);
-                    console.log('https://kick.com/api/v2/channels/' + username)
-                    let data = await response.json();
-                    let avatarURL = data.user.profile_pic;
-                    if (!avatarURL)
-                        avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-                    avatarMap.set(`${username}-${platform}`, avatarURL);
-                    return avatarURL;
-                }
-                catch (error) {
-                    console.debug(error);
-                    return 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-                }
-            }
-    }
-}
 
 async function GetRenderedHTML(fragment) {
     if (!(fragment instanceof DocumentFragment)) {
@@ -745,6 +724,22 @@ let data = {
     "userName": "nutty",
     "userType": "twitch"
 }
+
+// let data = {
+//     "__source": "CustomCodeEvent",
+//     "actionName": "Printer Bot | Events",
+//     "triggerCustomCodeEventName": "kickKicksGifted",
+//     "amount": 100,
+//     "message": "Eat my ass",
+//     "gift": "Flex",
+//     "giftType": "LEVEL_UP",
+//     "giftTier": "LEVEL_UP",
+//     "sender": "DJSUSAN00",
+//     "senderId": "170168",
+//     "senderColor": "#1475E1",
+//     "eventSource": "kick",
+//     "fromKick": true
+// }
 
 async function TestPrint() {
     CustomEvent(data);

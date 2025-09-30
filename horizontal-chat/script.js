@@ -8,8 +8,6 @@ const urlParams = new URLSearchParams(queryString);
 const sbServerAddress = urlParams.get("address") || "127.0.0.1";
 const sbServerPort = urlParams.get("port") || "8080";
 const minimumRole = 2;							// 1 - Viewer, 2 - VIP, 3 - Moderator, 4 - Broadcaster
-const avatarMap = new Map();
-const pronounMap = new Map();
 const animationDuration = 8000;
 let widgetLocked = false;						// Needed to lock animation from overlapping
 let alertQueue = [];
@@ -20,8 +18,6 @@ let alertQueue = [];
 
 const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
-
-
 
 /////////////
 // OPTIONS //
@@ -52,12 +48,13 @@ const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPoin
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
 
-let kickUsername = urlParams.get("kickUsername") || "";
+const kickUsername = urlParams.get("kickUsername") || "";
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 // const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
 const showKickHosts = GetBooleanParam("showKickHosts", true);
+const showKickGifts = GetBooleanParam("showKickGifts", true);
 
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
@@ -79,10 +76,20 @@ const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
-const animationSpeed = GetIntParam("animationSpeed", 0.5);
+////////////////////
+// HIDDEN OPTIONS //
+////////////////////
 
-// Kick is stupid and turns underscores into dashes which fuck everything up, therefore do a find/replace to make it work good
-kickUsername = kickUsername.replace(/_/g, "-");
+const animationSpeed = GetIntParam("animationSpeed", 0.5);
+const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", false);
+const youtubeColor = urlParams.get("youtubeColor") || "#f70000";
+const youtubeCustomSubIcon = urlParams.get("youtubeCustomSubIcon") || "";
+
+
+
+////////////////
+// PAGE SETUP //
+////////////////
 
 // Set fonts for the widget
 document.body.style.fontFamily = font;
@@ -301,7 +308,9 @@ async function KickConnect() {
 		return;
 
 	// Channel to subscribe to (you'll need the correct channel name here)
-	const chatroomId = await GetKickChatroomId(kickUsername);
+    const kickIds = await GetKickIds(kickUsername);
+    const chatroomId = kickIds.chatroomId;
+    const channelId = kickIds.channelId;
 
 	// Cache subscriber badges
 	kickSubBadges = await GetKickSubBadges(kickUsername);
@@ -334,6 +343,7 @@ async function KickConnect() {
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}` } }));
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }));
                 websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `predictions-channel-${chatroomId}` } }));
+                websocket.send(JSON.stringify({ event: 'pusher:subscribe', data: { channel: `channel_${channelId}` } }));
 				console.log(`[Pusher] Sent subscription request to channel: ${chatroomId}`);
 			}
 
@@ -364,6 +374,9 @@ async function KickConnect() {
 					break;
 				case 'UserBannedEvent':
 					KickUserBanned(eventArgs);
+					break;
+				case 'KicksGifted':
+					KickKicksGifted(eventArgs);
 					break;
 			}
 		}
@@ -504,6 +517,7 @@ async function TwitchChatMessage(data) {
 	// Set the message data
 	let message = data.message.message;
 	const messageColor = data.message.color;
+	const role = data.message.role;
 
 	// Set furry mode
 	if (furryMode)
@@ -576,6 +590,17 @@ async function TwitchChatMessage(data) {
 		avatar.src = avatarURL;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
+	}
+
+	// Custom styling for subs
+	if (data.message.subscriber) {
+		usernameDiv.classList.add('sub-glow')
+	}
+
+	// Custom styling for mods
+	// 3 = Moderator
+	if (role == 3) {
+		usernameDiv.classList.add('moderator-glow')
 	}
 
 	// Hide the header if the same username sends a message twice in a row
@@ -852,7 +877,10 @@ function YouTubeMessage(data) {
 	// Set the message data
 	if (showUsername) {
 		usernameDiv.innerText = data.user.name;
-		usernameDiv.style.color = "#f70000";	// YouTube users do not have colors, so just set it to red
+		if (randomYouTubeColors)
+			usernameDiv.style.color = StringToHex(data.user.name);
+		else
+			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
 
 	if (showMessage) {
@@ -890,7 +918,10 @@ function YouTubeMessage(data) {
 
 	if (data.user.isSponsor && showBadges) {
 		const badge = new Image();
-		badge.src = `icons/badges/youtube-member.svg`;
+		if (youtubeCustomSubIcon)
+			badge.src = youtubeCustomSubIcon;
+		else
+			badge.src = `icons/badges/youtube-member.svg`;
 		badge.style.filter = `invert(100%)`;
 		badge.style.opacity = 0.8;
 		badge.classList.add("badge");
@@ -918,6 +949,17 @@ function YouTubeMessage(data) {
 		avatar.src = data.user.profileImageUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
+	}
+
+	// Custom styling for subs
+	if (data.user.isSponsor) {
+		usernameDiv.classList.add('sub-glow')
+	}
+
+	// Custom styling for mods
+	// 3 = Moderator
+	if (data.user.isModerator) {
+		usernameDiv.classList.add('moderator-glow')
 	}
 
 	// Hide the header if the same username sends a message twice in a row
@@ -1425,6 +1467,18 @@ function KickUserBanned(data) {
 	});
 }
 
+function KickKicksGifted(data) {
+	if (!showKickGifts)
+		return;
+
+	const kicksImg = `<img src=icons/badges/kick-kicks.svg class="platform"/>`;
+	const giftImg = `<img src=https://files.kick.com/kicks/gifts/${data.gift.gift_id.replace('_', '-')}.webp class="platform"/>`;
+
+	const message = ` ${giftImg} ${data.sender.username} sent ${data.gift.name} ${kicksImg} ${data.gift.amount}`;
+
+	ShowAlert(message, 'kick');
+}
+
 async function TikTokChat(data) {
 	if (!showTikTokMessages)
 		return;
@@ -1571,105 +1625,6 @@ function TikTokSubscribe(data) {
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
-
-function GetBooleanParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // Parameter not found
-	}
-
-	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
-
-	if (lowercaseValue === 'true') {
-		return true;
-	} else if (lowercaseValue === 'false') {
-		return false;
-	} else {
-		return paramValue; // Return original string if not 'true' or 'false'
-	}
-}
-
-function GetIntParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // or undefined, or a default value, depending on your needs
-	}
-
-	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
-
-	if (isNaN(intValue)) {
-		return null; // or handle the error in another way, e.g., throw an error
-	}
-
-	return intValue;
-}
-
-function GetCurrentTimeFormatted() {
-	const now = new Date();
-	let hours = now.getHours();
-	const minutes = String(now.getMinutes()).padStart(2, '0');
-	const ampm = hours >= 12 ? 'PM' : 'AM';
-
-	hours = hours % 12;
-	hours = hours ? hours : 12; // the hour '0' should be '12'
-
-	const formattedTime = `${hours}:${minutes} ${ampm}`;
-	return formattedTime;
-}
-
-async function GetAvatar(username, platform) {
-
-	// First, check if the username is hashed already
-	if (avatarMap.has(`${username}-${platform}`)) {
-		console.debug(`Avatar found for ${username} (${platform}). Retrieving from hash map.`)
-		return avatarMap.get(`${username}-${platform}`);
-	}
-
-	// If code reaches this point, the username hasn't been hashed, so retrieve avatar
-	switch (platform) {
-		case 'twitch':
-			{
-				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Decapi.`)
-				let response = await fetch('https://decapi.me/twitch/avatar/' + username);
-				let data = await response.text();
-				avatarMap.set(`${username}-${platform}`, data);
-				return data;
-			}
-		case 'kick':
-			{
-				console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`)
-				let response = await fetch('https://kick.com/api/v2/channels/' + username);
-				console.log('https://kick.com/api/v2/channels/' + username)
-				let data = await response.json();
-				let avatarURL = data.user.profile_pic;
-				if (!avatarURL)
-					avatarURL = 'https://kick.com/img/default-profile-pictures/default2.jpeg';
-				avatarMap.set(`${username}-${platform}`, avatarURL);
-				return avatarURL;
-			}
-	}
-}
-
-async function GetPronouns(platform, username) {
-	if (pronounMap.has(username)) {
-		console.debug(`Pronouns found for ${username}. Retrieving from hash map.`)
-		return pronounMap.get(username);
-	}
-	else {
-		console.debug(`No pronouns found for ${username}. Retrieving from alejo.io.`)
-		const response = await client.getUserPronouns(platform, username);
-		const userFound = response.pronoun.userFound;
-		const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
-
-		pronounMap.set(username, pronouns);
-
-		return pronouns;
-	}
-}
 
 function AddMessageItem(element, elementID, platform, userId) {
 	// Calculate the height of the div before inserting
@@ -1818,77 +1773,6 @@ function GetWinnersList(gifts) {
 		const secondLastWinner = winners.pop();
 		return `${winners.join(", ")}, ${secondLastWinner} and ${lastWinner}`;
 	}
-}
-
-function TranslateToFurry(sentence) {
-	const words = sentence.toLowerCase().split(/\b/);
-
-	const furryWords = words.map(word => {
-		if (/\w+/.test(word)) {
-			let newWord = word;
-
-			// Common substitutions
-			newWord = newWord.replace(/l/g, 'w');
-			newWord = newWord.replace(/r/g, 'w');
-			newWord = newWord.replace(/th/g, 'f');
-			newWord = newWord.replace(/you/g, 'yous');
-			newWord = newWord.replace(/my/g, 'mah');
-			newWord = newWord.replace(/me/g, 'meh');
-			newWord = newWord.replace(/am/g, 'am');
-			newWord = newWord.replace(/is/g, 'is');
-			newWord = newWord.replace(/are/g, 'are');
-			newWord = newWord.replace(/very/g, 'vewy');
-			newWord = newWord.replace(/pretty/g, 'pwetty');
-			newWord = newWord.replace(/little/g, 'wittle');
-			newWord = newWord.replace(/nice/g, 'nyce');
-
-			// Random additions
-			if (Math.random() < 0.15) {
-				newWord += ' nya~';
-			} else if (Math.random() < 0.1) {
-				newWord += ' >w<';
-			} else if (Math.random() < 0.05) {
-				newWord += ' owo';
-			}
-
-			return newWord;
-		}
-		return word;
-	});
-
-	return furryWords.join('');
-}
-
-function EscapeRegExp(string) {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-}
-
-async function GetKickChatroomId(username) {
-	const url = `https://kick.com/api/v2/channels/${username}`;
-
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(`HTTP error ${response.status}`);
-		}
-
-		const data = await response.json();
-		if (data.chatroom && data.chatroom.id) {
-			return data.chatroom.id;
-		} else {
-			throw new Error("Chatroom ID not found in response.");
-		}
-	} catch (error) {
-		console.error("Failed to fetch chatroom ID:", error.message);
-		return null;
-	}
-}
-
-async function GetKickSubBadges(username) {
-	const response = await fetch(`https://kick.com/api/v2/channels/${username}`);
-	const data = await response.json();
-
-	return data.subscriber_badges || [];
 }
 
 function GetKickBadgeURL(data) {

@@ -2,7 +2,7 @@
 	margin: 0;
 	padding: 0;
 	--margin: 0px;
-	--border-radius: 20px;
+	--border-radius: 0.5em;
 }
 
 body {
@@ -76,6 +76,10 @@ html {
 	/* background-color: red; */
 }
 
+#alertBoxContent img {
+  height: 1.2em;
+}
+
 #background {
 	position: absolute;
 	bottom: 0;
@@ -110,7 +114,7 @@ html {
 
 li {
 	list-style: none;
-	overflow: hidden;
+	/* overflow: hidden; */
 	max-width: 0px;
 	transition: all 1s ease-in-out;
 }

@@ -147,7 +147,7 @@ client.on('Twitch.UpcomingAd', (response) => {
 
 function TwitchAdRun(data) {
 	const duration = data.length_seconds;
-	
+
 	// Unset the upcoming ad countdown warning
 	upcomingAdWarningStartDelay = null;
 
@@ -160,8 +160,7 @@ function TwitchAdRun(data) {
 }
 
 function TwitchUpcomingAd(data) {
-	if (upcomingAdWarningStartDelay != null)
-	{
+	if (upcomingAdWarningStartDelay != null) {
 		console.debug('Countdown already started, skipping...');
 		return;
 	}
@@ -269,7 +268,7 @@ function TimerLabelAnimation(duration) {
 function UpcomingAdWarning(warningSeconds) {
 	if (!showUpcomingAdWarning)
 		return;
-	
+
 	// Check if the widget is in the middle of an animation
 	if (upcomingAdWarningLocked)
 		return;
@@ -307,44 +306,6 @@ function UpcomingAdWarning(warningSeconds) {
 // HELPER FUNCTIONS //
 //////////////////////
 
-function GetBooleanParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // Parameter not found
-	}
-
-	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
-
-	if (lowercaseValue === 'true') {
-		return true;
-	} else if (lowercaseValue === 'false') {
-		return false;
-	} else {
-		return paramValue; // Return original string if not 'true' or 'false'
-	}
-}
-
-function GetIntParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
-
-	if (paramValue === null) {
-		return defaultValue; // or undefined, or a default value, depending on your needs
-	}
-
-	console.log(paramValue);
-
-	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
-
-	if (isNaN(intValue)) {
-		return null; // or handle the error in another way, e.g., throw an error
-	}
-
-	return intValue;
-}
-
 String.prototype.toHHMMSS = function () {
 	var sec_num = parseInt(this, 10); // don't forget the second param
 	var hours = Math.floor(sec_num / 3600);
@@ -358,24 +319,20 @@ String.prototype.toHHMMSS = function () {
 	return minutes + ':' + seconds;
 }
 
-function IsNullOrWhitespace(str) {
-	return /^\s*$/.test(str);
-}
-
 function formatTime(seconds) {
-  seconds = Math.floor(seconds); // Round down to nearest whole second
+	seconds = Math.floor(seconds); // Round down to nearest whole second
 
-  if (seconds < 60) {
-    return `${seconds}`;
-  }
+	if (seconds < 60) {
+		return `${seconds}`;
+	}
 
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
+	const mins = Math.floor(seconds / 60);
+	const secs = seconds % 60;
 
-  // Pad seconds with a leading zero if less than 10
-  const paddedSecs = secs.toString().padStart(2, '0');
+	// Pad seconds with a leading zero if less than 10
+	const paddedSecs = secs.toString().padStart(2, '0');
 
-  return `${mins}:${paddedSecs}`;
+	return `${mins}:${paddedSecs}`;
 }
 
 ////////////////////
