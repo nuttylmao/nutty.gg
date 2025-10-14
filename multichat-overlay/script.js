@@ -709,7 +709,8 @@ async function TwitchChatMessage(data) {
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "twitch" && lastUserId == data.user.id) {
 			userInfoDiv.style.display = "none";
-			avatarDiv.innerHTML = '';
+			avatarDiv.style.visibility = "hidden";
+			avatarDiv.style.height = "0px";
 		}
 	}
 
@@ -1362,8 +1363,11 @@ async function YouTubeMessage(data) {
 	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
-		if (lastPlatform == "youtube" && lastUserId == data.user.id)
+		if (lastPlatform == "youtube" && lastUserId == data.user.id) {
 			userInfoDiv.style.display = "none";
+			avatarDiv.style.visibility = "hidden";
+			avatarDiv.style.height = "0px";
+		}
 	}
 
 	// Embed image
@@ -2273,8 +2277,11 @@ async function KickChatMessage(data) {
 	if (groupConsecutiveMessages && messageList.children.length > 0 && scrollDirection != 2) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
-		if (lastPlatform == "kick" && lastUserId == data.sender.id)
+		if (lastPlatform == "kick" && lastUserId == data.sender.id) {
 			userInfoDiv.style.display = "none";
+			avatarDiv.style.visibility = "hidden";
+			avatarDiv.style.height = "0px";
+		}
 	}
 
 	// Embed image
@@ -2738,7 +2745,8 @@ async function TikTokChat(data) {
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "tiktok" && lastUserId == data.userId) {
 			userInfoDiv.style.display = "none";
-			avatarDiv.innerHTML = '';
+			avatarDiv.style.visibility = "hidden";
+			avatarDiv.style.height = "0px";
 		}
 	}
 
