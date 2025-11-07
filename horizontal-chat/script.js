@@ -46,6 +46,7 @@ const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
+const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
 
 const kickUsername = urlParams.get("kickUsername") || "";
@@ -179,6 +180,11 @@ client.on('Twitch.RewardRedemption', (response) => {
 client.on('Twitch.Raid', (response) => {
 	console.debug(response.data);
 	TwitchRaid(response.data);
+})
+
+client.on('Twitch.WatchStreak', (response) => {
+	console.debug(response.data);
+	TwitchWatchStreak(response.data);
 })
 
 client.on('Twitch.ChatMessageDeleted', (response) => {
@@ -785,6 +791,18 @@ async function TwitchRaid(data) {
 	const viewers = data.viewers;
 
 	let message = `${username} is raiding with a party of ${viewers}`;
+
+	ShowAlert(message, 'twitch');
+}
+
+async function TwitchWatchStreak(data) {
+	if (!showTwitchWatchStreaks)
+		return;
+
+	const displayName = data.displayName;
+	const watchStreak = data.watchStreak;
+
+	let message = `${displayName} is currently on a ${watchStreak}-stream streak!`;
 
 	ShowAlert(message, 'twitch');
 }

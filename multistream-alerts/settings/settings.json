@@ -313,6 +313,23 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
+			"id": "showTwitchWatchStreaks",
+			"label": "Watch Streaks",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "twitchWatchStreaksAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showTwitchWatchStreaks",
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
 			"id": "showYouTubeSuperChats",
 			"label": "Super Chats",
 			"description": "",

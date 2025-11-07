@@ -51,6 +51,7 @@ const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
+const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
 const kickUsername = urlParams.get("kickUsername") || "";
@@ -198,6 +199,11 @@ client.on('Twitch.RewardRedemption', (response) => {
 client.on('Twitch.Raid', (response) => {
 	console.debug(response.data);
 	TwitchRaid(response.data);
+})
+
+client.on('Twitch.WatchStreak', (response) => {
+	console.debug(response.data);
+	TwitchWatchStreak(response.data);
 })
 
 client.on('Twitch.ChatMessageDeleted', (response) => {
@@ -1156,6 +1162,47 @@ async function TwitchRaid(data) {
 
 	titleDiv.innerText = `${username} is raiding`;
 	contentDiv.innerText = `with a party of ${viewers}`;
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function TwitchWatchStreak(data) {
+	if (!showTwitchWatchStreaks)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.userName;
+		const avatarURL = await GetAvatar(username, 'twitch');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	const displayName = data.displayName;
+	const watchStreak = data.watchStreak;
+	const message = data.message;
+	
+	titleDiv.innerText = `${displayName} is currently on a ${watchStreak}-stream streak! `;
+	contentDiv.innerText = `${message}`;
 
 	AddMessageItem(instance, data.messageId);
 }
