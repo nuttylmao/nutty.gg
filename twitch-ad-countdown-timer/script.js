@@ -115,21 +115,25 @@ switch (warningPosition) {
         upcomingAdWarningContainer.style.top = "15%";
         upcomingAdWarningContainer.style.left = "-100%";
         upcomingAdWarningContainer.style.transform = "translateX(0)";
+		upcomingAdWarningContainer.style.borderRadius = "0px 10px 10px 0px";
         break;
     case "bottom-left":
         upcomingAdWarningContainer.style.bottom = "15%";
         upcomingAdWarningContainer.style.left = "-100%";
         upcomingAdWarningContainer.style.transform = "translateX(0)";
+		upcomingAdWarningContainer.style.borderRadius = "0px 10px 10px 0px";
         break;
     case "bottom-right":
         upcomingAdWarningContainer.style.bottom = "15%";
         upcomingAdWarningContainer.style.right = "-100%";
         upcomingAdWarningContainer.style.transform = "translateX(0)";
+        upcomingAdWarningContainer.style.borderRadius = "10px 0px 0px 10px";
         break;
     case "top-right":
         upcomingAdWarningContainer.style.top = "15%";
         upcomingAdWarningContainer.style.right = "-100%";
         upcomingAdWarningContainer.style.transform = "translateX(0)";
+        upcomingAdWarningContainer.style.borderRadius = "10px 0px 0px 10px";
         break;
 }
 
