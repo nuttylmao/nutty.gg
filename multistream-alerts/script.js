@@ -867,7 +867,7 @@ async function StreamElementsTip(data) {
 
 	UpdateAlertBox(
 		'streamelements',
-		''
+		'',
 		`${donater}`,
 		`donated ${currency}${formattedAmount}`,
 		``,
