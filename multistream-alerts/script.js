@@ -67,6 +67,8 @@ const showTwitchCheers = GetBooleanParam("showTwitchCheers", true);
 const twitchCheerAction = urlParams.get("twitchCheerAction") || "";
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const twitchRaidAction = urlParams.get("twitchRaidAction") || "";
+const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
+const twitchWatchStreaksAction = urlParams.get("twitchWatchStreaksAction") || "";
 
 // Which Kick alerts do you want to see?
 const kickUsername = urlParams.get("kickUsername") || "";
@@ -209,6 +211,11 @@ client.on('Twitch.RewardRedemption', (response) => {
 client.on('Twitch.Raid', (response) => {
 	console.debug(response.data);
 	TwitchRaid(response.data);
+})
+
+client.on('Twitch.WatchStreak', (response) => {
+	console.debug(response.data);
+	TwitchWatchStreak(response.data);
 })
 
 client.on('YouTube.SuperChat', (response) => {
@@ -721,6 +728,30 @@ async function TwitchRaid(data) {
 	);
 }
 
+async function TwitchWatchStreak(data) {
+	if (!showTwitchWatchStreaks)
+		return;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(data.userName, 'twitch');
+
+	// Set the text
+	const username = data.displayName;
+	const watchStreak = data.watchStreak;
+	
+	UpdateAlertBox(
+		'twitch',
+		avatarURL,
+		`${username}`,
+		`is currently on a ${watchStreak} stream streak!`,
+		'',
+		username,
+		'',
+		twitchWatchStreaksAction,
+		data
+	);
+}
+
 function YouTubeSuperChat(data) {
 	if (!showYouTubeSuperChats)
 		return;
@@ -836,7 +867,7 @@ async function StreamElementsTip(data) {
 
 	UpdateAlertBox(
 		'streamelements',
-		''
+		'',
 		`${donater}`,
 		`donated ${currency}${formattedAmount}`,
 		``,

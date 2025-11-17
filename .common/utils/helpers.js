@@ -222,21 +222,42 @@ function EscapeRegExp(string) {
 }
 
 // Given a string, return a random hex code. The same input always results in the same output
-function StringToHex(str) {
-    // Simple hash function to convert string to a number
+function RandomHex(str) {
+    // Simple hash to convert string to a number
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        hash |= 0; // Convert to 32bit integer
+        hash |= 0;
     }
 
-    // Convert hash to a hex color
-    let color = '#';
-    for (let i = 0; i < 3; i++) {
-        // Extract each byte and convert to 2-digit hex
-        const value = (hash >> (i * 8)) & 0xFF;
-        color += value.toString(16).padStart(2, '0');
+    // Use the hash to generate a hue (0–360)
+    const hue = Math.abs(hash) % 360;
+
+    // Force super saturation + readable brightness
+    const saturation = 100;  // maximum saturation
+    const lightness = 55;    // tweak 50–60 depending on your background
+
+    // Convert HSL → RGB → hex
+    function hslToHex(h, s, l) {
+        s /= 100;
+        l /= 100;
+
+        const k = n => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = n =>
+            l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+
+        const r = Math.round(255 * f(0));
+        const g = Math.round(255 * f(8));
+        const b = Math.round(255 * f(4));
+
+        return (
+            "#" +
+            r.toString(16).padStart(2, "0") +
+            g.toString(16).padStart(2, "0") +
+            b.toString(16).padStart(2, "0")
+        );
     }
 
-    return color;
+    return hslToHex(hue, saturation, lightness);
 }

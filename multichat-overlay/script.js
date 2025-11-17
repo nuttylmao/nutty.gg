@@ -51,6 +51,7 @@ const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
+const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
 const kickUsername = urlParams.get("kickUsername") || "";
@@ -198,6 +199,11 @@ client.on('Twitch.RewardRedemption', (response) => {
 client.on('Twitch.Raid', (response) => {
 	console.debug(response.data);
 	TwitchRaid(response.data);
+})
+
+client.on('Twitch.WatchStreak', (response) => {
+	console.debug(response.data);
+	TwitchWatchStreak(response.data);
 })
 
 client.on('Twitch.ChatMessageDeleted', (response) => {
@@ -1160,6 +1166,67 @@ async function TwitchRaid(data) {
 	AddMessageItem(instance, data.messageId);
 }
 
+async function TwitchWatchStreak(data) {
+	if (!showTwitchWatchStreaks)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.userName;
+		const avatarURL = await GetAvatar(username, 'twitch');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	const displayName = data.displayName;
+	const watchStreak = data.watchStreak;
+	const message = data.message;
+	
+	titleDiv.innerText = `${displayName} is currently on a ${watchStreak} stream streak! `;
+	contentDiv.innerText = `${message}`;
+
+	// Render emotes
+	for (i in data.emotes) {
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
+		const emoteName = EscapeRegExp(data.emotes[i].name);
+
+		let regexPattern = emoteName;
+
+		// Check if the emote name consists only of word characters (alphanumeric and underscore)
+		if (/^\w+$/.test(emoteName)) {
+			regexPattern = `\\b${emoteName}\\b`;
+		}
+		else {
+			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
+			regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
+		}
+
+		const regex = new RegExp(regexPattern, 'g');
+		contentDiv.innerHTML = contentDiv.innerHTML.replace(regex, emoteElement);
+	}
+
+	AddMessageItem(instance, data.messageId);
+}
+
 function TwitchChatMessageDeleted(data) {
 	const messageList = document.getElementById("messageList");
 
@@ -1265,7 +1332,7 @@ async function YouTubeMessage(data) {
 	if (showUsername) {
 		usernameDiv.innerText = data.user.name;
 		if (randomYouTubeColors)
-			usernameDiv.style.color = StringToHex(data.user.name);
+			usernameDiv.style.color = RandomHex(data.user.name);
 		else
 			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
