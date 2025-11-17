@@ -743,7 +743,7 @@ async function TwitchWatchStreak(data) {
 		'twitch',
 		avatarURL,
 		`${username}`,
-		`is currently on a ${watchStreak}-stream streak!`,
+		`is currently on a ${watchStreak} stream streak!`,
 		'',
 		username,
 		'',

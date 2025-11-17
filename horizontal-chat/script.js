@@ -802,7 +802,7 @@ async function TwitchWatchStreak(data) {
 	const displayName = data.displayName;
 	const watchStreak = data.watchStreak;
 
-	let message = `${displayName} is currently on a ${watchStreak}-stream streak!`;
+	let message = `${displayName} is currently on a ${watchStreak} stream streak!`;
 
 	ShowAlert(message, 'twitch');
 }
