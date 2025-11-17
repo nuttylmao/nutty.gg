@@ -896,7 +896,7 @@ function YouTubeMessage(data) {
 	if (showUsername) {
 		usernameDiv.innerText = data.user.name;
 		if (randomYouTubeColors)
-			usernameDiv.style.color = StringToHex(data.user.name);
+			usernameDiv.style.color = RandomHex(data.user.name);
 		else
 			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
