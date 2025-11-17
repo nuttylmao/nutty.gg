@@ -136,6 +136,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchCheers",
+			"label": "Cheers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showTwitchAnnouncements",
 			"label": "Announcements",
 			"description": "",

@@ -46,6 +46,7 @@ const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
 const showYouTubeLinkPreviews = GetBooleanParam("showYouTubeLinkPreviews", true);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
+const showTwitchCheers = GetBooleanParam("showTwitchCheers", false);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
 const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
@@ -158,7 +159,7 @@ client.on('Twitch.ChatMessage', (response) => {
 
 client.on('Twitch.Cheer', (response) => {
 	console.debug(response.data);
-	TwitchChatMessage(response.data);
+	TwitchCheer(response.data);
 })
 
 client.on('Twitch.AutomaticRewardRedemption', (response) => {
@@ -750,6 +751,49 @@ async function TwitchChatMessage(data) {
 
 		YouTubeThumbnailPreview(videoData);
 	}
+}
+
+async function TwitchCheer(data) {
+	TwitchChatMessage(data);
+	if (!showTwitchCheers)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#contentDiv");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.user.login;
+		const avatarURL = await GetAvatar(username, 'twitch');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Set the text
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	let bits = data.bits;
+
+	titleDiv.innerText = `${username} cheered ${bits} bits`;
+
+	AddMessageItem(instance, data.messageId);
 }
 
 async function TwitchAutomaticRewardRedemption(data) {

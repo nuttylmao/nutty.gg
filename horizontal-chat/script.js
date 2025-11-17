@@ -41,6 +41,7 @@ const ignoreChatters = urlParams.get("ignoreChatters") || "";
 const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", true);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
+const showTwitchCheers = GetBooleanParam("showTwitchCheers", false);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
 const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
@@ -139,7 +140,7 @@ client.on('Twitch.ChatMessage', (response) => {
 
 client.on('Twitch.Cheer', (response) => {
 	console.debug(response.data);
-	TwitchChatMessage(response.data);
+	TwitchCheer(response.data);
 })
 
 client.on('Twitch.Announcement', (response) => {
@@ -619,6 +620,22 @@ async function TwitchChatMessage(data) {
 	}
 
 	AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
+}
+
+async function TwitchCheer(data) {
+	TwitchChatMessage(data);
+	if (!showTwitchCheers)
+		return;
+	
+	// Set the text
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	let bits = data.bits;
+	
+	const message = `${username} cheered ${bits} bits`;
+
+	ShowAlert(message, 'twitch');
 }
 
 async function TwitchAnnouncement(data) {
