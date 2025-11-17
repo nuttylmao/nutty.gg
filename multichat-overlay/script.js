@@ -3271,39 +3271,3 @@ async function GetYouTubeVideoData(videoId) {
 		return null;
 	}
 }
-
-let data = {
-    "msgId": "617ba873-519d-4e28-9d72-e25c13af8022",
-    "subscriber": false,
-    "message": "exeldr1Good",
-    "systemMessage": "Exeldro watched 5 consecutive streams and sparked a watch streak!",
-    "emotes": [
-      {
-        "id": "emotesv2_ae32a0ba44b347479250e76759d34b8a",
-        "type": "Twitch",
-        "name": "exeldr1Good",
-        "startIndex": 0,
-        "endIndex": 10,
-        "imageUrl": "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_ae32a0ba44b347479250e76759d34b8a/default/dark/2.0"
-      }
-    ],
-    "badges": [
-      {
-        "name": "moderator",
-        "version": "1",
-        "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
-        "info": ""
-      }
-    ],
-    "monthsSubscribed": 0,
-    "watchStreak": 5,
-    "copoReward": 450,
-    "string": "77656c7f-33ef-4d8d-981c-5be7fec88030",
-    "userId": "416052011",
-    "userName": "exeldro",
-    "displayName": "Exeldro",
-    "role": 3,
-    "isTest": false
-  }
-
-  TwitchWatchStreak(data);
