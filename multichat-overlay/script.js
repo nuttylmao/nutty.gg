@@ -43,6 +43,7 @@ const scrollDirection = GetIntParam("scrollDirection", 1);
 const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", false);
 const inlineChat = GetBooleanParam("inlineChat", false);
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
+const imageEmbedWhitelist = urlParams.get("imageEmbedWhitelist") || "*";
 const showYouTubeLinkPreviews = GetBooleanParam("showYouTubeLinkPreviews", true);
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
@@ -388,7 +389,7 @@ async function KickConnect() {
 	{
 		// Fetch from Streamer.bot
 		const broadcasterInfo = await client.getBroadcaster();
-		
+
 		if (broadcasterInfo.platforms.kick)
 			kickUsername = broadcasterInfo.platforms.kick.broadcasterLogin;
 		else
@@ -731,7 +732,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Embed image
-	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'twitch') && IsImageUrl(message)) {
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'twitch') && IsImageUrl(message) && IsImageUrlAllowed(message)) {
 		const image = new Image();
 
 		image.onload = function () {
@@ -1347,11 +1348,11 @@ async function YouTubeMessage(data) {
 		else
 			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
-	
+
 	// Set the message data
 	//let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
 	let message = ConstructMessageFromParts(data.parts);
-	
+
 	// Set furry mode
 	if (furryMode)
 		message = TranslateToFurry(message);
@@ -1447,7 +1448,7 @@ async function YouTubeMessage(data) {
 	}
 
 	// Embed image
-	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'youtube') && IsImageUrl(message)) {
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'youtube') && IsImageUrl(message) && IsImageUrlAllowed(message)) {
 		const image = new Image();
 
 		image.onload = function () {
@@ -2322,7 +2323,7 @@ async function KickChatMessage(data) {
 
 	// Set the message data
 	let message = ConstructMessageFromParts(data.parts);
-	
+
 	// Highlight mentions
 	const mentionRgx = new RegExp(`(^|\\s)@${kickUsername}(\\s|$)`, 'i');
 	const mention = mentionRgx.test(message);
@@ -2407,7 +2408,7 @@ async function KickChatMessage(data) {
 	}
 
 	// Embed image
-	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'kick') && IsImageUrl(message)) {
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'kick') && IsImageUrl(message) && IsImageUrlAllowed(message)) {
 		const image = new Image();
 
 		image.onload = function () {
@@ -3103,6 +3104,49 @@ function IsImageUrl(url) {
 		return /\.(png|jpe?g|webp|gif)$/i.test(pathname);
 	} catch (error) {
 		// Return false if the URL is invalid.
+		return false;
+	}
+}
+
+function IsImageUrlAllowed(url) {
+	// If whitelist is empty or "*", allow everything
+	if (!imageEmbedWhitelist || imageEmbedWhitelist.trim() === "" || imageEmbedWhitelist.trim() === "*") {
+		return true;
+	}
+
+	try {
+		const { hostname } = new URL(url);
+		// Parse comma-separated whitelist and trim whitespace
+		const allowedDomains = imageEmbedWhitelist.split(',').map(domain => domain.trim().toLowerCase());
+
+		// Check if the URL's hostname matches any allowed domain
+		//
+		// Examples:
+		// "imgur.com" → matches: imgur.com, i.imgur.com, www.imgur.com
+		// "giphy.com" → matches: giphy.com, media4.giphy.com
+		// "tenor.com" → matches: tenor.com, media.tenor.com
+		//
+		// Why we need both checks:
+		// - "hostname === domain" for exact match (e.g., "imgur.com")
+		// - "hostname.endsWith('.' + domain)" for subdomains (e.g., "i.imgur.com")
+		//
+		// The leading dot in ".domain" is important for security!
+		// Without it, "evilimgur.com".endsWith("imgur.com") would be true (BAD!)
+		// With it, "evilimgur.com".endsWith(".imgur.com") is false (SAFE!)
+		//
+		const isAllowed = allowedDomains.some(domain => {
+			if (!domain) return false;
+			const lowerHostname = hostname.toLowerCase();
+			return lowerHostname === domain || lowerHostname.endsWith('.' + domain);
+		});
+
+		if (!isAllowed) {
+			console.log(`[Image Whitelist] Blocked image URL: ${url} (domain: ${hostname})`);
+		}
+
+		return isAllowed;
+	} catch (error) {
+		console.log(`[Image Whitelist] Invalid URL: ${url}`);
 		return false;
 	}
 }
