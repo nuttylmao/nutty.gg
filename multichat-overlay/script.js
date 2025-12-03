@@ -1358,7 +1358,7 @@ async function YouTubeMessage(data) {
 	if (showUsername) {
 		usernameDiv.innerText = data.user.name;
 		if (randomYouTubeColors)
-			usernameDiv.style.color = getUserColor(data.user.name, "youtube");
+			usernameDiv.style.color = RandomHex(data.user.name);
 		else
 			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
@@ -2763,7 +2763,7 @@ async function TikTokChat(data) {
 	if (showUsername) {
 		usernameDiv.innerText = data.nickname;
 		if (randomTiktokColors)
-			usernameDiv.style.color = getUserColor(data.nickname, "tiktok");
+			usernameDiv.style.color = RandomHex(data.nickname);
 		else
 			usernameDiv.style.color = tiktokColor;
 	}
@@ -3300,37 +3300,6 @@ function CalculateKickSubBadge(months) {
 		.sort((a, b) => b.months - a.months)[0];
 
 	return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
-}
-
-// Assign a random pastel-friendly color to a user 
-function usernameToColor(username, platform) {
-    const key = platform + ":" + username; // unique per platform
-
-    // Simple hash
-    let hash = 0;
-    for (let i = 0; i < key.length; i++) {
-        hash = key.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    // Map hash to 0-360 for hue
-    const hue = Math.abs(hash) % 360;
-
-    // Pastel-friendly fixed saturation and lightness
-    const saturation = 100; // full saturation
-    const lightness = 75;   // pastel-light
-
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-}
-
-// Modular function to get user color
-function getUserColor(username, platform) {
-    if (!platformUserColors[platform]) {
-        platformUserColors[platform] = {};
-    }
-    if (!platformUserColors[platform][username]) {
-        platformUserColors[platform][username] = usernameToColor(username, platform);
-    }
-    return platformUserColors[platform][username];
 }
 
 async function getTikTokEmotes(data, messageElement) {
