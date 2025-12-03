@@ -2777,6 +2777,7 @@ async function TikTokChat(data) {
 
 	// Set message text
 	if (showMessage) {
+		// The following function checks if the message contains emotes. If so, it renders it. Otherwise, it sets the normal message
 		await getTikTokEmotes({ comment: message, emotes: data.emotes }, messageDiv);
 	}
 
