@@ -160,11 +160,15 @@ li {
 }
 
 .tiktokBadge {
-	display: inline-flex;       /* ensures flex on TikTok badges */
+	display: inline-flex;       
     align-items: center;
 	border-radius: 3px;
 	transform: translateY(0.20em);  /* adjust as needed */
     gap: 1px; 
+}
+
+.tiktokBadge.tiktokGradeBadge {
+	padding: 0 0.15em;
 }
 
 .badge img {

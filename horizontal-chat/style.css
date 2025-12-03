@@ -177,6 +177,10 @@ li {
     gap: 1px; 
 }
 
+.tiktokBadge.tiktokGradeBadge {
+	padding: 0 0.15em;
+}
+
 .badge img {
 	height: 1em;
 	width: auto;
