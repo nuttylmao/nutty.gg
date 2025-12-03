@@ -169,6 +169,60 @@ li {
 	transform: translate(0px, 0.25em);
 }
 
+.tiktokBadge {
+	display: inline-flex;       /* ensures flex on TikTok badges */
+    align-items: center;
+	border-radius: 3px;
+	transform: translateY(0.20em);  /* adjust as needed */
+    gap: 1px; 
+}
+
+.badge img {
+	height: 1em;
+	width: auto;
+	vertical-align: middle; /* optional, aligns with text */
+}
+
+.badge i {
+	font-size: 0.8em;
+	width: auto;
+}
+
+.badge.tiktokBadge.mod {
+	background: rgba(0, 0, 0, 0.7);
+	transform: translateY(0);  /* adjust as needed */
+}
+
+.badge.tiktokBadge.mod i {
+    transform: scale(0.8);
+    transform-origin: center; 
+    display: block;           
+}
+
+.tiktok-badge-level { 
+    font-size: 0.6em;
+	font-family: "TikTok Sans", sans-serif;
+  	font-weight: 700;
+	margin-right: 0.2em;
+}
+
+.tiktokTopgifter {
+	background: rgba(254, 44, 85, 0.4);
+}
+
+.tiktokGradeBadge {
+	background: rgba(71, 90, 255, 0.5); 
+}
+
+.tiktokFansBadge {
+	background: rgba(255, 94, 58, 0.5);
+}
+
+.tiktokFansBadge.sub {
+    outline: 1px solid rgba(255, 184, 77, 1);
+    outline-offset: -1px;
+}
+
 .emote {
 	height: 1.5em;
 	margin: 1px;

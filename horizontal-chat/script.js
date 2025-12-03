@@ -18,6 +18,32 @@ let alertQueue = [];
 
 const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
+const platformUserColors = {};
+
+// TikTok Level Badges URL
+const badgesLevelEight = [
+	{ min: 1,  max: 4,  url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv1_v1.png~tplv-obj.image' },
+	{ min: 5,  max: 9,  url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv5_v1.png~tplv-obj.image' },
+	{ min: 10, max: 14, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv10_v1.png~tplv-obj.image' },
+	{ min: 15, max: 19, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv15_v2.png~tplv-obj.image' },
+	{ min: 20, max: 24, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv20_v1.png~tplv-obj.image' },
+	{ min: 25, max: 29, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv25_v1.png~tplv-obj.image' },
+	{ min: 30, max: 34, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv30_v1.png~tplv-obj.image' },
+	{ min: 35, max: 39, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv35_v3.png~tplv-obj.image' },
+	{ min: 40, max: 44, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv40_v2.png~tplv-obj.image' },
+	{ min: 45, max: 49, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv45_v1.png~tplv-obj.image' },
+	{ min: 50, max: 500, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/grade_badge_icon_lite_lv50_v1.png~tplv-obj.image' },
+];
+
+// Tiktok Fan Badges URL
+const badgesLevelTen = [
+	{ min: 1,  max: 9,  url: 'https://p16-webcast.tiktokcdn.com/webcast-va/fans_badge_icon_lv1_v4.png~tplv-obj.image' },
+	{ min: 10, max: 19, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/fans_badge_icon_lv10_v4.png~tplv-obj.image' },
+	{ min: 20, max: 29, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/fans_badge_icon_lv20_v4.png~tplv-obj.image' },
+	{ min: 30, max: 39, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/fans_badge_icon_lv30_v4.png~tplv-obj.image' },
+	{ min: 40, max: 49, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/fans_badge_icon_lv40_v4.png~tplv-obj.image' },
+	{ min: 50, max: 500, url: 'https://p16-webcast.tiktokcdn.com/webcast-va/fans_badge_icon_lv50_v4.png~tplv-obj.image' },
+];
 
 /////////////
 // OPTIONS //
@@ -84,6 +110,8 @@ const furryMode = GetBooleanParam("furryMode", false);
 const animationSpeed = GetIntParam("animationSpeed", 0.5);
 const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", false);
 const youtubeColor = urlParams.get("youtubeColor") || "#f70000";
+const randomTiktokColors = GetBooleanParam("randomTiktokColors", true);
+const tiktokColor = urlParams.get("tiktokColor") || "#9e9e9e";
 const youtubeCustomSubIcon = urlParams.get("youtubeCustomSubIcon") || "";
 
 
@@ -301,8 +329,6 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 	console.debug(response.data);
 	FourthwallGiftDrawEnded(response.data);
 })
-
-
 
 ///////////////////////////
 // KICK PUSHER WEBSOCKET //
@@ -1534,7 +1560,10 @@ async function TikTokChat(data) {
 	// Set the username info
 	if (showUsername) {
 		usernameDiv.innerText = data.nickname;
-		usernameDiv.style.color = '#9e9e9e';
+		if (randomTiktokColors)
+			usernameDiv.style.color = getUserColor(data.nickname, "tiktok");
+		else
+			usernameDiv.style.color = tiktokColor;
 	}
 
 	// Set the message data
@@ -1545,8 +1574,9 @@ async function TikTokChat(data) {
 		message = TranslateToFurry(message);
 
 	// Set message text
+	// Set message text
 	if (showMessage) {
-		messageDiv.innerText = message;
+		await getTikTokEmotes({ comment: message, emotes: data.emotes }, messageDiv);
 	}
 
 	// Render platform
@@ -1559,22 +1589,80 @@ async function TikTokChat(data) {
 	if (showBadges) {
 		badgeListDiv.innerHTML = "";
 
-		if (data.isModerator) {
-			const badge = new Image();
-			badge.src = `icons/badges/youtube-moderator.svg`;
-			badge.style.filter = `invert(100%)`;
-			badge.style.opacity = 0.8;
-			badge.classList.add("badge");
-			badgeListDiv.appendChild(badge);
+		// Moderator badge
+		 if (data.isModerator) {
+			const span = document.createElement("span");
+			span.classList.add("badge", "tiktokBadge", "mod");
+			const icon = document.createElement("i");
+			icon.classList.add("fa-solid", "fa-user-gear");
+			span.appendChild(icon);
+			badgeListDiv.appendChild(span);
 		}
 
-		for (i in data.userBadges) {
-			if (data.userBadges[i].type == 'image') {
-				const badge = new Image();
-				badge.src = data.userBadges[i].url;
-				badge.classList.add("badge");
-				badgeListDiv.appendChild(badge);
-			}
+		// User badges
+		if (Array.isArray(data.userBadges) && data.userBadges.length > 0) {
+			data.userBadges.forEach(badge => {
+				const span = document.createElement("span");
+				span.classList.add("badge", "tiktokBadge");
+
+				// Top Gifter
+				if (badge.badgeSceneType === 6 && data.topGifterRank !== undefined) {
+					span.classList.add("tiktokTopgifter");
+					const img = document.createElement("img");
+					img.src = badge.url ?? "icons/badges/top-gifter-fallback.png";
+					span.appendChild(img);
+					const rank = document.createElement("span");
+					rank.classList.add("tiktok-badge-level");
+					rank.textContent = `No. ${data.topGifterRank} `;
+					span.appendChild(rank);
+					badgeListDiv.appendChild(span);
+					return;
+				}
+
+				// Scene 8 — Grade badge
+				if (badge.badgeSceneType === 8) {
+					span.classList.add("tiktokGradeBadge");
+
+					// Find the right badge URL
+					const img = document.createElement("img");
+					const badgeData = badgesLevelEight.find(b => badge.level >= b.min && badge.level <= b.max);
+					img.src = badgeData ? badgeData.url : badgesLevelEight[badgesLevelEight.length - 1].url;
+					span.appendChild(img);
+					const lvl = document.createElement("span");
+					lvl.classList.add("tiktok-badge-level");
+					lvl.textContent = badge.level;
+					span.appendChild(lvl);
+			
+					badgeListDiv.appendChild(span);
+					return;
+				}
+
+				// Scene 10 — Fans badge
+				if (badge.badgeSceneType === 10) {
+					span.classList.add("tiktokFansBadge");
+
+					if (data.isSubscribed) {
+						span.classList.add("sub");
+					}
+		
+					// Find the right badge URL from the inlined array
+					const img = document.createElement("img");
+					const badgeData = badgesLevelTen.find(b => badge.level >= b.min && badge.level <= b.max);
+					img.src = badgeData ? badgeData.url : badgesLevelTen[badgesLevelTen.length - 1].url;
+					span.appendChild(img);
+
+					badgeListDiv.appendChild(span);
+					return;
+				}
+
+				// Default fallback
+				if (badge.url) {
+					const img = document.createElement("img");
+					img.src = badge.url;
+					span.appendChild(img);
+					badgeListDiv.appendChild(span);
+				}
+			});
 		}
 	}
 
@@ -1622,7 +1710,7 @@ function TikTokGift(data) {
 
 	const giftImg = `<img src=${data.giftPictureUrl} class="platform"/>`;
 
-	const message = `${data.nickname} sent ${giftImg}x${data.repeatCount}`;
+	const message = `${data.nickname} sent ${data.giftName} x${data.repeatCount} ${giftImg}`;
 
 	ShowAlert(message, 'tiktok');
 }
@@ -1813,7 +1901,83 @@ function CalculateKickSubBadge(months) {
   return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
 }
 
+// Assign a random pastel-friendly color to a user 
+function usernameToColor(username, platform) {
+    const key = platform + ":" + username; // unique per platform
 
+    // Simple hash
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+        hash = key.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    // Map hash to 0-360 for hue
+    const hue = Math.abs(hash) % 360;
+
+    // Pastel-friendly fixed saturation and lightness
+    const saturation = 100; // full saturation
+    const lightness = 75;   // pastel-light
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+// Modular function to get user color
+function getUserColor(username, platform) {
+    if (!platformUserColors[platform]) {
+        platformUserColors[platform] = {};
+    }
+    if (!platformUserColors[platform][username]) {
+        platformUserColors[platform][username] = usernameToColor(username, platform);
+    }
+    return platformUserColors[platform][username];
+}
+
+async function getTikTokEmotes(data, messageElement) {
+    const {
+        comment: message,
+        emotes,
+    } = data;
+
+    // Clear the target element
+    messageElement.innerHTML = '';
+
+    if (!emotes || emotes.length === 0) {
+        // No emotes → just normal text
+        messageElement.appendChild(document.createTextNode(message));
+        return;
+    }
+
+    // Sort the emotes by index to ensure correct order
+    const sorted = [...emotes].sort((a, b) => a.placeInComment - b.placeInComment);
+
+    let lastIndex = 0;
+
+    for (const emote of sorted) {
+        const position = emote.placeInComment;
+
+        // Add text before the emote, if any
+        if (lastIndex < position) {
+            const text = message.slice(lastIndex, position);
+            messageElement.appendChild(document.createTextNode(text));
+        }
+
+        // Add the emote
+        const img = document.createElement('img');
+        img.src = emote.emoteImageUrl;
+        img.className = 'emote';
+        img.dataset.emoteId = emote.emoteId;
+        img.onerror = () => (img.outerHTML = emote.emoteId); // fallback
+        messageElement.appendChild(img);
+
+        lastIndex = position + 1; // move forward
+    }
+
+    // Final text after the last emote
+    if (lastIndex < message.length) {
+        const text = message.slice(lastIndex);
+        messageElement.appendChild(document.createTextNode(text));
+    }
+}
 
 ///////////////////////////////////
 // STREAMER.BOT WEBSOCKET STATUS //
