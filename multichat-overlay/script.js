@@ -80,7 +80,7 @@ const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
 
-const kickUsername = urlParams.get("kickUsername") || "rexbordz";
+const kickUsername = urlParams.get("kickUsername") || "";
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 // const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
@@ -93,12 +93,12 @@ const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
-const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", true);
+const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
 const showTikTokFollows = GetBooleanParam("showTikTokFollows", false);
 const showTikTokLikes = GetBooleanParam("showTikTokLikes", false);
-const showTikTokMessages = GetBooleanParam("showTikTokMessages", true);
-const showTikTokGifts = GetBooleanParam("showTikTokGifts", true);
-const showTikTokSubs = GetBooleanParam("showTikTokSubs", true);
+const showTikTokMessages = GetBooleanParam("showTikTokMessages", false);
+const showTikTokGifts = GetBooleanParam("showTikTokGifts", false);
+const showTikTokSubs = GetBooleanParam("showTikTokSubs", false);
 
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
