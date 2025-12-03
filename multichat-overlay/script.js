@@ -2765,7 +2765,7 @@ async function TikTokChat(data) {
 		if (randomTiktokColors)
 			usernameDiv.style.color = getUserColor(data.nickname, "tiktok");
 		else
-			usernameDiv.style.color = tiktokColor;	// YouTube users do not have colors, so just set it to red
+			usernameDiv.style.color = tiktokColor;
 	}
 
 	// Set the message data
@@ -2837,7 +2837,7 @@ async function TikTokChat(data) {
 					img.src = badgeData ? badgeData.url : badgesLevelEight[badgesLevelEight.length - 1].url;
 					span.appendChild(img);
 					const lvl = document.createElement("span");
-					lvl.classList.add("tiktok-badge-level");   // ← place here
+					lvl.classList.add("tiktok-badge-level"); 
 					lvl.textContent = badge.level;
 					span.appendChild(lvl);
 			
