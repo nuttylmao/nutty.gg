@@ -498,7 +498,7 @@ function TikfinityConnect() {
 		let event = payload.event;
 		let data = payload.data;
 
-		console.debug('Event: ' + event, data);
+		console.debug('Event: ' + event);
 
 		switch (event) {
 			case 'chat':
