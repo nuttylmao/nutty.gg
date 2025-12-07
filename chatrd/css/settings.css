@@ -1,0 +1,523 @@
+/* Basic reset and styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Full-page container styling */
+html {
+    width: 100vw;
+    scroll-behavior: smooth;
+    overflow-wrap: break-word;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+    font-optical-sizing: auto;
+    background-color: #121212;
+    overflow-x: hidden;
+}
+
+a { color: #DBB048; }
+
+hr {
+    border: 1px solid #222;
+    margin: 20px 0;
+}
+
+#container {
+    width: 100vw;
+}
+
+#container .wrapper {
+    display: flex;
+    flex-direction: row;
+    overflow-x: hidden;
+    width: 100vw;
+    /*height: 100vh;*/
+}
+
+#settings {
+    width: 640px;
+    color: #FFF;
+}
+
+#settings form {
+    display: block;
+    padding: 20px;
+}
+
+#settings .title {
+    text-align: center;
+    margin: 20px 0 0 0;
+}
+
+#settings .title h1 {
+    background-image: url('../images/logo-chatrd.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+    width: 200px;
+    height: 78px;
+    display: inline-block;
+}
+
+#settings .platform {
+    background: #191919;
+    padding: 20px;
+    border-radius: 10px;
+    outline: 1px solid rgba(255,255,255,0.05);
+    outline-offset: -1px;
+    margin-bottom: 20px;
+}
+
+
+#settings .platform h2 {
+    display: inline-flex;
+    gap: 10px;
+}
+
+#settings .platform h2 img {
+    height: 36px;
+}
+
+#settings .platform .platform-enable {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#settings .config {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+#settings .config strong {
+    font-weight: 900;
+}
+
+#settings .config small {
+    color: #717171;
+}
+
+#settings .config i.fa-solid.fa-arrow-turn-up {
+    transform: rotate(90deg);
+}
+
+#settings .config input[type=color] {
+    background: #111;
+    padding: 0 2px;
+}
+
+
+#settings .config i {
+    font-size: 14px;
+    color: #666;
+}
+
+#settings .config h2 i {
+    font-size: 24px;
+}
+
+
+#settings .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 27px;
+    text-align: center;
+}
+
+#settings .switch input[type=checkbox] {
+    opacity: 1;
+    width: 0;
+    height: 0;
+}
+
+#settings .config input[type=text],
+#settings .config input[type=number],
+#settings .config textarea {
+    font-family: "DM Sans", sans-serif;
+    border: none;
+    background:#222;
+    color: #FFF;
+    padding: 10px 15px;
+    border-radius: 10px;
+    outline: none;
+}
+
+#settings .switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #CCC;
+    transition: .4s;
+    border-radius: 30px;
+}
+
+#settings .switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 1.3em;
+    width: 1.2em;
+    border-radius: 16px;
+    left: 5px;
+    top: 3px;
+    bottom: 0;
+    background-color: white;
+    transition: .4s;
+}
+
+#settings .switch input[type=checkbox]:checked + .slider:before {
+    transform: translateX(1.4em);
+}
+
+#settings .switch input[type=checkbox]:checked + .slider {
+    background-color: #DBB048;
+}
+
+
+
+
+#settings .config .emote-list {
+    width:100%;
+    display: flex;
+	flex-wrap: wrap; /* allow items to wrap */
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#settings .config .emote-list .emote-item {
+    width: 96px;
+    height: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #222;
+    border-radius: 10px;
+}
+
+#settings .config .emote-list .emote-item button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    
+    border-radius: 10px;
+
+    transition: .4s;
+
+    text-align: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#settings .config .emote-list .emote-item button.add {
+    top: 50%;
+    left: 50%;
+    right: unset;
+
+    transform: translate(-50%,-50%);
+
+    width: 100%;
+    height: 100%;
+    font-size: 36px;
+}
+
+#settings .config .emote-list .emote-item button.add:hover {
+    background-color: #333;
+}
+
+#settings .config .emote-list .emote-item button.add i {
+    vertical-align: middle;
+    font-size: 24px;
+}
+
+
+#settings .config .emote-list .emote-item em {
+    display: block;
+    margin-top: 5px;
+    font-size: 9px;
+}
+
+#settings .config .emote-list .emote-item img {
+    height: 32px;
+}
+
+
+#settings small.warning {
+    display: inline-block;
+    padding: 10px 20px 10px 10px;
+    background-color: #232323;
+    color: #FFF;
+    border-radius: 10px;
+    line-height: 150%;
+}
+
+#settings small.warning i {
+    color: #ffcc00;
+}
+
+
+#speakerbot .switch input[type=checkbox]:checked + .slider { background-color: #00dbff; }
+#twitch .switch input[type=checkbox]:checked + .slider { background-color: #a970ff; }
+#youtube .switch input[type=checkbox]:checked + .slider { background-color: #FF0000; }
+#tiktok .switch input[type=checkbox]:checked + .slider { background-color: #F1204A; }
+#kick .switch input[type=checkbox]:checked + .slider { background-color: #48d415; }
+#streamelements .switch input[type=checkbox]:checked + .slider { background-color: #2700ff; }
+#streamlabs .switch input[type=checkbox]:checked + .slider { background-color: #80f5d2; }
+#patreon .switch input[type=checkbox]:checked + .slider { background-color: #ff5900; }
+#tipeee .switch input[type=checkbox]:checked + .slider { background-color: #e02f44; }
+#kofi .switch input[type=checkbox]:checked + .slider { background-color: #72a5f2; }
+#fourthwall .switch input[type=checkbox]:checked + .slider { background-color: #0042ff; }
+
+.switch input[type=checkbox]:disabled + .slider { background-color: #111 !important; }
+
+
+
+#font-value,
+#bg-opacity-value {
+    display: inline-block;
+    font-style: normal;
+    font-size: 14px;
+    width: 100%;
+    padding: 5px;
+    background: #121212;
+    text-align: center;
+    border-radius: 100px;
+}
+
+#preview {
+    width: calc(100% - 640px);
+    height: 100vh;
+    padding: 20px;
+}
+
+#preview iframe {
+    position: fixed;
+    top: 20px;
+    right: 0;
+    width: calc(100% - 640px);
+    height: calc(100vh - 40px);
+}
+
+.url-bar {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+}
+
+.url-bar input[type=text] {
+    display: none;
+}
+
+
+.url-bar button {
+    font-family: "DM Sans", sans-serif;
+    font-weight: bold;
+    border: none;
+    padding: 15px 30px;
+    margin-top: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #252525;
+    color: #FFF;
+    transition: .4s;
+    width: 100%;
+    font-size: 14px;
+}
+
+.url-bar button:hover {
+    background: #292929;
+}
+
+
+footer {
+    width: 640px;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+    background: rgba(18,18,18,0.5);
+    backdrop-filter: blur(10px);
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+}
+
+footer a {
+    display: inline-block;
+    margin: 10px 5px;
+    font-size: 20px;
+    color: #DBB048;
+}
+
+footer a img {
+    height: 22px;
+    vertical-align: bottom;
+}
+
+
+footer a[href="https://kick.com/vortisrd"] svg {
+    height: 26px;
+    vertical-align: bottom;
+    fill: #DBB048;
+}
+
+footer .nav-bar {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    width: 100%;
+}
+
+footer .nav-bar a {
+    display: inline-block;
+    border-radius: 100px;
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    text-decoration: none;
+    color: #FFF;
+    transition: all ease-in-out 300ms;
+}
+
+footer .nav-bar a:hover {
+    color: #DBB048;
+    background: rgba(0,0,0,0.40);
+}
+
+footer .nav-bar a img {
+    height: 24px;
+}
+
+.modal {
+	position: fixed;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+	background: rgba(0, 0, 0, 0.75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 999;
+    color: #FFF;
+}
+
+.modal small {
+    color: #717171;
+}
+
+.modal.hidden {
+	display: none;
+}
+
+.modal-content {
+	background: #121212;
+	padding: 1.5em;
+	border-radius: 1em;
+	width: 640px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+}
+
+
+.modal-content input[type=text],
+.modal-content input[type=number],
+.modal-content textarea {
+    font-family: "DM Sans", sans-serif;
+    border: none;
+    background:#222;
+    color: #FFF;
+    padding: 10px 20px;
+    border-radius: 10px;
+    outline: none;
+    margin-top: 10px;
+}
+
+
+.modal-content button {
+    font-family: "DM Sans", sans-serif;
+    font-weight: bold;
+    border: none;
+    padding: 15px 30px;
+    margin-top: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #252525;
+    color: #FFF;
+    transition: .4s;
+    width: 100%;
+    font-size: 14px;
+}
+
+.modal-content #confirmAddEmote {
+    background: #00dd63;
+}
+
+.modal-content #cancelAddEmote {
+    background: #ff0000;
+}
+
+.modal-content h3 {
+	margin: 0 0 0.5em;
+}
+
+.modal-content label {
+	display: flex;
+	flex-direction: column;
+	font-size: 0.9em;
+}
+
+.modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1em;
+}
+
+
+#settings .config #streamerBotStatus label i,
+#settings .config #speakerBotStatus label i,
+#settings .config #tikfinityStatus label i,
+#settings .config #kickStatus label i {
+    color: #ce2c2c;
+    text-shadow: 0 0 5px #ce2c2c;
+}
+
+#settings .config #streamerBotStatus.connected label i,
+#settings .config #speakerBotStatus.connected label i,
+#settings .config #tikfinityStatus.connected label i,
+#settings .config #kickStatus.connected label i {
+    color: #14c22b;
+    text-shadow: 0 0 5px #14c22b;
+}
+
+ .msm-platform {
+    display: inline-block;
+    background: #666;
+    color: #FFF;
+    padding: 2px 5px;
+    margin: 1px 0;
+    border-radius: 5px;
+    font-style: normal;
+ }
+
+
+.msm-platform.purple { background: rgba(145,70,255,0.75); }
+.msm-platform.red { background: rgba(255,0,0,0.75); }
+.msm-platform.green { background: rgba(72,212,21,0.75); }
+.msm-platform.vertical { background: rgba(241,32,74,0.75); }

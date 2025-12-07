@@ -1,0 +1,141 @@
+#chat .item.announcement.twitch .message {
+    background: rgba(145,70,255,0.75);
+}
+
+#chat .item.twitch .platform .hidden-platform {
+    background: rgba(145,70,255,1);
+}
+
+#chat .item.announcement.twitch.green .message {
+    background: linear-gradient(to bottom, rgba(0,219,132,0.75),rgba(87,190,230,0.75));
+}
+
+#chat .item.announcement.twitch.purple .message {
+    background: linear-gradient(to bottom, rgba(145,70,255,0.75),rgba(255,117,230,0.75));
+}
+
+#chat .item.announcement.twitch.orange .message {
+    background: linear-gradient(to bottom, rgba(255, 179, 26,0.75),rgba(224,224,0,0.75));
+}
+
+#chat .item.announcement.twitch.blue .message {
+    background: linear-gradient(to bottom, rgba(0,214,214,0.75),rgba(145,70,255,0.75));
+}
+
+#chat .event.twitch .message {
+    background: rgba(145,70,255,0.75);
+}
+
+#chat .item img.gigantified {
+    display: block;
+    height: 96px;
+}
+
+#chat .item.announcement.twitch .chatmoderation {
+    display: none;
+}
+
+#chat:not(.horizontal) .item.announcement.twitch {
+    margin: 0 10px;
+}
+
+#chat:not(.horizontal) .item.chat.first-chatter.twitch {
+    margin: 0 10px;
+}
+
+#chat.oneline .item.announcement.twitch {
+    margin: 10px 10px 0px 10px;
+}
+
+
+#statistics .platform#twitch {
+    order: 1;
+    background: #a970ff;
+}
+
+
+#chat .event.twitch .value .gift-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#chat .event.twitch .value span.gift-image,
+#chat .event.twitch .value span.gift-value {
+    display: inline-block;
+}
+
+#chat .event.twitch .value span.gift-image img {
+    width: 48px;
+    height: auto;
+    filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5));
+}
+
+#chat .event.twitch .value span.gift-value {
+    background: rgba(0,0,0,0.2);
+    padding: 3px 9px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#chat .event.twitch .value span.gift-value img {
+    width: 16px;
+    height: auto;
+    margin-top: -1px;
+}
+
+#chat .event.twitch.bits .info,
+#chat .event.twitch.reward .info {
+    margin: -5px 0 -5px 0;
+}
+
+#chat .event.twitch.reward .value .gift-info {
+    gap: 10px;
+}
+
+
+
+
+
+
+/* BITS CUSTOMIZATION FOR BIG STREAMERS LOL */
+
+#chat .event.twitch.bits[class*="bigger-than-"] .message {
+    animation: bigStreamerBGAnimate 1s ease infinite;
+    background-size: 100% 200%;
+}
+
+#chat .event.twitch.bits.bigger-than-1000 .message {
+    background-image: linear-gradient(
+      180deg,
+      rgba(145, 70, 255, 0.75),
+      rgba(0, 255, 155, 0.75)
+    );
+}
+
+#chat .event.twitch.bits.bigger-than-5000 .message {
+    background-image: linear-gradient(
+      180deg,
+      rgba(145, 70, 255, 0.75),
+      rgba(0, 247, 219, 0.75)
+    );
+}
+
+#chat .event.twitch.bits.bigger-than-10000 .message {
+    background-image: linear-gradient(
+      180deg,
+      rgba(145, 70, 255, 0.75),
+      rgba(255, 25, 25, 0.75)
+    );
+}
+
+#chat .event.twitch.bits.bigger-than-100000 .message {
+    background-image: linear-gradient(
+      180deg,
+      rgba(145, 70, 255, 0.75),
+      rgba(255, 255, 0, 0.75)
+    );
+}
+
+
+.msm-platform.purple { background: rgba(145,70,255,0.75); }
