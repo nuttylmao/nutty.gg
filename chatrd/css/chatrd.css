@@ -47,24 +47,34 @@ body {
     overflow-y: hidden;
 }
 
-/* Modern dark scrollbar */
-body::-webkit-scrollbar {
-  width: 10px; /* thickness of the scrollbar */
+/* WebKit/Chromium scrollbars */
+#chat::-webkit-scrollbar {
+    width: 10px;                     /* scrollbar thickness */
 }
 
-body::-webkit-scrollbar-track {
-  background: #1c1c1c; /* dark track */
-  border-radius: 5px;
+#chat::-webkit-scrollbar-track {
+    background: #1e1e1e;             /* track color */
+    border-radius: 5px;
 }
 
-body::-webkit-scrollbar-thumb {
-  background-color: #555; /* dark grey handle */
-  border-radius: 5px;
-  border: 2px solid #1c1c1c; /* spacing around handle */
+#chat::-webkit-scrollbar-thumb {
+    background-color: #555;           /* thumb color */
+    border-radius: 5px;
+    border: 2px solid #1e1e1e;       /* space around thumb for rounded effect */
 }
 
-body::-webkit-scrollbar-thumb:hover {
-  background-color: #777; /* lighter on hover */
+#chat::-webkit-scrollbar-thumb:hover {
+    background-color: #777;           /* hover effect */
+}
+
+/* Optional: Scrollbar corner if both axes scroll */
+#chat::-webkit-scrollbar-corner {
+    background: #1e1e1e;
+}
+
+/* Force scrollbar to always be visible in OBS (optional) */
+#chat {
+    scrollbar-gutter: stable;
 }
 
 #chat {
