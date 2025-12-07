@@ -27,6 +27,8 @@ const tiktokGiftsClasses = [
     { min: 100000,  max: 99999999999, class: 'bigger-than-100000' },
 ];
 
+userColors.set('tiktok', new Map());
+
 document.addEventListener('DOMContentLoaded', () => {
     if (showTiktok) {
         const tiktokStatistics = `
