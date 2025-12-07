@@ -129,7 +129,7 @@ async function youTubeChatMessage(data) {
     reply.remove();
     pronoun.remove();
 
-    var color = await createRandomColor('youtube', data.user.name);
+    var color = await RandomHex(data.user.name);
 
     user.style.color = color;
     user.textContent = data.user.name;

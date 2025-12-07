@@ -213,7 +213,7 @@ async function tiktokChatMessage(data) {
      }
     else { badges.remove(); }
 
-    var color = await createRandomColor('tiktok', data.uniqueId);
+    var color = await RandomHex(data.uniqueId);
 
     user.style.color = color;
     user.textContent = data.nickname;
