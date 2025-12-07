@@ -2763,7 +2763,7 @@ async function TikTokChat(data) {
 	if (showUsername) {
 		usernameDiv.innerText = data.nickname;
 		if (randomTiktokColors)
-			usernameDiv.style.color = RandomHex(data.nickname);
+			usernameDiv.style.color = RandomHex(data.uniqueId);
 		else
 			usernameDiv.style.color = tiktokColor;
 	}
