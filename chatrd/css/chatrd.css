@@ -47,10 +47,25 @@ body {
     overflow-y: hidden;
 }
 
-#chat::-webkit-scrollbar { width: 8px; }
-#chat::-webkit-scrollbar-track { background: #1e1e1e; }
-#chat::-webkit-scrollbar-thumb { background-color: #555; border-radius: 4px; border: 2px solid #1e1e1e; }
-#chat::-webkit-scrollbar-thumb:hover { background-color: #777; }
+/* Modern dark scrollbar */
+body::-webkit-scrollbar {
+  width: 10px; /* thickness of the scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: #1c1c1c; /* dark track */
+  border-radius: 5px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #555; /* dark grey handle */
+  border-radius: 5px;
+  border: 2px solid #1c1c1c; /* spacing around handle */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #777; /* lighter on hover */
+}
 
 #chat {
     flex: 1;
