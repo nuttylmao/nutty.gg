@@ -72,11 +72,6 @@ body {
     background: #1e1e1e;
 }
 
-/* Force scrollbar to always be visible in OBS (optional) */
-#chat {
-    scrollbar-gutter: stable;
-}
-
 #chat {
     flex: 1;
     display: flex;
@@ -84,6 +79,7 @@ body {
     overflow-y: auto;
     padding: 0px 10px;
     scrollbar-color: #555 #1e1e1e;
+    scrollbar-gutter: stable;
 }
 
 #chat.noscrollbar {
