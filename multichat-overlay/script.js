@@ -1380,7 +1380,19 @@ async function YouTubeMessage(data) {
 
 	// Render platform
 	if (showPlatform) {
-		const platformElements = `<img src="icons/platforms/youtube.png" class="platform"/>`;
+		const verticalTags = ["vertical", "shorts"];
+
+		const isVertical = data.broadcast.tags.some(item =>
+			verticalTags.some(target => item.toLowerCase() === target.toLowerCase())
+		);
+
+		let platformElements;
+		if (isVertical) {
+			platformElements = `<img src="icons/platforms/youtube-shorts.png" class="platform"/>`;
+		} else {
+			platformElements = `<img src="icons/platforms/youtube.png" class="platform"/>`;
+		}
+		
 		platformDiv.innerHTML = platformElements;
 	}
 
