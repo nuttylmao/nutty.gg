@@ -945,7 +945,7 @@ function YouTubeMessage(data) {
 
 		let platformElements;
 		if (isVertical) {
-			platformElements = `<img src="icons/platforms/youtube-shorts.png" class="platform"/>`;
+			platformElements = `<img src="icons/platforms/youtube-shorts.svg" class="platform"/>`;
 		} else {
 			platformElements = `<img src="icons/platforms/youtube.png" class="platform"/>`;
 		}
@@ -1593,7 +1593,7 @@ async function TikTokChat(data) {
 
 	// Render platform
 	if (showPlatform) {
-		const platformElements = `<img src="icons/platforms/tiktok.png" class="platform"/>`;
+		const platformElements = `<img src="icons/platforms/tiktok.svg" class="platform"/>`;
 		platformDiv.innerHTML = platformElements;
 	}
 

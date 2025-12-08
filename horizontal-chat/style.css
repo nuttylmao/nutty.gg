@@ -193,7 +193,7 @@ li {
 }
 
 .badge.tiktokBadge.mod {
-	background: rgba(0, 0, 0, 0.7);
+	background: rgba(0, 0, 0, 0.9);
 	transform: translateY(0);  /* adjust as needed */
 }
 
