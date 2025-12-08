@@ -149,10 +149,10 @@ async function twitchChatMessage(data) {
         'shared-chat': sharedChat,
         
         header,
-        avatar,
         timestamp,
         platform,
         badges,
+        avatar,
         pronouns: pronoun,
         user,
         
