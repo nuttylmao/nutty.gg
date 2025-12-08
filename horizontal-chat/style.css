@@ -233,10 +233,6 @@ li {
 	transform: translate(0px, 0.4em);
 }
 
-#badgeList {
-	margin: 0px 5px;
-}
-
 #username,
 #title {
 	font-weight: 700;
