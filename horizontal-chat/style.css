@@ -152,7 +152,7 @@ li {
 	font-size: 0.7em;
 	/* padding: 5px 15px; */
 	padding: 0.15em 0.5em;
-
+	transform: translateY(-0.07em);
 }
 
 .bits {
@@ -166,14 +166,14 @@ li {
 .badge {
 	height: 1em;
 	margin: 1px;
-	transform: translate(0px, 0.25em);
+	transform: translate(0px, 0.18em);
 }
 
 .tiktokBadge {
-	display: inline-flex;       /* ensures flex on TikTok badges */
+	display: inline-flex;       
     align-items: center;
 	border-radius: 3px;
-	transform: translateY(0.20em);  /* adjust as needed */
+	transform: translateY(0.13em);  /* adjust as needed */
     gap: 1px; 
 }
 
@@ -194,7 +194,7 @@ li {
 
 .badge.tiktokBadge.mod {
 	background: rgba(0, 0, 0, 0.9);
-	transform: translateY(0);  /* adjust as needed */
+	transform: translateY(-0.07em);  /* adjust as needed */
 }
 
 .badge.tiktokBadge.mod i {
