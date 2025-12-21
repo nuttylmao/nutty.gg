@@ -1,7 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
-	--margin: 0px;
+	--margin: 20px;
 	--border-radius: 0.5em;
 }
 
@@ -13,8 +13,8 @@ html {
 	width: 100vw;
 	height: 100vh;
 	scroll-behavior: smooth;
-	/* background: rgba(0, 0, 0, 0.884); */
-	font-size: 18px;
+	/* background: #000000d9; */
+	font-size: 30px;
 	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 	color: white;
 	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
@@ -44,84 +44,37 @@ html {
 
 #messageList {
 	position: absolute;
-	bottom: 0;
-	right: 0;
-	display: flex;
-	align-items: flex-end;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	text-justify: right;
-	overflow: hidden;
-	white-space: nowrap;
-}
-
-#alertBox {
-	position: absolute;
-	bottom: 0;
-	right: 50%;
-	transform: translateX(50%);
-	overflow: hidden;
-	white-space: nowrap;
+	left: 0;
 	width: 100%;
-	height: 1.7em;
-	display: flex;
-	align-items: flex-end;
-	justify-content: center;
 }
 
-#alertBoxContent {
-	font-weight: 700;
-	line-height: 1.7em;
-	text-align: center;
-	/* background-color: red; */
-}
-
-#alertBoxContent img {
-  height: 1.2em;
-}
-
-#background {
-	position: absolute;
+.normalScrollDirection {
 	bottom: 0;
-	right: 50%;
-	transform: translateX(50%);
-	width: 100%;
-	height: 1.7em;
-	background: var(--background);
-	bottom: calc(-1 * var(--margin));
-	z-index: -100;
 }
 
-@keyframes showAlertBox {
-	0% {
-		bottom: calc(-1 * var(--margin) - 1.7em);
-	}
-
-	100% {
-		bottom: 0px;
-	}
-}
-
-@keyframes hideAlertBox {
-	0% {
-		bottom: 0px;
-	}
-
-	100% {
-		bottom: calc(-1 * var(--margin) - 1.7em);
-	}
+.reverseScrollDirection {
+	display: flex;
+	top: 0;
+	flex-direction: column-reverse;
 }
 
 li {
 	list-style: none;
 	/* overflow: hidden; */
-	max-width: 0px;
+	max-height: 0;
+	margin: 10px 0px 0px 0px;
 	transition: all 1s ease-in-out;
+}
+
+.reverseLineItemDirection {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 }
 
 .slide-fade li {
 	transition: all var(--animation-speed) ease-out;
-	/* opacity: 1; */
+	/* opacity: 0; */
 }
 
 .slide-fade li.show {
@@ -129,19 +82,57 @@ li {
 }
 
 #IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList {
-	/* margin-top: 10px; */
-	background: #2FB774;
-	display: inline;
 	opacity: 0;
-	overflow: hidden;
-	white-space: nowrap;
+}
+
+#firstMessage,
+#sharedChat {
+	display: none;
+	font-weight: 500;
+	font-size: 0.7em;
+}
+
+.bubble {
+	background: var(--bubble-color) !important;
+	padding: 0.5em 1em;
+	border-radius: var(--border-radius);
+}
+
+.highlightMessage {
+	/* background: #adadad46 !important; */
+	background: #414141e5 !important;
+	box-shadow: inset 0 0 0 0.1em rgb(94, 94, 94);
+	padding: 0.5em 1em;
+	border-radius: var(--border-radius);
+}
+
+.message-contents {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+}
+
+.add-this-class-to-the-thing-to-make-all-the-text-centered-vertically-because-that-looks-much-better {
+	align-items: center;
+}
+
+#avatar {
+	width: 2em;
+}
+
+#avatar:empty {
+	display: none;
 }
 
 .avatar {
-	height: 1em;
-	margin: 1px;
-	transform: translate(0px, 0.25em);
-	border-radius: 50%
+    width: 2em;                /* Set width equal to height */
+    height: 2em;
+    margin: 1px;
+    transform: translate(0px, 0.25em);
+    border-radius: 50%;
+    object-fit: cover;         /* Crop to fill the circle */
+    overflow: hidden;          /* Ensure no overflow outside the circle */
+    display: inline-block;     /* Just in case */
 }
 
 .timestamp,
@@ -152,7 +143,6 @@ li {
 	font-size: 0.7em;
 	/* padding: 5px 15px; */
 	padding: 0.15em 0.5em;
-	transform: translateY(-0.07em);
 }
 
 .bits {
@@ -166,14 +156,14 @@ li {
 .badge {
 	height: 1em;
 	margin: 1px;
-	transform: translate(0px, 0.18em);
+	transform: translate(0px, 0.25em);
 }
 
 .tiktokBadge {
 	display: inline-flex;       
     align-items: center;
 	border-radius: 3px;
-	transform: translateY(0.13em);  /* adjust as needed */
+	transform: translateY(0.20em);  /* adjust as needed */
     gap: 1px; 
 }
 
@@ -194,7 +184,7 @@ li {
 
 .badge.tiktokBadge.mod {
 	background: rgba(0, 0, 0, 0.9);
-	transform: translateY(-0.07em);  /* adjust as needed */
+	transform: translateY(0);  /* adjust as needed */
 }
 
 .badge.tiktokBadge.mod i {
@@ -233,6 +223,24 @@ li {
 	transform: translate(0px, 0.4em);
 }
 
+.productImage {
+	height: 3em;
+	border-radius: 0.25em;
+	transform: translate(0px, 0.25em);
+}
+
+.youtubeThumbnail {
+	width: 5em;
+	border-radius: 0.25em;
+	transform: translate(0px, 0.25em);
+}
+
+/* .centerThatShitHomie {
+	display: inline-block;
+	width: 100%;
+	text-align: center;
+} */
+
 #username,
 #title {
 	font-weight: 700;
@@ -242,45 +250,92 @@ li {
 	font-weight: 700;
 }
 
-#message {
-	font-weight: 700;
-	line-height: 1.7em;
-	margin: 0px 5px;
-}
-
-/* .firstMessage {
-	display: none;
-	font-size: 0.7em;
-} */
-
-/* .highlightMessage {
-	background: #adadad46;
-	padding: 20px 40px;
-	border-radius: var(--border-radius);
-} */
-
-/* .reply {
+#reply {
 	display: none;
 	overflow: hidden;
-	white-space: nowrap;
+	white-space: normal; /* Allow line wrapping */
 	text-overflow: ellipsis;
+	word-break: break-word; /* Break long words if necessary */
 	font-size: 0.7em;
 	opacity: 0.5;
-} */
+}
 
-/* .card {
+#message {
+	font-weight: 400;
+	line-height: var(--line-spacing);
+}
+
+#card {
 	background: #adadad46;
-	padding: 20px 40px;
+	padding: 0.5em 1em;
 	border-radius: var(--border-radius);
+}
+
+.youtube-super-sticker {
+	height: 2em;
+	margin: 1px;
+	transform: translate(0px, 0.25em);
+}
+
+.kick-gift,
+.tiktok-gift {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1em;
+	padding: 0.5em;
+	border-radius: var(--border-radius);
+	max-width: 100%;
+}
+
+.kick-gift-avatar,
+.tiktok-gift-avatar {
+	height: 3em;
+	margin: 1px;
+	border-radius: 50%;
+	justify-content: left;
+	flex-shrink: 0;
+}
+
+.kick-gift-contents,
+.tiktok-gift-message {
+	flex-grow: 1;
+	/* white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; */
+	gap: 1em;
+}
+
+/* .kick-gift-contents {
+	text-align: center;
 } */
 
-/* .youtube-super-sticker {
-	display: block;
-} */
+#kick-gift-message {
+	font-size: 0.9em;
+}
 
-/* .sticker-img {
+.kick-gift-sticker,
+.tiktok-gift-sticker {
+	flex-shrink: 0;
+	justify-content: flex-end;
+
+	filter: drop-shadow(5px 5px 5px #00000060);
+}
+
+.tiktok-gift-sticker {
+	height: 2.5em;
+}
+
+.kick-gift-sticker {
 	height: 5em;
-} */
+}
+
+#tiktok-gift-repeat-count {
+	justify-content: flex-end;
+	font-size: 1.5em;
+	font-style: italic;
+	font-weight: 500;
+}
 
 /*****************/
 /** CARD COLORS **/
@@ -311,7 +366,7 @@ li {
 }
 
 .kick {
-	background: linear-gradient(#53fc18, #005600) !important;
+	background: linear-gradient(#32b602, #005600) !important;
 }
 
 .streamlabs {
@@ -341,6 +396,15 @@ li {
 .tiktok {
 	background: linear-gradient(#262626, #000000) !important;
 }
+
+.fourthwall {
+	background: linear-gradient(#466edb, #1c56f5) !important;
+}
+
+.thumbnail {
+	background: linear-gradient(#494949, #202020) !important;
+}
+
 
 .blank {
 	background: #adadad00 !important;
