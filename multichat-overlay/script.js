@@ -627,9 +627,9 @@ async function TwitchChatMessage(data) {
 	// Set the username info
 	if (showUsername) {
 		if (data.message.displayName.toLowerCase() == data.message.username.toLowerCase())
-			usernameDiv.innerText = data.message.displayName;
+			usernameDiv.innerText = inlineChat ? `${data.message.displayName}:` : data.message.displayName;
 		else
-			usernameDiv.innerText = `${data.message.displayName} (${data.message.username})`;
+			usernameDiv.innerText = inlineChat ? `${data.message.displayName} (${data.message.username}):` : `${data.message.displayName} (${data.message.username})`;
 		usernameDiv.style.color = data.message.color;
 	}
 
@@ -660,7 +660,7 @@ async function TwitchChatMessage(data) {
 
 	// Remove the line break
 	if (inlineChat) {
-		instance.querySelector("#colon-separator").style.display = `inline`;
+		//instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
 		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
@@ -1356,7 +1356,7 @@ async function YouTubeMessage(data) {
 
 	// Set the message data
 	if (showUsername) {
-		usernameDiv.innerText = data.user.name;
+		usernameDiv.innerText = inlineChat ? `${data.user.name}:` : data.user.name;
 		if (randomYouTubeColors)
 			usernameDiv.style.color = RandomHex(data.user.name);
 		else
@@ -2309,7 +2309,7 @@ async function KickChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		usernameDiv.innerText = data.sender.username;
+		usernameDiv.innerText = inlineChat ? `${data.sender.username}:` : data.sender.username;
 		usernameDiv.style.color = data.sender.identity.color;
 	}
 

@@ -533,9 +533,9 @@ async function TwitchChatMessage(data) {
 	// Set the username info
 	if (showUsername) {
 		if (data.message.displayName.toLowerCase() == data.message.username.toLowerCase())
-			usernameDiv.innerText = data.message.displayName;
+			usernameDiv.innerText = `${data.message.displayName}:`;
 		else
-			usernameDiv.innerText = `${data.message.displayName} (${data.message.username})`;
+			usernameDiv.innerText = `${data.message.displayName} (${data.message.username}):`;
 		usernameDiv.style.color = data.message.color;
 	}
 
@@ -920,7 +920,7 @@ function YouTubeMessage(data) {
 
 	// Set the message data
 	if (showUsername) {
-		usernameDiv.innerText = data.user.name;
+		usernameDiv.innerText = `${data.user.name}:`;
 		if (randomYouTubeColors)
 			usernameDiv.style.color = RandomHex(data.user.name);
 		else
@@ -1357,7 +1357,7 @@ async function KickChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		usernameDiv.innerText = data.sender.username;
+		usernameDiv.innerText = `${data.sender.username}:`;
 		usernameDiv.style.color = data.sender.identity.color;
 	}
 
@@ -1571,7 +1571,7 @@ async function TikTokChat(data) {
 
 	// Set the username info
 	if (showUsername) {
-		usernameDiv.innerText = data.nickname;
+		usernameDiv.innerText = `${data.nickname}:`;
 		if (randomTiktokColors)
 			usernameDiv.style.color = RandomHex(data.uniqueId);
 		else
