@@ -440,10 +440,6 @@ function LoadSettings() {
 	loadSettingsBox.style.opacity = 0;
 }
 
-function OpenMembershipPage() {
-	window.open("https://nutty.gg/collections/member-exclusive-widgets", '_blank').focus();
-}
-
 function OpenLoadDefaultsPopup() {
 	loadDefaultsBox.style.visibility = 'visible';
 	loadDefaultsBox.style.opacity = 1;
