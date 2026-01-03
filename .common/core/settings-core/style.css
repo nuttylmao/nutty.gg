@@ -43,10 +43,6 @@ body {
     /* Prevent buttons from shrinking */
 }
 
-#membershipsButton {
-    background: var(--accent-color);
-}
-
 #settingsPanel {
     width: 600px;
     overflow-y: auto;
