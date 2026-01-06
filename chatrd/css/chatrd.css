@@ -796,10 +796,3 @@ body {
     border-radius: 5px;
     font-size: 14px;
  }
-
-#chat .item.chat .timestamp { order: 2; }
-#chat .item.chat .pronouns { order: 5; }
-#chat .item.chat .info .avatar { order: 1; }
-#chat .item.chat .platform { order: 3; }
-#chat .item.chat .badges { order: 4; }
-#chat .item.chat .user { order: 6; }
