@@ -1653,7 +1653,7 @@ async function TikTokChat(data) {
 				if (badge.badgeSceneType === 10) {
 					span.classList.add("tiktokFansBadge");
 
-					if (data.isSubscribed) {
+					if (data.isSubscriber) {
 						span.classList.add("sub");
 					}
 		
