@@ -1,0 +1,3 @@
+[submodule "chatRD"]
+	path = chatRD
+	url = https://github.com/rexbordz/chatrd.git
