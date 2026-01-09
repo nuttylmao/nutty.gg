@@ -139,6 +139,7 @@ document.documentElement.style.setProperty('--animation-speed', `${animationSpee
 const client = new StreamerbotClient({
 	host: sbServerAddress,
 	port: sbServerPort,
+	scheme: 'ws',
 
 	onConnect: (data) => {
 		console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
