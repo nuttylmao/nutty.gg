@@ -873,6 +873,7 @@ async function TwitchAnnouncement(data) {
 		content.querySelector("#username").innerText = data.user.name;
 	else
 		content.querySelector("#username").innerText = `${data.user.name} (${data.user.login})`;
+
 	content.querySelector("#username").style.color = data.user.color;
 	content.querySelector("#message").innerText = data.text;
 
@@ -1373,7 +1374,7 @@ async function YouTubeMessage(data) {
 
 	// Remove the line break
 	if (inlineChat) {
-		instance.querySelector("#colon-separator").style.display = `inline`;
+		// instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
 		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
@@ -2333,7 +2334,7 @@ async function KickChatMessage(data) {
 
 	// Remove the line break
 	if (inlineChat) {
-		instance.querySelector("#colon-separator").style.display = `inline`;
+		// instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
 		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
@@ -2795,7 +2796,7 @@ async function TikTokChat(data) {
 
 	// Remove the line break
 	if (inlineChat) {
-		instance.querySelector("#colon-separator").style.display = `inline`;
+		// instance.querySelector("#colon-separator").style.display = `inline`;
 		instance.querySelector("#line-space").style.display = `none`;
 		instance.querySelector(".message-contents").style.alignItems = 'center';
 	}
