@@ -50,9 +50,8 @@ const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
 
-const kickUsername = urlParams.get("kickUsername") || "";
 const showKickMessages = GetBooleanParam("showKickMessages", true);
-// const showKickFollows = GetBooleanParam("showKickFollows", false);
+const showKickFollows = GetBooleanParam("showKickFollows", false);
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
 const showKickHosts = GetBooleanParam("showKickHosts", true);
@@ -86,6 +85,7 @@ const animationSpeed = GetIntParam("animationSpeed", 0.5);
 const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", false);
 const youtubeColor = urlParams.get("youtubeColor") || "#f70000";
 const youtubeCustomSubIcon = urlParams.get("youtubeCustomSubIcon") || "";
+const kickUsername = urlParams.get("kickUsername") || "";
 
 
 
@@ -233,6 +233,37 @@ client.on('YouTube.GiftMembershipReceived', (response) => {
 	YouTubeGiftMembershipReceived();
 })
 
+client.on('Kick.ChatMessage', (response) => {
+	console.debug(response.data);
+	KickChatMessage(response.data);
+})
+
+client.on('Kick.Follow', (response) => {
+	console.debug(response.data);
+	KickFollow(response.data);
+})
+
+// // TODO: Seems to be missing data, using Pusher until this is fixed
+// client.on('Kick.Subscription', (response) => {
+// 	console.debug(response.data);
+// 	KickSubscription(response.data);
+// })
+
+// client.on('Kick.Resubscription', (response) => {
+// 	console.debug(response.data);
+// 	KickSubscription(response.data);
+// })
+
+// client.on('Kick.GiftSubscription', (response) => {
+// 	console.debug(response.data);
+// 	KickGiftedSubscriptions(response.data);
+// })
+
+// client.on('Kick.RewardRedemption', (response) => {
+// 	console.debug(response.data);
+// 	KickRewardRedeemed(response.data);
+// })
+
 client.on('Streamlabs.Donation', (response) => {
 	console.debug(response.data);
 	StreamlabsDonation(response.data);
@@ -311,8 +342,17 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 
 // Connect and handle Pusher WebSocket
 async function KickConnect() {
+	// If user has not manually set Kick username, try to grab if from Streamer.bot
 	if (!kickUsername)
-		return;
+	{
+		// Fetch from Streamer.bot
+		const broadcasterInfo = await client.getBroadcaster();
+		
+		if (broadcasterInfo.platforms.kick)
+			kickUsername = broadcasterInfo.platforms.kick.broadcasterLogin;
+		else
+			return;
+	}
 
 	// Channel to subscribe to (you'll need the correct channel name here)
     const kickIds = await GetKickIds(kickUsername);
@@ -327,7 +367,7 @@ async function KickConnect() {
     // Reconnect
     websocket.onclose = function () {
         console.log(`Reconnecting to ${kickUsername}...`);
-        setTimeout(connectPusher, 5000);
+		setTimeout(KickConnect, 5000);
     };
 
 	websocket.onopen = function () {
@@ -358,9 +398,9 @@ async function KickConnect() {
 			const eventArgs = JSON.parse(data.data);
 			const event = data.event.split('\\').pop();
 			switch (event) {
-				case 'ChatMessageEvent':
-					KickChatMessage(eventArgs);
-					break;
+				// case 'ChatMessageEvent':
+				// 	KickChatMessage(eventArgs);
+				// 	break;
 				//// 'Follows' unsupported by pusher
 				// case 'FollowEvent':
 				// 	break;
@@ -395,7 +435,6 @@ async function KickConnect() {
 
 // Try connect when window is loaded
 window.addEventListener('load', KickConnect);
-
 
 
 //////////////////////
@@ -522,7 +561,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = data.message.message;
+	let message = ConstructMessageFromParts(data.parts);
 	const messageColor = data.message.color;
 	const role = data.message.role;
 
@@ -532,7 +571,7 @@ async function TwitchChatMessage(data) {
 
 	// Set message text
 	if (showMessage) {
-		messageDiv.innerText = message;
+		messageDiv.innerHTML = message;
 	}
 
 	// Set the "action" color
@@ -545,7 +584,6 @@ async function TwitchChatMessage(data) {
 		platformDiv.innerHTML = platformElements;
 	}
 
-
 	// Render badges
 	if (showBadges) {
 		badgeListDiv.innerHTML = "";
@@ -555,38 +593,6 @@ async function TwitchChatMessage(data) {
 			badge.classList.add("badge");
 			badgeListDiv.appendChild(badge);
 		}
-	}
-
-	// Render emotes
-	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-		const emoteName = EscapeRegExp(data.emotes[i].name);
-
-		let regexPattern = emoteName;
-
-		// Check if the emote name consists only of word characters (alphanumeric and underscore)
-		if (/^\w+$/.test(emoteName)) {
-			regexPattern = `\\b${emoteName}\\b`;
-		}
-		else {
-			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-			regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
-		}
-
-		const regex = new RegExp(regexPattern, 'g');
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(regex, emoteElement);
-	}
-
-	// Render cheermotes
-	for (i in data.cheerEmotes) {
-		// const cheerEmoteElement = `<img src="${data.cheerEmotes[i].imageUrl}" class="emote"/>`;
-		// messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.cheerEmotes[i].name}\\b`), cheerEmoteElement);
-		const bits = data.cheerEmotes[i].bits;
-		const imageUrl = data.cheerEmotes[i].imageUrl;
-		const name = data.cheerEmotes[i].name;
-		const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
-		const bitsElements = `<span class="bits">${bits}</span>`
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
 	}
 
 	// Render avatars
@@ -660,29 +666,7 @@ async function TwitchAnnouncement(data) {
 			break;
 	}
 
-	let message = data.text;
-
-	// Render emotes
-	for (i in data.parts) {
-		if (data.parts[i].type == `emote`) {
-			const emoteElement = `<img src="${data.parts[i].imageUrl}" class="emote"/>`;
-			const emoteName = EscapeRegExp(data.parts[i].text);
-	
-			let regexPattern = emoteName;
-	
-			// Check if the emote name consists only of word characters (alphanumeric and underscore)
-			if (/^\w+$/.test(emoteName)) {
-				regexPattern = `\\b${emoteName}\\b`;
-			}
-			else {
-				// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-				regexPattern = `(?<=^|[^\\w])${emoteName}(?=$|[^\\w])`;
-			}
-	
-			const regex = new RegExp(regexPattern, 'g');
-			message = message.replace(regex, emoteElement);
-		}
-	}
+	let message = ConstructMessageFromParts(data.parts);
 
 	ShowAlert(message, background);
 }
@@ -918,13 +902,17 @@ function YouTubeMessage(data) {
 			usernameDiv.style.color = youtubeColor;	// YouTube users do not have colors, so just set it to red
 	}
 
-	if (showMessage) {
-		messageDiv.innerText = data.message;
-	}
-
+	// Set the message data
+	let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
+	
 	// Set furry mode
 	if (furryMode)
-		messageDiv.innerText = TranslateToFurry(data.message);
+		message = TranslateToFurry(message);
+
+	// Set message text
+	if (showMessage) {
+		messageDiv.innerHTML = message;
+	}
 
 	// Render platform
 	if (showPlatform) {
@@ -970,12 +958,6 @@ function YouTubeMessage(data) {
 		badge.style.opacity = 0.8;
 		badge.classList.add("badge");
 		badgeListDiv.appendChild(badge);
-	}
-
-	// Render emotes
-	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(data.emotes[i].name, emoteElement);
 	}
 
 	// Render avatars
@@ -1305,11 +1287,11 @@ async function KickChatMessage(data) {
 		return;
 
 	// Don't post messages starting with "!"
-	if (data.content.startsWith("!") && excludeCommands)
+	if (data.text.startsWith("!") && excludeCommands)
 		return;
 
 	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.sender.username.toLowerCase()))
+	if (ignoreUserList.includes(data.user.name.toLowerCase()))
 		return;
 
 	// Get a reference to the template
@@ -1336,12 +1318,12 @@ async function KickChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		usernameDiv.innerText = data.sender.username;
-		usernameDiv.style.color = data.sender.identity.color;
+		usernameDiv.innerText = data.user.name;
+		usernameDiv.style.color = data.user.color;
 	}
 
 	// Set the message data
-	let message = data.content;
+	let message = ConstructMessageFromParts(data.parts);
 
 	// Set furry mode
 	if (furryMode)
@@ -1349,7 +1331,7 @@ async function KickChatMessage(data) {
 
 	// Set message text
 	if (showMessage) {
-		messageDiv.innerText = message;
+		messageDiv.innerHTML = message;
 	}
 
 	// Render platform
@@ -1361,28 +1343,38 @@ async function KickChatMessage(data) {
 	// Render badges
 	if (showBadges) {
 		badgeListDiv.innerHTML = "";
-		for (i in data.sender.identity.badges) {
+		for (i in data.user.badges) {
 			const badge = new Image();
-			badge.src = GetKickBadgeURL(data.sender.identity.badges[i]);
+			if (data.user.badges[i].imageUrl)
+				badge.src = data.user.badges[i].imageUrl;
+			else
+				badge.src = GetKickBadgeURL(data.user.badges[i]);
 			badge.classList.add("badge");
 			badgeListDiv.appendChild(badge);
 		}
 	}
+	function GetKickBadgeURL(data) {
+		switch (data.id) {
+			case 'subscriber':
+				return CalculateKickSubBadge(data.count);
+			default:
+				return `icons/badges/kick-${data.id}.svg`;
+		}
+		function CalculateKickSubBadge(months) {
+			if (!Array.isArray(kickSubBadges)) return null;
 
-	// Render emotes
-	function replaceEmotes(message) {
-		const emoteRegex = /\[emote:(\d+):([^\]]+)\]/g;
+			// Filter for eligible badges, then get the one with the highest 'months'
+			const badge = kickSubBadges
+				.filter(b => b.months <= months)
+				.sort((a, b) => b.months - a.months)[0];
 
-		return message.replace(emoteRegex, (_, id, name) => {
-			const imgUrl = `https://files.kick.com/emotes/${id}/fullsize`;
-			return `<img src="${imgUrl}" alt="${name}" title="${name}" class="emote" />`;
-		});
+			return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
+		}
 	}
-	messageDiv.innerHTML = replaceEmotes(message);
 
 	// Render avatars
 	if (showAvatar) {
-		const username = data.sender.slug;
+		const username = data.user.login;
 		const avatarURL = await GetAvatar(username, 'kick');
 		const avatar = new Image();
 		avatar.src = avatarURL;
@@ -1399,7 +1391,21 @@ async function KickChatMessage(data) {
 			userInfoDiv.style.display = "none";
 	}
 
-	AddMessageItem(instance, data.id, 'kick', data.sender.id);
+	AddMessageItem(instance, data.messageId, 'kick', data.user.id);
+}
+
+function KickFollow(data) {	
+	if (!showKickFollows)
+		return;
+	
+	// Set the text
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	
+	const message = `${username} followed`;
+
+	ShowAlert(message, 'kick');
 }
 
 function KickSubscription(data) {
@@ -1408,7 +1414,7 @@ function KickSubscription(data) {
 	
 	// Set the text
 	const username = data.username;
-	const months = data.months;
+	const months = data.months
 
 	let message = '';
 	if (months <= 1)
@@ -1710,43 +1716,6 @@ function AddMessageItem(element, elementID, platform, userId) {
 	}, 200);
 }
 
-// I used Gemini for this shit so if it doesn't work, blame Google
-function FindFirstImageUrl(jsonObject) {
-	if (typeof jsonObject !== 'object' || jsonObject === null) {
-		return null; // Handle invalid input
-	}
-
-	function iterate(obj) {
-		if (Array.isArray(obj)) {
-			for (const item of obj) {
-				const result = iterate(item);
-				if (result) {
-					return result;
-				}
-			}
-			return null;
-		}
-
-		for (const key in obj) {
-			if (obj.hasOwnProperty(key)) {
-				if (key === 'imageUrl') {
-					return obj[key]; // Found it! Return the value.
-				}
-
-				if (typeof obj[key] === 'object' && obj[key] !== null) {
-					const result = iterate(obj[key]); // Recursive call for nested objects
-					if (result) {
-						return result; // Propagate the found value
-					}
-				}
-			}
-		}
-		return null; // Key not found in this level
-	}
-
-	return iterate(jsonObject);
-}
-
 function ShowAlert(message, background = null, duration = animationDuration) {
 
 	// Check if the widget is in the middle of an animation
@@ -1808,26 +1777,6 @@ function GetWinnersList(gifts) {
 		const secondLastWinner = winners.pop();
 		return `${winners.join(", ")}, ${secondLastWinner} and ${lastWinner}`;
 	}
-}
-
-function GetKickBadgeURL(data) {
-	switch (data.type) {
-		case 'subscriber':
-			return CalculateKickSubBadge(data.count);
-		default:
-			return `icons/badges/kick-${data.type}.svg`;
-	}
-}
-
-function CalculateKickSubBadge(months) {
-  if (!Array.isArray(kickSubBadges)) return null;
-
-  // Filter for eligible badges, then get the one with the highest 'months'
-  const badge = kickSubBadges
-    .filter(b => b.months <= months)
-    .sort((a, b) => b.months - a.months)[0];
-
-  return badge?.badge_image?.src || `icons/badges/kick-subscriber.svg`;
 }
 
 

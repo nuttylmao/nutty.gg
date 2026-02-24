@@ -71,7 +71,8 @@ const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const twitchWatchStreaksAction = urlParams.get("twitchWatchStreaksAction") || "";
 
 // Which Kick alerts do you want to see?
-const kickUsername = urlParams.get("kickUsername") || "";
+const showKickFollows = GetBooleanParam("showKickFollows", false);
+const kickFollowAction = urlParams.get("kickFollowAction") || "";
 const showKickSubs = GetBooleanParam("showKickSubs", true);
 const kickSubAction = urlParams.get("kickSubAction") || "";
 const showKickChannelPointRedemptions = GetBooleanParam("showKickChannelPointRedemptions", true);
@@ -109,6 +110,12 @@ const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", f
 const tipeeestreamDonationAction = urlParams.get("tipeeestreamDonationAction") || "";
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
 const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
+
+////////////////////
+// HIDDEN OPTIONS //
+////////////////////
+
+let kickUsername = urlParams.get("kickUsername") || "";
 
 // Set avatar visibility
 if (!showAvatar) {
@@ -316,8 +323,17 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 
 // Connect and handle Pusher WebSocket
 async function KickConnect() {
+	// If user has not manually set Kick username, try to grab if from Streamer.bot
 	if (!kickUsername)
-		return;
+	{
+		// Fetch from Streamer.bot
+		const broadcasterInfo = await client.getBroadcaster();
+		
+		if (broadcasterInfo.platforms.kick)
+			kickUsername = broadcasterInfo.platforms.kick.broadcasterLogin;
+		else
+			return;
+	}
 
 	// Channel to subscribe to (you'll need the correct channel name here)
     const kickIds = await GetKickIds(kickUsername);
@@ -332,7 +348,7 @@ async function KickConnect() {
     // Reconnect
     websocket.onclose = function () {
         console.log(`Reconnecting to ${kickUsername}...`);
-        setTimeout(connectPusher, 5000);
+        setTimeout(KickConnect, 5000);
     };
 
 	websocket.onopen = function () {
@@ -482,40 +498,10 @@ async function TwitchCheer(data) {
 	// Set the text
 	const username = data.message.displayName;
 	const bits = data.bits;
-	let message = data.message.message;
+	let message = ConstructMessageFromParts(data.parts);
 
 	// Render avatars
 	const avatarURL = await GetAvatar(username, 'twitch');
-
-	// Render emotes
-	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-		const emoteName = EscapeRegExp(data.emotes[i].name);
-
-		let regexPattern = emoteName;
-
-		// Check if the emote name consists only of word characters (alphanumeric and underscore)
-		if (/^\w+$/.test(emoteName)) {
-			regexPattern = `\\b${emoteName}\\b`;
-		}
-		else {
-			// For non-word emotes, ensure they are surrounded by non-word characters or boundaries
-			regexPattern = `(?:^|[^\\w])${emoteName}(?:$|[^\\w])`;
-		}
-
-		const regex = new RegExp(regexPattern, 'g');
-		message = message.replace(regex, emoteElement);
-	}
-
-	// Render cheermotes
-	for (i in data.cheerEmotes) {
-		const bits = data.cheerEmotes[i].bits;
-		const imageUrl = data.cheerEmotes[i].imageUrl;
-		const name = data.cheerEmotes[i].name;
-		const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
-		const bitsElements = `<span class="bits">${bits}</span>`
-		message = message.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
-	}
 
 	UpdateAlertBox(
 		'twitch',
@@ -1262,28 +1248,28 @@ function FourthwallGiftDrawEnded(data) {
 	);
 }
 
-// async function KickFollow(data) {
-// 	if (!showKickFollows)
-// 		return;
+async function KickFollow(data) {
+	if (!showKickFollows)
+		return;
 
-// 	// Set the text
-// 	const username = data.user;
+	// Set the text
+	const username = data.user.name;
 
-// 	// Render avatars
-// 	const avatarURL = await GetAvatar(username, 'kick');
+	// Render avatars
+	const avatarURL = await GetAvatar(username, 'kick');
 
-// 	UpdateAlertBox(
-// 		'kick',
-// 		avatarURL,
-// 		`${username}`,
-// 		`followed`,
-// 		'',
-// 		username,
-// 		'',
-// 		kickFollowAction,
-// 		data
-// 	);
-// }
+	UpdateAlertBox(
+		'kick',
+		avatarURL,
+		`${username}`,
+		`followed`,
+		'',
+		username,
+		'',
+		kickFollowAction,
+		data
+	);
+}
 
 async function KickSubscription(data) {
 	if (!showKickSubs)

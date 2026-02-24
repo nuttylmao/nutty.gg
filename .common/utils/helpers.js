@@ -12,39 +12,39 @@ const pronounMap = new Map();
 //////////////////////
 
 function GetBooleanParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramValue = urlParams.get(paramName);
 
-	if (paramValue === null) {
-		return defaultValue; // Parameter not found
-	}
+    if (paramValue === null) {
+        return defaultValue; // Parameter not found
+    }
 
-	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
+    const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
 
-	if (lowercaseValue === 'true') {
-		return true;
-	} else if (lowercaseValue === 'false') {
-		return false;
-	} else {
-		return paramValue; // Return original string if not 'true' or 'false'
-	}
+    if (lowercaseValue === 'true') {
+        return true;
+    } else if (lowercaseValue === 'false') {
+        return false;
+    } else {
+        return paramValue; // Return original string if not 'true' or 'false'
+    }
 }
 
 function GetIntParam(paramName, defaultValue) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const paramValue = urlParams.get(paramName);
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramValue = urlParams.get(paramName);
 
-	if (paramValue === null) {
-		return defaultValue; // or undefined, or a default value, depending on your needs
-	}
+    if (paramValue === null) {
+        return defaultValue; // or undefined, or a default value, depending on your needs
+    }
 
-	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
+    const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
 
-	if (isNaN(intValue)) {
-		return null; // or handle the error in another way, e.g., throw an error
-	}
+    if (isNaN(intValue)) {
+        return null; // or handle the error in another way, e.g., throw an error
+    }
 
-	return intValue;
+    return intValue;
 }
 
 async function GetKickIds(username) {
@@ -143,82 +143,89 @@ async function GetAvatar(username, platform) {
 }
 
 async function GetPronouns(platform, username) {
-	if (pronounMap.has(username)) {
-		console.debug(`Pronouns found for ${username}. Retrieving from hash map.`)
-		return pronounMap.get(username);
-	}
-	else {
-		console.debug(`No pronouns found for ${username}. Retrieving from alejo.io.`)
-		const response = await client.getUserPronouns(platform, username);
-		const userFound = response.pronoun.userFound;
-		const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
+    if (pronounMap.has(username)) {
+        console.debug(`Pronouns found for ${username}. Retrieving from hash map.`)
+        return pronounMap.get(username);
+    }
+    else {
+        console.debug(`No pronouns found for ${username}. Retrieving from alejo.io.`)
+        const response = await client.getUserPronouns(platform, username);
+        const userFound = response.pronoun.userFound;
+        const pronouns = userFound ? `${response.pronoun.pronounSubject}/${response.pronoun.pronounObject}` : '';
 
-		pronounMap.set(username, pronouns);
+        pronounMap.set(username, pronouns);
 
-		return pronouns;
-	}
+        return pronouns;
+    }
 }
 
 function GetCurrentTimeFormatted() {
-	const now = new Date();
-	let hours = now.getHours();
-	const minutes = String(now.getMinutes()).padStart(2, '0');
-	const ampm = hours >= 12 ? 'PM' : 'AM';
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
 
-	hours = hours % 12;
-	hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
 
-	const formattedTime = `${hours}:${minutes} ${ampm}`;
-	return formattedTime;
+    const formattedTime = `${hours}:${minutes} ${ampm}`;
+    return formattedTime;
 }
 
 function DecodeHTMLString(html) {
-	var txt = document.createElement("textarea");
-	txt.innerHTML = html;
-	return txt.value;
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }
 
 function TranslateToFurry(sentence) {
-	const words = sentence.toLowerCase().split(/\b/);
+    // Split on <img ...> tags, keeping them in the result
+    const parts = sentence.split(/(<img\b[^>]*>)/gi);
 
-	const furryWords = words.map(word => {
-		if (/\w+/.test(word)) {
-			let newWord = word;
+    const furryParts = parts.map(part => {
+        // If this part is an <img>, leave it unchanged
+        if (/^<img\b[^>]*>$/.test(part)) {
+            return part;
+        }
 
-			// Common substitutions
-			newWord = newWord.replace(/l/g, 'w');
-			newWord = newWord.replace(/r/g, 'w');
-			newWord = newWord.replace(/th/g, 'f');
-			newWord = newWord.replace(/you/g, 'yous');
-			newWord = newWord.replace(/my/g, 'mah');
-			newWord = newWord.replace(/me/g, 'meh');
-			newWord = newWord.replace(/am/g, 'am');
-			newWord = newWord.replace(/is/g, 'is');
-			newWord = newWord.replace(/are/g, 'are');
-			newWord = newWord.replace(/very/g, 'vewy');
-			newWord = newWord.replace(/pretty/g, 'pwetty');
-			newWord = newWord.replace(/little/g, 'wittle');
-			newWord = newWord.replace(/nice/g, 'nyce');
+        // Otherwise, apply furry translation
+        const words = part.toLowerCase().split(/\b/);
 
-			// Random additions
-			if (Math.random() < 0.15) {
-				newWord += ' nya~';
-			} else if (Math.random() < 0.1) {
-				newWord += ' >w<';
-			} else if (Math.random() < 0.05) {
-				newWord += ' owo';
-			}
+        return words.map(word => {
+            if (/\w+/.test(word)) {
+                let newWord = word;
 
-			return newWord;
-		}
-		return word;
-	});
+                // Common substitutions
+                newWord = newWord.replace(/l/g, 'w');
+                newWord = newWord.replace(/r/g, 'w');
+                newWord = newWord.replace(/th/g, 'f');
+                newWord = newWord.replace(/you/g, 'yous');
+                newWord = newWord.replace(/my/g, 'mah');
+                newWord = newWord.replace(/me/g, 'meh');
+                newWord = newWord.replace(/am/g, 'am');
+                newWord = newWord.replace(/is/g, 'is');
+                newWord = newWord.replace(/are/g, 'are');
+                newWord = newWord.replace(/very/g, 'vewy');
+                newWord = newWord.replace(/pretty/g, 'pwetty');
+                newWord = newWord.replace(/little/g, 'wittle');
+                newWord = newWord.replace(/nice/g, 'nyce');
 
-	return furryWords.join('');
-}
+                // Random additions
+                if (Math.random() < 0.15) {
+                    newWord += ' nya~';
+                } else if (Math.random() < 0.1) {
+                    newWord += ' >w<';
+                } else if (Math.random() < 0.05) {
+                    newWord += ' owo';
+                }
 
-function EscapeRegExp(string) {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+                return newWord;
+            }
+            return word;
+        }).join('');
+    });
+
+    return furryParts.join('');
 }
 
 // Given a string, return a random hex code. The same input always results in the same output
@@ -260,4 +267,63 @@ function RandomHex(str) {
     }
 
     return hslToHex(hue, saturation, lightness);
+}
+
+// Used to construct a message from "parts" variable commonly found in Streamer.bot chat messages
+function ConstructMessageFromParts(parts) {
+    return parts.map(part => {
+        switch (part.type)
+        {
+            case "text":
+                return part.text;
+            case "cheer":
+                // Render the cheer emote image
+                const emoteImg = `<img src="${part.imageUrl}" alt="${part.text}" title="${part.text}" class="emote">`;
+                
+                // Render the bits count
+                const bitLabel = `<span class="bits">${part.bits}</span>`;
+                
+                return emoteImg + bitLabel;
+            default:
+                return `<img src="${part.imageUrl}" alt="${part.text}" title="${part.text}" class="emote">`;
+        }
+    }).join('');
+}
+
+// Used to construct a message from "emotes" variable commonly found in Streamer.bot chat messages
+function RenderMessageWithEmotesHTML(originalMessage, emotes) {
+    if (!emotes || emotes.length === 0) return originalMessage;
+
+    // Sort emotes by startIndex
+    emotes.sort((a, b) => a.startIndex - b.startIndex);
+
+    let html = '';
+    let cursor = 0;
+
+    emotes.forEach(emote => {
+        // Add text before the emote
+        if (emote.startIndex > cursor) {
+            html += escapeHTML(originalMessage.slice(cursor, emote.startIndex));
+        }
+
+        // Add emote image
+        html += `<img src="${emote.imageUrl}" alt="${escapeHTML(emote.name)}" title="${escapeHTML(emote.name)}" class="emote">`;
+
+        cursor = emote.endIndex + 1;
+    });
+
+    // Add remaining text after last emote
+    if (cursor < originalMessage.length) {
+        html += escapeHTML(originalMessage.slice(cursor));
+    }
+    
+    // Simple HTML escape function
+    function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, match => {
+            const escape = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+            return escape[match];
+        });
+    }
+
+    return html;
 }
