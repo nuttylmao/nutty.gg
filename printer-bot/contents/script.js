@@ -57,6 +57,9 @@ async function CustomEvent(data) {
                 for (i in data.emotes) {
                     const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
                     const emoteName = EscapeRegExp(data.emotes[i].name);
+                    function EscapeRegExp(string) {
+                        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+                    }
 
                     let regexPattern = emoteName;
 
@@ -693,10 +696,6 @@ function IsValidUrl(string) {
     } catch {
         return false;
     }
-}
-
-function EscapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
 function SetPlatformIcon(el, platform) {

@@ -136,6 +136,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchCheers",
+			"label": "Cheers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showTwitchAnnouncements",
 			"label": "Announcements",
 			"description": "",
@@ -224,19 +232,19 @@
 			"group": "Which YouTube messages do you want to see?"
 		},
 		{
-			"id": "kickUsername",
-			"label": "Kick Username",
-			"description": "",
-			"type": "text",
-			"defaultValue": "",
-			"group": "Which Kick messages do you want to see?"
-		},
-		{
 			"id": "showKickMessages",
 			"label": "Chat Messages",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"group": "Which Kick messages do you want to see?"
+		},
+		{
+			"id": "showKickFollows",
+			"label": "New Followers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
 			"group": "Which Kick messages do you want to see?"
 		},
 		{

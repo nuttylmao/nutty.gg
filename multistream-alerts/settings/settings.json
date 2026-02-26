@@ -381,11 +381,20 @@
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
-			"id": "kickUsername",
-			"label": "Kick Username",
+			"id": "showKickFollows",
+			"label": "New Followers",
 			"description": "",
-			"type": "text",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which Kick alerts do you want to see?"
+		},
+		{
+			"id": "KickFollowAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
 			"defaultValue": "",
+			"showIf": "showKickFollows",
 			"group": "Which Kick alerts do you want to see?"
 		},
 		{
