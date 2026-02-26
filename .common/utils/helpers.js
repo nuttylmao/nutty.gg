@@ -272,6 +272,11 @@ function RandomHex(str) {
 // Used to construct a message from "parts" variable commonly found in Streamer.bot chat messages
 function ConstructMessageFromParts(parts) {
     return parts.map(part => {
+        if (part.emoji)
+            return ` <img src="${part.image}" alt="${part.text}" title="${part.text}" class="emote"> `;
+        if (!part.type)
+            return part.text;
+
         switch (part.type)
         {
             case "text":
