@@ -1351,7 +1351,8 @@ async function YouTubeMessage(data) {
 	}
 	
 	// Set the message data
-	let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
+	//let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
+	let message = ConstructMessageFromParts(data.parts);
 	
 	// Set furry mode
 	if (furryMode)

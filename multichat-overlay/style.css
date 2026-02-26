@@ -112,6 +112,10 @@ li {
 	gap: 0.5em;
 }
 
+#message {
+	word-break: break-word; /* Break long words if necessary */
+}
+
 .add-this-class-to-the-thing-to-make-all-the-text-centered-vertically-because-that-looks-much-better {
 	align-items: center;
 }
