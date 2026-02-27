@@ -276,6 +276,8 @@ function ConstructMessageFromParts(parts) {
             return ` <img src="${part.image}" alt="${part.text}" title="${part.text}" class="emote"> `;
         if (!part.type)
             return part.text;
+        if (part.source == 'Twemoji')
+            return part.text;
 
         switch (part.type)
         {

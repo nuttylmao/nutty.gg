@@ -2616,7 +2616,7 @@ async function KickRewardRedeemed(data) {
 	// Set the text
 	const username = data.username;
 	const rewardName = data.reward_title;
-	const userInput = data.userInput;
+	const userInput = data.user_input;
 
 	titleDiv.innerHTML = `${username} redeemed ${rewardName}`;
 	contentDiv.innerText = `${userInput}`;
