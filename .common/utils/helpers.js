@@ -178,6 +178,14 @@ function DecodeHTMLString(html) {
     return txt.value;
 }
 
+// Simple HTML escape function to prevent XSS attacks
+function EscapeHTML(str) {
+    return str.replace(/[&<>"']/g, match => {
+        const escape = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+        return escape[match];
+    });
+}
+
 function TranslateToFurry(sentence) {
     // Split on <img ...> tags, keeping them in the result
     const parts = sentence.split(/(<img\b[^>]*>)/gi);
@@ -273,26 +281,26 @@ function RandomHex(str) {
 function ConstructMessageFromParts(parts) {
     return parts.map(part => {
         if (part.emoji)
-            return ` <img src="${part.image}" alt="${part.text}" title="${part.text}" class="emote"> `;
+            return ` <img src="${EscapeHTML(part.image)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote"> `;
         if (!part.type)
-            return part.text;
+            return EscapeHTML(part.text);
         if (part.source == 'Twemoji')
-            return part.text;
+            return EscapeHTML(part.text);
 
         switch (part.type)
         {
             case "text":
-                return part.text;
+                return EscapeHTML(part.text);
             case "cheer":
                 // Render the cheer emote image
-                const emoteImg = `<img src="${part.imageUrl}" alt="${part.text}" title="${part.text}" class="emote">`;
+                const emoteImg = `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
                 
                 // Render the bits count
-                const bitLabel = `<span class="bits">${part.bits}</span>`;
+                const bitLabel = `<span class="bits">${EscapeHTML(part.bits.toString())}</span>`;
                 
                 return emoteImg + bitLabel;
             default:
-                return `<img src="${part.imageUrl}" alt="${part.text}" title="${part.text}" class="emote">`;
+                return `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
         }
     }).join('');
 }
@@ -310,27 +318,43 @@ function RenderMessageWithEmotesHTML(originalMessage, emotes) {
     emotes.forEach(emote => {
         // Add text before the emote
         if (emote.startIndex > cursor) {
-            html += escapeHTML(originalMessage.slice(cursor, emote.startIndex));
+            html += EscapeHTML(originalMessage.slice(cursor, emote.startIndex));
         }
 
         // Add emote image
-        html += `<img src="${emote.imageUrl}" alt="${escapeHTML(emote.name)}" title="${escapeHTML(emote.name)}" class="emote">`;
+        html += `<img src="${EscapeHTML(emote.imageUrl)}" alt="${EscapeHTML(emote.name)}" title="${EscapeHTML(emote.name)}" class="emote">`;
 
         cursor = emote.endIndex + 1;
     });
 
     // Add remaining text after last emote
     if (cursor < originalMessage.length) {
-        html += escapeHTML(originalMessage.slice(cursor));
-    }
-    
-    // Simple HTML escape function
-    function escapeHTML(str) {
-        return str.replace(/[&<>"']/g, match => {
-            const escape = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-            return escape[match];
-        });
+        html += EscapeHTML(originalMessage.slice(cursor));
     }
 
     return html;
+}
+
+async function LoadHTMLTemplate(name) {
+    const response = await fetch(name);
+
+    if (!response.ok) {
+        throw new Error(`Failed to load template: ${name}`);
+    }
+
+    const html = await response.text();
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+
+    const template = tempDiv.querySelector("template");
+
+    if (!template) {
+        throw new Error(`No <template> found in ${name}.html`);
+    }
+
+    // Avoid duplicate registration
+    if (!document.getElementById(template.id)) {
+        document.body.appendChild(template.cloneNode(true));
+    }
 }
