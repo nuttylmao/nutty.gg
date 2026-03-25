@@ -159,6 +159,15 @@ async function GetPronouns(platform, username) {
     }
 }
 
+function RenderKickEmotes(message) {
+    const emoteRegex = /\[emote:(\d+):([^\]]+)\]/g;
+
+    return message.replace(emoteRegex, (_, id, name) => {
+        const imgUrl = `https://files.kick.com/emotes/${id}/fullsize`;
+        return `<img src="${imgUrl}" alt="${name}" title="${name}" class="emote" />`;
+    });
+}
+
 function GetCurrentTimeFormatted() {
     const now = new Date();
     let hours = now.getHours();

@@ -2303,11 +2303,11 @@ async function KickChatMessage(data) {
 	const isReply = data.isReply;
 	if (isReply && showMessage) {
 		const replyUser = data.reply.sender.name;
-		const replyMsg = data.reply.sender.content;
+		const replyMsg = data.reply.content;
 
 		replyDiv.style.display = 'block';
 		replyUserDiv.innerText = replyUser;
-		replyMsgDiv.innerHTML = replaceEmotes(replyMsg);;
+		replyMsgDiv.innerHTML = RenderKickEmotes(replyMsg);
 	}
 
 	// Set timestamp
