@@ -145,6 +145,7 @@ const client = new StreamerbotClient({
 		console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
 		console.debug(data);
 		SetConnectionStatus(true);
+		KickConnect();
 	},
 
 	onDisconnect: () => {
@@ -472,9 +473,6 @@ async function KickConnect() {
 		}
 	}
 }
-
-// Try connect when window is loaded
-window.addEventListener('load', KickConnect);
 
 
 
@@ -2303,11 +2301,11 @@ async function KickChatMessage(data) {
 	const isReply = data.isReply;
 	if (isReply && showMessage) {
 		const replyUser = data.reply.sender.name;
-		const replyMsg = data.reply.sender.content;
+		const replyMsg = data.reply.content;
 
 		replyDiv.style.display = 'block';
 		replyUserDiv.innerText = replyUser;
-		replyMsgDiv.innerHTML = replaceEmotes(replyMsg);;
+		replyMsgDiv.innerHTML = RenderKickEmotes(replyMsg);
 	}
 
 	// Set timestamp
@@ -2616,7 +2614,7 @@ async function KickRewardRedeemed(data) {
 	// Set the text
 	const username = data.username;
 	const rewardName = data.reward_title;
-	const userInput = data.userInput;
+	const userInput = data.user_input;
 
 	titleDiv.innerHTML = `${username} redeemed ${rewardName}`;
 	contentDiv.innerText = `${userInput}`;
