@@ -145,6 +145,7 @@ const client = new StreamerbotClient({
 		console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
 		console.debug(data);
 		SetConnectionStatus(true);
+		KickConnect();
 	},
 
 	onDisconnect: () => {
@@ -472,9 +473,6 @@ async function KickConnect() {
 		}
 	}
 }
-
-// Try connect when window is loaded
-window.addEventListener('load', KickConnect);
 
 
 
