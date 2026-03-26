@@ -121,6 +121,33 @@
 			"group": "General"
 		},
 		{
+			"id": "warningPosition",
+			"label": "Warning Position",
+			"description": "Position of the upcoming ad countdown",
+			"type": "select",
+			"options": [
+				{
+					"value": "top-left",
+					"label": "Top Left"
+				},
+				{
+					"value": "top-right",
+					"label": "Top Right"
+				},
+				{
+					"value": "bottom-left",
+					"label": "Bottom Left"
+				},
+				{
+					"value": "bottom-right",
+					"label": "Bottom Right"
+				}
+			],
+			"defaultValue": "bottom-right",
+			"showIf": "showUpcomingAdWarning",
+			"group": "General"
+		},
+		{
 			"id": "address",
 			"label": "Address",
 			"description": "Streamer.bot Websocket Server Address",
