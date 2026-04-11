@@ -118,25 +118,59 @@ async function GetAvatar(username, platform) {
             console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`);
 
             let url = `https://kick.com/api/v2/channels/${username}`;
+
             try {
                 let response = await fetch(url);
                 if (!response.ok) {
-                    // Retry with underscores replaced by dashes
                     const altUsername = username.replace(/_/g, "-");
                     url = `https://kick.com/api/v2/channels/${altUsername}`;
                     response = await fetch(url);
+
                     if (!response.ok) {
                         throw new Error(`HTTP error ${response.status}`);
                     }
                 }
 
                 let data = await response.json();
-                let avatarURL = data.user?.profile_pic || 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+
+                const defaultAvatars = [
+                    'https://kick.com/img/default-profile-pictures/default-avatar-1.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-2.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-3.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-4.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-5.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-6.webp',
+                ];
+
+                const avatarURL =
+                    data.user?.profile_pic ||
+                    defaultAvatars[hashString(`${username}-${platform}`) % defaultAvatars.length];
+
                 avatarMap.set(`${username}-${platform}`, avatarURL);
                 return avatarURL;
+
             } catch (error) {
                 console.error("Failed to fetch avatar:", error.message);
-                return 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+
+                const defaultAvatars = [
+                    'https://kick.com/img/default-profile-pictures/default-avatar-1.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-2.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-3.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-4.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-5.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-6.webp',
+                ];
+
+                return defaultAvatars[hashString(`${username}-${platform}`) % defaultAvatars.length];
+            }
+
+            function hashString(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                    hash |= 0; // convert to 32-bit int
+                }
+                return Math.abs(hash);
             }
         }
     }
