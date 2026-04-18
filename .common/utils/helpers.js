@@ -335,6 +335,15 @@ function ConstructMessageFromParts(parts) {
             case "text":
                 return EscapeHTML(part.text);
             case "cheer":
+                // TODO: It seems like Streamer.bot v1.0.5-alpha3 doesn't include the imageUrl for bits in the message parts, only the bits count. We may need to hardcode the image URL format for Twitch bits, or find another way to retrieve it.
+                let imageUrl = '';
+
+                if (!part.imageUrl) {
+                    const tiers = [100000, 10000, 5000, 1000, 100, 10, 1];
+                    const activeTier = tiers.find(tier => part.bits >= tier) || 1;
+                    part.imageUrl = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${activeTier}/4.gif`;
+                }
+
                 // Render the cheer emote image
                 const emoteImg = `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
                 
@@ -342,6 +351,8 @@ function ConstructMessageFromParts(parts) {
                 const bitLabel = `<span class="bits">${EscapeHTML(part.bits.toString())}</span>`;
                 
                 return emoteImg + bitLabel;
+            case "mention":
+                return '';
             default:
                 return `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
         }

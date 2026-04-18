@@ -115,7 +115,9 @@ const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
 // HIDDEN OPTIONS //
 ////////////////////
 
+let twitchUsername = urlParams.get("twitchUsername") || "";
 let kickUsername = urlParams.get("kickUsername") || "";
+let youtubeUsername = urlParams.get("youtubeUsername") || "";
 
 // Set avatar visibility
 if (!showAvatar) {
@@ -324,12 +326,18 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 
 // Connect and handle Pusher WebSocket
 async function KickConnect() {
+	// Fetch from Streamer.bot
+	const broadcasterInfo = await client.getBroadcaster();
+
+	// This code has nothing to do with Kick, but it's a really good place to get Twitch and YouTube usernames as well, because I'm built different like that
+	if (broadcasterInfo.platforms.twitch)
+		twitchUsername = broadcasterInfo.platforms.twitch.broadcastUserName;
+	if (broadcasterInfo.platforms.youtube)
+		youtubeUsername = broadcasterInfo.platforms.youtube.broadcastUserName;
+
 	// If user has not manually set Kick username, try to grab if from Streamer.bot
 	if (!kickUsername)
-	{
-		// Fetch from Streamer.bot
-		const broadcasterInfo = await client.getBroadcaster();
-		
+	{		
 		if (broadcasterInfo.platforms.kick)
 			kickUsername = broadcasterInfo.platforms.kick.broadcasterLogin;
 		else
@@ -494,7 +502,7 @@ async function TwitchCheer(data) {
 		return;
 
 	// Set the text
-	const username = data.message.displayName;
+	const username = data.user.login;
 	const bits = data.bits;
 	let message = ConstructMessageFromParts(data.parts);
 
@@ -720,8 +728,9 @@ async function TwitchWatchStreak(data) {
 	const avatarURL = await GetAvatar(data.userName, 'twitch');
 
 	// Set the text
-	const username = data.displayName;
-	const watchStreak = data.watchStreak;
+	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
+	const displayName = data.displayName ?? data.user.name;
+	const watchStreak = data.watchStreak ?? data.streak_count;
 	
 	UpdateAlertBox(
 		'twitch',
