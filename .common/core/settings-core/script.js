@@ -70,6 +70,12 @@ function LoadJSON(settingsJson) {
 					settingItem.classList.add('setting-item');
 					settingItem.id = `item-${setting.id}`;
 
+					// Indent settings that are dependent on other settings using the showIf property
+					if (setting.showIf) {
+						const depth = GetSettingDepth(setting, data.settings);
+						settingItem.style.marginLeft = `${depth * 20}px`;
+					}
+
 					const labelDescriptionDiv = document.createElement('div');
 
 					if (setting.label) {
@@ -468,6 +474,18 @@ window.addEventListener('message', (event) => {
 		unmuteLabel.style.display = 'none';
 	}
 });
+
+function GetSettingDepth(setting, allSettings) {
+    let depth = 0;
+    let current = setting;
+
+    while (current.showIf) {
+        depth++;
+        current = allSettings.find(s => s.id === current.showIf) || {};
+    }
+
+    return depth;
+}
 
 
 

@@ -1,0 +1,95 @@
+:root {
+    --winning-color: #3be47680;
+    --vote-bar-color: #FFFFFF;
+    --vote-bar-track-color: #FFFFFF33;
+}
+
+.response-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    width: 100%;
+    transition: all 0.8s ease;
+}
+
+.response-index {
+    width: 2.5em;
+    height: 2.5em;
+	min-width: 2.5em;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.8em;
+    transition: all 0.8s ease-out;
+}
+
+.response-except-just-the-shit-on-the-right-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    min-width: 0;
+}
+
+.response-title,
+.response-votes {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    line-height: 1.2em;
+    /* mix-blend-mode: exclusion; */    /* I couldn't make this shit look good so I'm turning it off for now */
+}
+
+.response-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.response-votes {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    margin-left: 8px;
+    font-size: 0.8em;
+}
+
+.response-bar-track {
+    background-color: var(--vote-bar-track-color);
+    position: relative;
+    display: flex;
+    border-radius: 0.5em;
+    overflow: hidden;
+    padding: 0.5em 0.5em;
+}
+
+.response-bar-fill {
+    position: absolute;   /* take it out of flex flow */
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: var(--vote-bar-color);
+    transition: all 0.25s ease;
+    z-index: 0; /* sits behind text */
+    inset: 0;
+    display: flex;   /* 👈 KEY CHANGE */
+    overflow: hidden;
+}
+
+.trophy-icon {
+    width: 1.8em;
+    height: 1.8em;
+    vertical-align: middle;
+}
+
+.response-bar-segment {
+    height: 100%;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+}
