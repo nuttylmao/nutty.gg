@@ -227,6 +227,14 @@
 			"group": "General"
 		},
 		{
+			"id": "imageEmbedWhitelist",
+			"label": "Image Embed Whitelist",
+			"description": "Comma-separated list of allowed domains for image embeds (e.g. imgur.com,giphy.com). Use * to allow all domains.",
+			"type": "text",
+			"defaultValue": "*",
+			"group": "General"
+		},
+		{
 			"id": "showYouTubeLinkPreviews",
 			"label": "Show YouTube Link Previews",
 			"description": "",
