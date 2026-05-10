@@ -42,6 +42,7 @@ const ignoreChatters = urlParams.get("ignoreChatters") || "";
 const scrollDirection = GetIntParam("scrollDirection", 1);
 const groupConsecutiveMessages = GetBooleanParam("groupConsecutiveMessages", false);
 const inlineChat = GetBooleanParam("inlineChat", false);
+const highlightMentions = GetBooleanParam("highlightMentions", true);
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel", 20);
 const showYouTubeLinkPreviews = GetBooleanParam("showYouTubeLinkPreviews", true);
 
@@ -672,7 +673,7 @@ async function TwitchChatMessage(data) {
 	// Highlight mentions
 	const mentionRgx = new RegExp(`(^|\\s)@${twitchUsername}(\\s|$)`, 'i');
 	const mention = mentionRgx.test(data.text);
-	if (mention && showMessage)
+	if (mention && highlightMentions && showMessage)
 		messageContainerDiv.classList.add("highlightMessage");
 
 	// Set furry mode
@@ -1371,7 +1372,7 @@ async function YouTubeMessage(data) {
 	// Highlight mentions
 	const mentionRgx = new RegExp(`(^|\\s)@${youtubeUsername}(\\s|$)`, 'i');
 	const mention = mentionRgx.test(message);
-	if (mention && showMessage)
+	if (mention && highlightMentions && showMessage)
 		messageContainerDiv.classList.add("highlightMessage");
 	
 	// Set furry mode
@@ -2348,7 +2349,7 @@ async function KickChatMessage(data) {
 	// Highlight mentions
 	const mentionRgx = new RegExp(`(^|\\s)@${kickUsername}(\\s|$)`, 'i');
 	const mention = mentionRgx.test(message);
-	if (mention && showMessage)
+	if (mention && highlightMentions && showMessage)
 		messageContainerDiv.classList.add("highlightMessage");
 
 	// Set furry mode
