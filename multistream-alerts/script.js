@@ -725,7 +725,7 @@ async function TwitchWatchStreak(data) {
 		return;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.userName, 'twitch');
+	const avatarURL = await GetAvatar(data.user.login, 'twitch');
 
 	// Set the text
 	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
@@ -735,10 +735,10 @@ async function TwitchWatchStreak(data) {
 	UpdateAlertBox(
 		'twitch',
 		avatarURL,
-		`${username}`,
+		`${displayName}`,
 		`is currently on a ${watchStreak} stream streak!`,
 		'',
-		username,
+		displayName,
 		'',
 		twitchWatchStreaksAction,
 		data

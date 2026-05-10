@@ -1236,7 +1236,7 @@ async function TwitchWatchStreak(data) {
 
 	if (showAvatar) {
 		// Render avatars
-		const username = data.userName;
+		const username = data.user.login;
 		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
@@ -1250,7 +1250,7 @@ async function TwitchWatchStreak(data) {
 	const message = RenderMessageWithEmotesHTML(data.message, data.emotes);
 	
 	titleDiv.innerText = `${displayName} is currently on a ${watchStreak} stream streak! `;
-	contentDiv.innerHTML = message;
+	contentDiv.innerHTML = ConstructMessageFromParts(data.parts);
 
 	AddMessageItem(instance, data.messageId);
 }
