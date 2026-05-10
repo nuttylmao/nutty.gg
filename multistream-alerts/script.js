@@ -63,6 +63,8 @@ const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const twitchSubAction = urlParams.get("twitchSubAction") || "";
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
 const twitchChannelPointRedemptionAction = urlParams.get("twitchChannelPointRedemptionAction") || "";
+const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptions", true);
+const twitchPowerUpRedemptionAction = urlParams.get("twitchPowerUpRedemptionAction") || "";
 const showTwitchCheers = GetBooleanParam("showTwitchCheers", true);
 const twitchCheerAction = urlParams.get("twitchCheerAction") || "";
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
@@ -216,6 +218,11 @@ client.on('Twitch.GiftBomb', (response) => {
 client.on('Twitch.RewardRedemption', (response) => {
 	console.debug(response.data);
 	TwitchRewardRedemption(response.data);
+})
+
+client.on('Twitch.CustomPowerUpRedemption', (response) => {
+	console.debug(response.data);
+	TwitchCustomPowerUpRedemption(response.data);
 })
 
 client.on('Twitch.Raid', (response) => {
@@ -692,6 +699,34 @@ async function TwitchRewardRedemption(data) {
 		username,
 		userInput,
 		twitchChannelPointRedemptionAction,
+		data
+	);
+}
+
+async function TwitchCustomPowerUpRedemption(data) {
+	if (!showTwitchPowerUpRedemptions)
+		return;
+
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	const powerUpName = data.custom_power_up.title;
+	const cost = data.custom_power_up.bits_cost;
+	const prompt = data.custom_power_up.prompt;
+	const bitIcon = `<img src="icons/badges/twitch-bit.svg" class="platform" style="height: 1em"/>`;
+
+	// Render avatars
+	const avatarURL = await GetAvatar(data.user.login, 'twitch');
+
+	UpdateAlertBox(
+		'twitch',
+		avatarURL,
+		`${username} redeemed`,
+		`${powerUpName} ${bitIcon} ${cost}`,
+		'',
+		username,
+		prompt,
+		twitchPowerUpRedemptionAction,
 		data
 	);
 }

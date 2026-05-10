@@ -46,6 +46,7 @@ const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true)
 const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
+const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
@@ -179,6 +180,11 @@ client.on('Twitch.GiftBomb', (response) => {
 client.on('Twitch.RewardRedemption', (response) => {
 	console.debug(response.data);
 	TwitchRewardRedemption(response.data);
+})
+
+client.on('Twitch.CustomPowerUpRedemption', (response) => {
+	console.debug(response.data);
+	TwitchCustomPowerUpRedemption(response.data);
 })
 
 client.on('Twitch.Raid', (response) => {
@@ -784,6 +790,23 @@ async function TwitchRewardRedemption(data) {
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
 
 	let message = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
+
+	ShowAlert(message, 'twitch');
+}
+
+async function TwitchCustomPowerUpRedemption(data) {
+	if (!showTwitchPowerUpRedemptions)
+		return;
+
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	const powerUpName = data.custom_power_up.title;
+	const cost = data.custom_power_up.bits_cost;
+	const prompt = data.custom_power_up.prompt;
+	const bitIcon = `<img src="icons/badges/twitch-bit.svg" class="platform"/>`;
+
+	let message = `${username} redeemed ${powerUpName} ${bitIcon} ${cost}`;
 
 	ShowAlert(message, 'twitch');
 }

@@ -176,6 +176,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchPowerUpRedemptions",
+			"label": "Power-Up Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showTwitchRaids",
 			"label": "Raids",
 			"description": "",

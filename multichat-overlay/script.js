@@ -52,6 +52,7 @@ const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true)
 const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
+const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
@@ -200,6 +201,11 @@ client.on('Twitch.GiftSub', (response) => {
 client.on('Twitch.RewardRedemption', (response) => {
 	console.debug(response.data);
 	TwitchRewardRedemption(response.data);
+})
+
+client.on('Twitch.CustomPowerUpRedemption', (response) => {
+	console.debug(response.data);
+	TwitchCustomPowerUpRedemption(response.data);
 })
 
 client.on('Twitch.Raid', (response) => {
@@ -1166,6 +1172,52 @@ async function TwitchRewardRedemption(data) {
 
 	titleDiv.innerHTML = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
 	contentDiv.innerText = `${userInput}`;
+
+	AddMessageItem(instance, data.messageId);
+}
+
+async function TwitchCustomPowerUpRedemption(data) {
+	if (!showTwitchPowerUpRedemptions)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('twitch');
+
+	if (showAvatar) {
+		// Render avatars
+		const username = data.user.login;
+		const avatarURL = await GetAvatar(username, 'twitch');
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+
+	// Set the text
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	const powerUpName = data.custom_power_up.title;
+	const cost = data.custom_power_up.bits_cost;
+	const prompt = data.custom_power_up.prompt;
+	const bitIcon = `<img src="icons/badges/twitch-bit.svg" class="platform"/>`;
+
+	titleDiv.innerHTML = `${username} redeemed ${powerUpName} ${bitIcon} ${cost}`;
+	contentDiv.innerText = `${prompt}`;
 
 	AddMessageItem(instance, data.messageId);
 }
