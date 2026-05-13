@@ -1195,7 +1195,12 @@ async function TwitchCustomPowerUpRedemption(data) {
 	const contentDiv = instance.querySelector("#content");
 
 	// Set the card background colors
-	cardDiv.classList.add('twitch');
+	// cardDiv.classList.add('twitch');
+	const baseColor = data.custom_power_up.backgroundColor; // e.g., #3498db
+
+	// B3 = 70% opacity
+	// FF = 100% opacity
+	cardDiv.style.background = `linear-gradient(180deg, ${baseColor}B3 0%, ${baseColor}FF 100%)`;
 
 	if (showAvatar) {
 		// Render avatars
