@@ -801,9 +801,9 @@ async function TwitchCustomPowerUpRedemption(data) {
 	let username = data.user.name;
 	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
 		username = `${data.user.name} (${data.user.login})`;
-	const powerUpName = data.custom_power_up.title;
-	const cost = data.custom_power_up.bits_cost;
-	const prompt = data.custom_power_up.prompt;
+	const powerUpName = data.customPowerUp.title;
+	const cost = data.customPowerUp.bits;
+	const userInput = data.userInput;
 	const bitIcon = `<img src="icons/badges/twitch-bit.svg" class="platform"/>`;
 
 	let message = `${username} redeemed ${powerUpName} ${bitIcon} ${cost}`;

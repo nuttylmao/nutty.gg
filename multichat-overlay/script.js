@@ -1196,7 +1196,7 @@ async function TwitchCustomPowerUpRedemption(data) {
 
 	// Set the card background colors
 	// cardDiv.classList.add('twitch');
-	const baseColor = data.custom_power_up.backgroundColor; // e.g., #3498db
+	const baseColor = data.customPowerUp.backgroundColor; // e.g., #3498db
 
 	// B3 = 70% opacity
 	// FF = 100% opacity
@@ -1216,13 +1216,13 @@ async function TwitchCustomPowerUpRedemption(data) {
 	let username = data.user.name;
 	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
 		username = `${data.user.name} (${data.user.login})`;
-	const powerUpName = data.custom_power_up.title;
-	const cost = data.custom_power_up.bits_cost;
-	const prompt = data.custom_power_up.prompt;
+	const powerUpName = data.customPowerUp.title;
+	const cost = data.customPowerUp.bits;
+	const userInput = data.userInput;
 	const bitIcon = `<img src="icons/badges/twitch-bit.svg" class="platform"/>`;
 
 	titleDiv.innerHTML = `${username} redeemed ${powerUpName} ${bitIcon} ${cost}`;
-	contentDiv.innerText = `${prompt}`;
+	contentDiv.innerText = `${userInput}`;
 
 	AddMessageItem(instance, data.messageId);
 }
