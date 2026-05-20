@@ -118,25 +118,59 @@ async function GetAvatar(username, platform) {
             console.debug(`No avatar found for ${username} (${platform}). Retrieving from Kick.`);
 
             let url = `https://kick.com/api/v2/channels/${username}`;
+
             try {
                 let response = await fetch(url);
                 if (!response.ok) {
-                    // Retry with underscores replaced by dashes
                     const altUsername = username.replace(/_/g, "-");
                     url = `https://kick.com/api/v2/channels/${altUsername}`;
                     response = await fetch(url);
+
                     if (!response.ok) {
                         throw new Error(`HTTP error ${response.status}`);
                     }
                 }
 
                 let data = await response.json();
-                let avatarURL = data.user?.profile_pic || 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+
+                const defaultAvatars = [
+                    'https://kick.com/img/default-profile-pictures/default-avatar-1.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-2.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-3.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-4.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-5.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-6.webp',
+                ];
+
+                const avatarURL =
+                    data.user?.profile_pic ||
+                    defaultAvatars[hashString(`${username}-${platform}`) % defaultAvatars.length];
+
                 avatarMap.set(`${username}-${platform}`, avatarURL);
                 return avatarURL;
+
             } catch (error) {
                 console.error("Failed to fetch avatar:", error.message);
-                return 'https://kick.com/img/default-profile-pictures/default2.jpeg';
+
+                const defaultAvatars = [
+                    'https://kick.com/img/default-profile-pictures/default-avatar-1.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-2.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-3.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-4.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-5.webp',
+                    'https://kick.com/img/default-profile-pictures/default-avatar-6.webp',
+                ];
+
+                return defaultAvatars[hashString(`${username}-${platform}`) % defaultAvatars.length];
+            }
+
+            function hashString(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                    hash |= 0; // convert to 32-bit int
+                }
+                return Math.abs(hash);
             }
         }
     }
@@ -301,6 +335,15 @@ function ConstructMessageFromParts(parts) {
             case "text":
                 return EscapeHTML(part.text);
             case "cheer":
+                // TODO: It seems like Streamer.bot v1.0.5-alpha3 doesn't include the imageUrl for bits in the message parts, only the bits count. We may need to hardcode the image URL format for Twitch bits, or find another way to retrieve it.
+                let imageUrl = '';
+
+                if (!part.imageUrl) {
+                    const tiers = [100000, 10000, 5000, 1000, 100, 10, 1];
+                    const activeTier = tiers.find(tier => part.bits >= tier) || 1;
+                    part.imageUrl = `https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/${activeTier}/4.gif`;
+                }
+
                 // Render the cheer emote image
                 const emoteImg = `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
                 
@@ -308,6 +351,8 @@ function ConstructMessageFromParts(parts) {
                 const bitLabel = `<span class="bits">${EscapeHTML(part.bits.toString())}</span>`;
                 
                 return emoteImg + bitLabel;
+            case "mention":
+                return part.text;
             default:
                 return `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
         }

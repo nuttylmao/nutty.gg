@@ -46,6 +46,7 @@ const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true)
 const showTwitchFollows = GetBooleanParam("showTwitchFollows", false);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
 const showTwitchChannelPointRedemptions = GetBooleanParam("showTwitchChannelPointRedemptions", true);
+const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptions", true);
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
@@ -85,7 +86,9 @@ const animationSpeed = GetIntParam("animationSpeed", 0.5);
 const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", false);
 const youtubeColor = urlParams.get("youtubeColor") || "#f70000";
 const youtubeCustomSubIcon = urlParams.get("youtubeCustomSubIcon") || "";
-const kickUsername = urlParams.get("kickUsername") || "";
+let twitchUsername = urlParams.get("twitchUsername") || "";
+let kickUsername = urlParams.get("kickUsername") || "";
+let youtubeUsername = urlParams.get("youtubeUsername") || "";
 
 
 
@@ -177,6 +180,11 @@ client.on('Twitch.GiftBomb', (response) => {
 client.on('Twitch.RewardRedemption', (response) => {
 	console.debug(response.data);
 	TwitchRewardRedemption(response.data);
+})
+
+client.on('Twitch.CustomPowerUpRedemption', (response) => {
+	console.debug(response.data);
+	TwitchCustomPowerUpRedemption(response.data);
 })
 
 client.on('Twitch.Raid', (response) => {
@@ -343,12 +351,18 @@ client.on('Fourthwall.GiftDrawEnded', (response) => {
 
 // Connect and handle Pusher WebSocket
 async function KickConnect() {
+	// Fetch from Streamer.bot
+	const broadcasterInfo = await client.getBroadcaster();
+
+	// This code has nothing to do with Kick, but it's a really good place to get Twitch and YouTube usernames as well, because I'm built different like that
+	if (broadcasterInfo.platforms.twitch)
+		twitchUsername = broadcasterInfo.platforms.twitch.broadcastUserName;
+	if (broadcasterInfo.platforms.youtube)
+		youtubeUsername = broadcasterInfo.platforms.youtube.broadcastUserName;
+
 	// If user has not manually set Kick username, try to grab if from Streamer.bot
 	if (!kickUsername)
-	{
-		// Fetch from Streamer.bot
-		const broadcasterInfo = await client.getBroadcaster();
-		
+	{		
 		if (broadcasterInfo.platforms.kick)
 			kickUsername = broadcasterInfo.platforms.kick.broadcasterLogin;
 		else
@@ -504,11 +518,11 @@ async function TwitchChatMessage(data) {
 		return;
 
 	// Don't post messages starting with "!"
-	if (data.message.message.startsWith("!") && excludeCommands)
+	if (data.text.startsWith("!") && excludeCommands)
 		return;
 
 	// Don't post messages from users from the ignore list
-	if (ignoreUserList.includes(data.message.username.toLowerCase()))
+	if (ignoreUserList.includes(data.user.login.toLowerCase()))
 		return;
 
 	// Get a reference to the template
@@ -544,15 +558,15 @@ async function TwitchChatMessage(data) {
 
 	// Set the username info
 	if (showUsername) {
-		if (data.message.displayName.toLowerCase() == data.message.username.toLowerCase())
-			usernameDiv.innerText = data.message.displayName;
+		if (data.user.name.toLowerCase() == data.user.login.toLowerCase())
+			usernameDiv.innerText = data.user.name;
 		else
-			usernameDiv.innerText = `${data.message.displayName} (${data.message.username})`;
-		usernameDiv.style.color = data.message.color;
+			usernameDiv.innerText = `${data.user.name} (${data.user.login})`;
+		usernameDiv.style.color = data.user.color;
 	}
 
 	// Set pronouns
-	const pronouns = await GetPronouns('twitch', data.message.username);
+	const pronouns = await GetPronouns('twitch', data.user.login);
 	if (pronouns && showPronouns) {
 		pronounsDiv.classList.add("pronouns");
 		pronounsDiv.innerText = pronouns;
@@ -560,8 +574,8 @@ async function TwitchChatMessage(data) {
 
 	// Set the message data
 	let message = ConstructMessageFromParts(data.parts);
-	const messageColor = data.message.color;
-	const role = data.message.role;
+	const messageColor = data.user.color;
+	const role = data.user.role;
 
 	// Set furry mode
 	if (furryMode)
@@ -573,7 +587,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the "action" color
-	if (data.message.isMe)
+	if (data.meta.isMe)
 		messageDiv.style.color = messageColor;
 
 	// Render platform
@@ -585,9 +599,9 @@ async function TwitchChatMessage(data) {
 	// Render badges
 	if (showBadges) {
 		badgeListDiv.innerHTML = "";
-		for (i in data.message.badges) {
+		for (i in data.user.badges) {
 			const badge = new Image();
-			badge.src = data.message.badges[i].imageUrl;
+			badge.src = data.user.badges[i].imageUrl;
 			badge.classList.add("badge");
 			badgeListDiv.appendChild(badge);
 		}
@@ -595,7 +609,7 @@ async function TwitchChatMessage(data) {
 
 	// Render avatars
 	if (showAvatar) {
-		const username = data.message.username;
+		const username = data.user.login;
 		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
@@ -604,7 +618,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Custom styling for subs
-	if (data.message.subscriber) {
+	if (data.user.subscribed) {
 		usernameDiv.classList.add('sub-glow')
 	}
 
@@ -623,7 +637,7 @@ async function TwitchChatMessage(data) {
 			userInfoDiv.style.display = "none";
 	}
 
-	AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
+	AddMessageItem(instance, data.messageId, 'twitch', data.user.id);
 }
 
 async function TwitchCheer(data) {
@@ -780,6 +794,23 @@ async function TwitchRewardRedemption(data) {
 	ShowAlert(message, 'twitch');
 }
 
+async function TwitchCustomPowerUpRedemption(data) {
+	if (!showTwitchPowerUpRedemptions)
+		return;
+
+	let username = data.user.name;
+	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
+		username = `${data.user.name} (${data.user.login})`;
+	const powerUpName = data.customPowerUp.title;
+	const cost = data.customPowerUp.bits;
+	const userInput = data.userInput;
+	const bitIcon = `<img src="icons/badges/twitch-bit.svg" class="platform"/>`;
+
+	let message = `${username} redeemed ${powerUpName} ${bitIcon} ${cost}`;
+
+	ShowAlert(message, 'twitch');
+}
+
 async function TwitchRaid(data) {
 	if (!showTwitchRaids)
 		return;
@@ -798,8 +829,9 @@ async function TwitchWatchStreak(data) {
 	if (!showTwitchWatchStreaks)
 		return;
 
-	const displayName = data.displayName;
-	const watchStreak = data.watchStreak;
+	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
+	const displayName = data.displayName ?? data.user.name;
+	const watchStreak = data.watchStreak ?? data.streak_count;
 
 	let message = `${displayName} is currently on a ${watchStreak} stream streak!`;
 

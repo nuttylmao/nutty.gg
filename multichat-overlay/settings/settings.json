@@ -193,6 +193,14 @@
 			"group": "General"
 		},
 		{
+			"id": "highlightMentions",
+			"label": "Highlight Mentions",
+			"description": "Highlight messages that mention the streamer",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
 			"id": "imageEmbedPermissionLevel",
 			"label": "Embed Images",
 			"description": "Automatically embed images for these users",
@@ -277,6 +285,14 @@
 		{
 			"id": "showTwitchChannelPointRedemptions",
 			"label": "Channel Point Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
+			"id": "showTwitchPowerUpRedemptions",
+			"label": "Power-Up Redemptions",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,

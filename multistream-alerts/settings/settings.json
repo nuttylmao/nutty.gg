@@ -279,6 +279,23 @@
 			"group": "Which Twitch alerts do you want to see?"
 		},
 		{
+			"id": "showTwitchPowerUpRedemptions",
+			"label": "Power-Up Redemptions",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
+			"id": "twitchPowerUpRedemptionAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showTwitchPowerUpRedemptions",
+			"group": "Which Twitch alerts do you want to see?"
+		},
+		{
 			"id": "showTwitchCheers",
 			"label": "Cheers",
 			"description": "",
