@@ -1,0 +1,303 @@
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+    margin: 0;
+}
+
+#main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+#standard-layout {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    /* This forces both containers to be the same height */
+    align-items: stretch; 
+    gap: 0.5em;
+}
+
+#album-art-container {
+    /* 1. Tell it to maintain a 1:1 square ratio */
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 1em;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+#art-layer,
+#art-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease;
+}
+
+#art-layer {
+    z-index: 1;
+	transition: all 0.5s ease;
+}
+
+#art-transition-layer {
+    z-index: 0;
+}
+
+#song-info-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1em;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* The background now fills the frame */
+#background-layer,
+#background-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+	background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+	background-blend-mode: overlay; /* Or 'soft-light' for a subtler effect */
+    filter: blur(0px) brightness(0.3);
+    transform: scale(1.1); /* Slightly zoom in to cover edges when blurred */
+}
+
+#background-layer {
+	transition: all 0.5s ease;
+}
+
+#background-transition-layer {
+	z-index: 0;
+}
+
+/* The content sits on top */
+#song-info-wrapper {
+    position: relative; /* Keeps it in the document flow */
+    z-index: 2;         /* Sits above the background-layer */
+    
+    padding: 1em 1.75em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+#track-label {
+	font-size: 1em;
+	font-weight: 600;
+}
+
+#artist-label {
+	font-size: 0.8em;
+	font-weight: 300;
+	opacity: 0.6;
+}
+
+.text-label {
+	white-space: nowrap;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
+    transition: opacity 0.25s ease-in-out;
+}
+
+#progress-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2em;
+	margin-top: 0.2em;
+}
+
+#progress-bar-track {
+    width: 100%;
+    height: 0.4em;
+	border-radius: 1em;
+	background-color: #ffffff3a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+}
+
+#progress-bar-fill {
+    height: 100%;
+    width: 0%; /* JS will control this */
+    border-radius: 1em;
+    background-color: var(--accent-color, #ffffff);
+    transition: width 1s ease-in-out, background-color 1s ease-in-out;
+    
+    /* This makes the handle track the end of the bar */
+    position: relative; 
+}
+
+#progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: -6px; /* Adjust to center the circle on the end of the bar */
+    top: 50%;
+    transform: translateY(-50%);
+    
+    width: 0.8em;  /* Diameter of your circle */
+    height: 0.8em;
+    background-color: var(--accent-color, #ffffff);
+    border-radius: 50%;
+    filter: brightness(1.4); 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+    
+    /* Optional: Hide it if the width is too small */
+    opacity: 0; 
+    transition: all 1s ease-in-out;
+}
+
+/* Show the handle when the progress bar is active */
+#progress-bar-track:hover #progress-bar-fill::after,
+#progress-bar-fill:not([style*="width: 0%"])::after {
+    opacity: 1;
+}
+
+#time-container {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.7em;
+	opacity: 0.5;
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-out {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}@keyframes slide-in-from-top {
+	0% {
+		transform: translateY(-1em);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-in-from-top {
+	0% {
+		transform: translateY(-1em);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-top {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateY(-1em);
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-from-bottom {
+	0% {
+		transform: translateY(1em);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-bottom {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateY(1em);
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-from-left {
+	0% {
+		transform: translateX(-1em);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-left {
+	0% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateX(-1em);
+		opacity: 0;
+	}
+}
+
+@keyframes slide-in-from-right {
+	0% {
+		transform: translateX(1em);
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out-right {
+	0% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateX(1em);
+		opacity: 0;
+	}
+}

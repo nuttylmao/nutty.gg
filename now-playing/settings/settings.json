@@ -1,0 +1,172 @@
+{
+	"settings": [
+		{
+			"id": "theme",
+			"label": "Theme",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "standard",
+					"label": "Standard"
+				},
+				{
+					"value": "compact",
+					"label": "Compact"
+				},
+				{
+					"value": "simple",
+					"label": "Simple"
+				},
+				{
+					"value": "card",
+					"label": "Card"
+				}
+			],
+			"defaultValue": "standard",
+			"group": "Appearance"
+		},
+		{
+			"id": "font",
+			"label": "Font",
+			"description": "",
+			"type": "text",
+			"defaultValue": "",
+			"group": "Appearance"
+		},
+		{
+			"id": "fontSize",
+			"label": "Font Size",
+			"description": "",
+			"type": "number",
+			"defaultValue": 20,
+			"group": "Appearance"
+		},
+		{
+			"id": "width",
+			"label": "Width",
+			"description": "",
+			"type": "number",
+			"defaultValue": 500,
+			"group": "Appearance"
+		},
+		{
+			"id": "albumArt",
+			"label": "Album Art",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "none",
+					"label": "Don't display"
+				},
+				{
+					"value": "show",
+					"label": "Show"
+				},
+				{
+					"value": "spinny",
+					"label": "Spinny disc thingy cause that looks dope as hell"
+				}
+			],
+			"defaultValue": "none",
+			"group": "Appearance"
+		},
+		{
+			"id": "showProgressBar",
+			"label": "Show Progress Bar",
+			"description": "Some apps do not display progress info correctly.",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "targetApplication",
+			"label": "Target Application",
+			"description": "Specific app to track. Leave empty to automatically follow the active player.<br><a href='http://127.0.0.1:5000/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"type": "text",
+			"placeholder": "e.g., Spotify.exe",
+			"defaultValue": "",
+			"group": "General"
+		},
+		{
+			"id": "autoHide",
+			"label": "Auto-Hide on Track Change",
+			"description": "If enabled, the widget will show for a set duration whenever a new track starts.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "displayDuration",
+			"label": "Display Duration (seconds)",
+			"description": "How long the widget should remain visible.",
+			"type": "number",
+			"min": 1,
+			"max": 60,
+			"defaultValue": 5,
+			"showIf": "autoHide",
+			"group": "General"
+		},
+		{
+			"id": "showAnimation",
+			"label": "Show Animation",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "fade-in",
+					"label": "Fade In"
+				},
+				{
+					"value": "slide-in-from-top",
+					"label": "Slide In From Top"
+				},
+				{
+					"value": "slide-in-from-bottom",
+					"label": "Slide In From Bottom"
+				},
+				{
+					"value": "slide-in-from-left",
+					"label": "Slide In From Left"
+				},
+				{
+					"value": "slide-in-from-right",
+					"label": "Slide In From Right"
+				}
+			],
+			"defaultValue": "slide-in-from-bottom",
+			"group": "General"
+		},
+		{
+			"id": "hideAnimation",
+			"label": "Hide Animation",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "fade-out",
+					"label": "Fade Out"
+				},
+				{
+					"value": "slide-out-top",
+					"label": "Slide Out Top"
+				},
+				{
+					"value": "slide-out-bottom",
+					"label": "Slide Out Down"
+				},
+				{
+					"value": "slide-out-left",
+					"label": "Slide Out Left"
+				},
+				{
+					"value": "slide-out-right",
+					"label": "Slide Out Right"
+				}
+			],
+			"defaultValue": "slide-out-bottom",
+			"group": "General"
+		}
+	]
+}
