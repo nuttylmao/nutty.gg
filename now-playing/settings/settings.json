@@ -65,7 +65,7 @@
 					"label": "Show"
 				}
 			],
-			"defaultValue": "none",
+			"defaultValue": "show",
 			"group": "Appearance"
 		},
 		{
