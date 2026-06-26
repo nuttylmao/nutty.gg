@@ -63,10 +63,6 @@
 				{
 					"value": "show",
 					"label": "Show"
-				},
-				{
-					"value": "spinny",
-					"label": "Spinny disc thingy cause that looks dope as hell"
 				}
 			],
 			"defaultValue": "none",
