@@ -29,6 +29,14 @@ const displayDuration = GetIntParam("displayDuration", 5);
 const showAnimation = urlParams.get('showAnimation') || 'fade';
 const hideAnimation = urlParams.get('hideAnimation') || 'fade';
 
+////////////////
+// PAGE SETUP //
+////////////////
+
+// Set fonts for the widget
+document.body.style.fontFamily = font;
+document.body.style.fontSize = `${fontSize}px`;
+
 
 
 ////////////////

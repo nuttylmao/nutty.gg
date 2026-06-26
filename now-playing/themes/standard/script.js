@@ -10,7 +10,7 @@ let hideTimeout = null;
 // PAGE ELEMENTS //
 ///////////////////
 
-const standardLayout = document.getElementById('standard-layout');
+const mainWrapper = document.getElementById('main-wrapper');
 const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
 const albumArtLayer = document.getElementById('album-art-layer');
@@ -30,10 +30,7 @@ const durationLabel = document.getElementById('duration');
 // PAGE SETUP //
 ////////////////
 
-// Set fonts for the widget
-document.body.style.fontFamily = font;
-document.body.style.fontSize = `${fontSize}px`;
-standardLayout.style.width = `${width}px`;
+mainWrapper.style.width = `${width}px`;
 
 // Set album art style
 switch (albumArt)
@@ -121,7 +118,7 @@ function UpdatePlayerState(data) {
             // Set progressbar
             // Ensure we don't divide by zero or exceed 100%
             const durationMs = timelineProps.EndTime;
-            const progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
+            let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
             progressPercent = Math.min(100, Math.max(0, progressPercent));
             progressBarFill.style.width = `${progressPercent}%`;
             progressBarFill.style.setProperty('--accent-color', mediaProps.AccentColor);
@@ -147,7 +144,7 @@ function SetVisibility(visible) {
     }
 
     if (visible) {
-        standardLayout.style.animation = `${showAnimation} 0.5s ease-out forwards`;
+        mainWrapper.style.animation = `${showAnimation} 0.5s ease-out forwards`;
         
         // Only set a new timer if autoHide is enabled
         if (autoHide) {
@@ -156,7 +153,7 @@ function SetVisibility(visible) {
             }, displayDuration * 1000);
         }
     } else {
-        standardLayout.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
+        mainWrapper.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
     }
 }
 
