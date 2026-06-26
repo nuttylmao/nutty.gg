@@ -19,7 +19,7 @@ const mainContainer = document.getElementById('main-container');
 const theme = urlParams.get('theme') || 'standard';
 const font = urlParams.get("font") || "";
 const fontSize = GetIntParam("fontSize", 20);
-const width = GetIntParam("width", 500);
+const maxWidth = GetIntParam("maxWidth", 500);
 const albumArt = urlParams.get('albumArt') || 'show';
 const showProgressBar = GetBooleanParam("showProgressBar", true);
 

@@ -10,4 +10,5 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh; /* Full viewport height */
+    margin: 0.5em;
 }

@@ -43,9 +43,9 @@
 			"group": "Appearance"
 		},
 		{
-			"id": "width",
-			"label": "Width",
-			"description": "",
+			"id": "maxWidth",
+			"label": "Max Width",
+			"description": "Set to 0 to utilize full browser width",
 			"type": "number",
 			"defaultValue": 500,
 			"group": "Appearance"

@@ -15,14 +15,14 @@ const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
 const albumArtLayer = document.getElementById('album-art-layer');
 const albumArtTransition = document.getElementById('album-art-transition-layer');
-const backgroundLayer = document.getElementById('background-layer');
-const backgroundTransitionLayer = document.getElementById('background-transition-layer');
+// const backgroundLayer = document.getElementById('background-layer');
+// const backgroundTransitionLayer = document.getElementById('background-transition-layer');
 const trackLabel = document.getElementById('track-label');
 const artistLabel = document.getElementById('artist-label');
-const progressContainer = document.getElementById('progress-container');
-const progressBarFill = document.getElementById('progress-bar-fill');
-const currentTimeLabel = document.getElementById('current-time');
-const durationLabel = document.getElementById('duration');
+// const progressContainer = document.getElementById('progress-container');
+// const progressBarFill = document.getElementById('progress-bar-fill');
+// const currentTimeLabel = document.getElementById('current-time');
+// const durationLabel = document.getElementById('duration');
 
 
 
@@ -48,9 +48,9 @@ switch (albumArt)
         break;
 }
 
-// Set progress bar visibility
-if (!showProgressBar)
-    progressContainer.style.display = 'none';
+// // Set progress bar visibility
+// if (!showProgressBar)
+//     progressContainer.style.display = 'none';
 
 
 
@@ -97,35 +97,35 @@ function UpdatePlayerState(data) {
             CurrentSong = newTrackKey;      // Update the tracker with the string key
         }
 
-        // 3. Update the progress info
-        if (timelineProps)
-        {
-            // Parse the Windows timestamp into a JavaScript time object
-            const lastUpdateAnchor = Date.parse(timelineProps.LastUpdatedTime.replace(' ', 'T'));
+        // // 3. Update the progress info
+        // if (timelineProps)
+        // {
+        //     // Parse the Windows timestamp into a JavaScript time object
+        //     const lastUpdateAnchor = Date.parse(timelineProps.LastUpdatedTime.replace(' ', 'T'));
 
-            // Calculate the drift (i.e. how many milliseconds have passed since Windows last updated)
-            const driftMs = Date.now() - lastUpdateAnchor;
+        //     // Calculate the drift (i.e. how many milliseconds have passed since Windows last updated)
+        //     const driftMs = Date.now() - lastUpdateAnchor;
 
-            // Add that drift to the reported Position
-            // Only add drift if the status is PLAYING
-            const isPlaying = (targetSession.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
-            const currentPositionMs = isPlaying && timelineProps.EndTime > 0 ? timelineProps.Position + driftMs : timelineProps.Position;
+        //     // Add that drift to the reported Position
+        //     // Only add drift if the status is PLAYING
+        //     const isPlaying = (targetSession.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
+        //     const currentPositionMs = isPlaying && timelineProps.EndTime > 0 ? timelineProps.Position + driftMs : timelineProps.Position;
 
-            // Update the label using your naming convention
-            currentTimeLabel.innerText =
-                ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(currentPositionMs);
+        //     // Update the label using your naming convention
+        //     currentTimeLabel.innerText =
+        //         ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(currentPositionMs);
 
-            durationLabel.innerText =
-                ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(timelineProps.EndTime);
+        //     durationLabel.innerText =
+        //         ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(timelineProps.EndTime);
 
-            // Set progressbar
-            // Ensure we don't divide by zero or exceed 100%
-            const durationMs = timelineProps.EndTime;
-            let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
-            progressPercent = Math.min(100, Math.max(0, progressPercent));
-            progressBarFill.style.width = `${progressPercent}%`;
-            progressBarFill.style.setProperty('--accent-color', mediaProps.AccentColor);
-        }
+        //     // Set progressbar
+        //     // Ensure we don't divide by zero or exceed 100%
+        //     const durationMs = timelineProps.EndTime;
+        //     let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
+        //     progressPercent = Math.min(100, Math.max(0, progressPercent));
+        //     progressBarFill.style.width = `${progressPercent}%`;
+        //     progressBarFill.style.setProperty('--accent-color', mediaProps.AccentColor);
+        // }
     }
     else
     {
@@ -164,7 +164,7 @@ async function ChangeTrack(mediaProps) {
     // Fade in the overlay (shows the new text)
     trackLabel.style.opacity = "0";
     artistLabel.style.opacity = "0";
-    backgroundLayer.style.opacity = "0";
+    // backgroundLayer.style.opacity = "0";
     albumArtLayer.style.opacity = "0";
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
@@ -177,26 +177,26 @@ async function ChangeTrack(mediaProps) {
         const accent = mediaProps.AccentColor || "#ffffff";
 
         // Set the image
-        backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
+        // backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;
 
-        // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-        // 'rgba(0,0,0,0.6)' ensures the text stays readable
-        backgroundLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
+        // // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
+        // // 'rgba(0,0,0,0.6)' ensures the text stays readable
+        // backgroundLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
 
         trackLabel.style.opacity = "";
         artistLabel.style.opacity = "";
-        backgroundLayer.style.opacity = "";
+        // backgroundLayer.style.opacity = "";
         albumArtLayer.style.opacity = "";
 
         setTimeout(() => {
-            // Set the image
-            backgroundTransitionLayer.style.backgroundImage = `url('${newArtUrl}')`;
+            // // Set the image
+            // backgroundTransitionLayer.style.backgroundImage = `url('${newArtUrl}')`;
             albumArtTransition.style.backgroundImage = `url('${newArtUrl}')`;
 
-            // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-            // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            backgroundTransitionLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
+            // // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
+            // // 'rgba(0,0,0,0.6)' ensures the text stays readable
+            // backgroundTransitionLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
 
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);
@@ -205,8 +205,8 @@ async function ChangeTrack(mediaProps) {
 
 function SetAlbumArtSize() {
     const height = songInfoContainer.offsetHeight;
-    albumArtContainer.style.height = `${height}px`;
-    albumArtContainer.style.width = `${height}px`;
+    albumArtContainer.style.height = `${1.5 * height}px`;
+    albumArtContainer.style.width = `${1.5 * height}px`;
 }
 
 SetAlbumArtSize();
