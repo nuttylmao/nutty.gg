@@ -83,7 +83,7 @@
 		},
 		{
 			"id": "showAlbumArt",
-			"label": "Show AlbumArt",
+			"label": "Show Album Art",
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,

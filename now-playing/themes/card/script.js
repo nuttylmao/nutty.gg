@@ -51,7 +51,7 @@ if (!showProgressBar)
 ////////////////////
 
 // Each theme must implement the following
-function UpdatePlayerState(data) {
+async function UpdatePlayerState(data) {
     // Check if the user has provided a target application in the settings
     const isFiltering = targetApplication && targetApplication.trim() !== "";
 
@@ -72,6 +72,9 @@ function UpdatePlayerState(data) {
         const playbackInfo = targetSession.playback_info;
         const mediaProps = targetSession.media_properties;
         const timelineProps = targetSession.timeline_properties;
+        
+        // Calcualte an accent color
+        const accentColorPalette = await GetAccentPalette(mediaProps.Base64Image);
 
         // 1. Check if playback status has changed and update visibility accordingly
         if (playbackInfo.PlaybackStatus !== CurrentPlaybackStatus) {
@@ -85,7 +88,7 @@ function UpdatePlayerState(data) {
         // 2. Check if the track name/artist have changed - this is our indicator that the next track has loaded
         const newTrackKey = `${mediaProps.Title}|${mediaProps.Artist}`;
         if (newTrackKey !== CurrentSong) {
-            ChangeTrack(mediaProps);        // Now trigger your cross-fade logic here!
+            ChangeTrack(mediaProps, accentColorPalette.LightVibrant);        // Now trigger your cross-fade logic here!
             CurrentSong = newTrackKey;      // Update the tracker with the string key
         }
 
@@ -116,7 +119,7 @@ function UpdatePlayerState(data) {
             let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
             progressPercent = Math.min(100, Math.max(0, progressPercent));
             progressBarFill.style.width = `${progressPercent}%`;
-            progressBarFill.style.setProperty('--accent-color', mediaProps.AccentColor);
+            progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
         }
     }
     else
@@ -152,7 +155,7 @@ function SetVisibility(visible) {
     }
 }
 
-async function ChangeTrack(mediaProps) {
+async function ChangeTrack(mediaProps, tintColor) {
     // Fade in the overlay (shows the new text)
     trackLabel.style.opacity = "0";
     artistLabel.style.opacity = "0";
@@ -166,7 +169,6 @@ async function ChangeTrack(mediaProps) {
 
         // Extract the image source string (use fallback if Windows has no art)
         const newArtUrl = mediaProps.Base64Image;
-        const accent = mediaProps.AccentColor || "#ffffff";
 
         // Set the image
         backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
@@ -174,7 +176,7 @@ async function ChangeTrack(mediaProps) {
 
         // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
         // 'rgba(0,0,0,0.6)' ensures the text stays readable
-        backgroundLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
+        backgroundLayer.style.backgroundColor = tintColor + "80"; // 80 is 50% opacity in hex
 
         trackLabel.style.opacity = "";
         artistLabel.style.opacity = "";
@@ -188,7 +190,7 @@ async function ChangeTrack(mediaProps) {
 
             // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
             // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            backgroundTransitionLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
+            backgroundTransitionLayer.style.backgroundColor = tintColor + "80"; // 80 is 50% opacity in hex
 
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);

@@ -33,23 +33,6 @@ CORS(app)
 # --- GLOBAL MEMORY CACHE ---
 ARTWORK_CACHE = {}
 
-def get_smart_accent(img):
-    """Sorts pixels by saturation to find the most vibrant color."""
-    thumb = img.copy()
-    thumb.thumbnail((20, 20)) # Higher sample rate than 1x1
-    pixels = list(thumb.getdata())
-    
-    # Sort by saturation: (max_channel - min_channel)
-    pixels.sort(key=lambda p: max(p) - min(p), reverse=True)
-    best_rgb = pixels[0]
-    
-    # Safety boost: ensure it's readable and vibrant
-    min_val = 80
-    rgb = [max(c, min_val) for c in best_rgb]
-    rgb = [min(int(c * 1.2), 255) for c in rgb]
-    
-    return '#{:02x}{:02x}{:02x}'.format(*rgb)
-
 async def get_all_media_info():
     global ARTWORK_CACHE
     import winsdk._winrt
@@ -90,11 +73,10 @@ async def get_all_media_info():
             artist = raw_media.artist if raw_media else "Unknown"
             track_key = f"{title} - {artist}"
 
-            media_data = {"Title": title, "Artist": artist, "Base64Image": None, "AccentColor": "#ffffff"}
+            media_data = {"Title": title, "Artist": artist, "Base64Image": None}
 
             if app_id in ARTWORK_CACHE and ARTWORK_CACHE[app_id]["track_key"] == track_key:
                 media_data["Base64Image"] = ARTWORK_CACHE[app_id]["base64"]
-                media_data["AccentColor"] = ARTWORK_CACHE[app_id]["accent"]
             
             elif raw_media and raw_media.thumbnail:
                 try:
@@ -106,12 +88,10 @@ async def get_all_media_info():
                     reader.read_bytes(buffer)
                     
                     img = Image.open(io.BytesIO(buffer))
-                    hex_color = get_smart_accent(img)
                     base64_art = f"data:image/png;base64,{base64.b64encode(buffer).decode('utf-8')}"
                     
-                    ARTWORK_CACHE[app_id] = {"track_key": track_key, "base64": base64_art, "accent": hex_color}
+                    ARTWORK_CACHE[app_id] = {"track_key": track_key, "base64": base64_art}
                     media_data["Base64Image"] = base64_art
-                    media_data["AccentColor"] = hex_color
                 except Exception:
                     pass
 
