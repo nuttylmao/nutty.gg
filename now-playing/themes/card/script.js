@@ -30,23 +30,15 @@ const durationLabel = document.getElementById('duration');
 // PAGE SETUP //
 ////////////////
 
+// Set property visibility
+trackLabel.style.display = showPrimary ? '' : 'none';
+artistLabel.style.display = showSecondary ? '' : 'none';
+
+// Set container width
 if (maxWidth > 0)
     mainWrapper.style.width = `${maxWidth}px`;
 else
     mainWrapper.style.width = `100%`;
-
-// Set album art style
-switch (albumArt)
-{
-    case 'none':
-        albumArtContainer.style.display = 'none';
-        break;
-    case 'show':
-        albumArtContainer.style.display = '';
-        break;
-    case 'spinny':
-        break;
-}
 
 // Set progress bar visibility
 if (!showProgressBar)
@@ -169,8 +161,8 @@ async function ChangeTrack(mediaProps) {
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(() => {
-        trackLabel.innerText = mediaProps.Title;
-        artistLabel.innerText = mediaProps.Artist;        
+        trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
+        artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;     
 
         // Extract the image source string (use fallback if Windows has no art)
         const newArtUrl = mediaProps.Base64Image;

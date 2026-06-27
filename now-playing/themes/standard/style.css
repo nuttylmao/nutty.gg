@@ -16,6 +16,7 @@
     position: relative;
     background-size: cover;
     background-position: center;
+    display: var(--show-album-art);
 }
 
 #album-art-layer,
@@ -89,19 +90,21 @@
 #track-label {
 	font-size: 1em;
 	font-weight: 600;
+    text-align: var(--text-alignment);
 }
 
 #artist-label {
 	font-size: 0.8em;
 	font-weight: 300;
 	opacity: 0.6;
+    text-align: var(--text-alignment);
 }
 
 .text-label {
 	white-space: nowrap;
     overflow: hidden;
-    mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
+    mask-image: var(--trailing-fade);
+    -webkit-mask-image: var(--trailing-fade);
     transition: opacity 0.25s ease-in-out;
 }
 

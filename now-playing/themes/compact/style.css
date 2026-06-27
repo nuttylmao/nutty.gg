@@ -52,7 +52,7 @@
 	align-items: baseline;
 	gap: 0.5em;
 	min-width: 100%;
-	/* justify-content: center; */
+	justify-content: var(--justify-content);
 	overflow: visible;
 }
 

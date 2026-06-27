@@ -51,22 +51,43 @@
 			"group": "Appearance"
 		},
 		{
-			"id": "albumArt",
-			"label": "Album Art",
+			"id": "textAlignment",
+			"label": "Text Alignment",
 			"description": "",
 			"type": "select",
 			"options": [
 				{
-					"value": "none",
-					"label": "Don't display"
+					"value": "left",
+					"label": "Left"
 				},
 				{
-					"value": "show",
-					"label": "Show"
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
 				}
 			],
-			"defaultValue": "show",
+			"defaultValue": "left",
 			"group": "Appearance"
+		},
+		{
+			"id": "targetApplication",
+			"label": "Target Application",
+			"description": "Specific app to track. Leave empty to automatically follow the active player.<br><a href='http://127.0.0.1:5000/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"type": "text",
+			"placeholder": "e.g., Spotify.exe",
+			"defaultValue": "",
+			"group": "General"
+		},
+		{
+			"id": "showAlbumArt",
+			"label": "Show AlbumArt",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
 		},
 		{
 			"id": "showProgressBar",
@@ -77,12 +98,27 @@
 			"group": "General"
 		},
 		{
-			"id": "targetApplication",
-			"label": "Target Application",
-			"description": "Specific app to track. Leave empty to automatically follow the active player.<br><a href='http://127.0.0.1:5000/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
-			"type": "text",
-			"placeholder": "e.g., Spotify.exe",
-			"defaultValue": "",
+			"id": "swapArtistTrack",
+			"label": "Swap Artist and Track",
+			"description": "Displays Artist above Track instead of Track above Artist.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "showPrimary",
+			"label": "Show Primary Text",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "showSecondary",
+			"label": "Show Secondary Text",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
 			"group": "General"
 		},
 		{

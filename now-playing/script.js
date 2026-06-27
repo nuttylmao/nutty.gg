@@ -20,14 +20,18 @@ const theme = urlParams.get('theme') || 'standard';
 const font = urlParams.get("font") || "";
 const fontSize = GetIntParam("fontSize", 20);
 const maxWidth = GetIntParam("maxWidth", 500);
-const albumArt = urlParams.get('albumArt') || 'show';
-const showProgressBar = GetBooleanParam("showProgressBar", true);
+const textAlignment = urlParams.get('textAlignment') || 'left';
 
 const targetApplication = urlParams.get('targetApplication') || '';
+const showAlbumArt = GetBooleanParam("showAlbumArt", true);
+const showProgressBar = GetBooleanParam("showProgressBar", true);
+const swapArtistTrack = GetBooleanParam("swapArtistTrack", false);
+const showPrimary = GetBooleanParam("showPrimary", true);
+const showSecondary = GetBooleanParam("showSecondary", true);
 const autoHide = GetBooleanParam("autoHide", false);
 const displayDuration = GetIntParam("displayDuration", 5);
-const showAnimation = urlParams.get('showAnimation') || 'fade';
-const hideAnimation = urlParams.get('hideAnimation') || 'fade';
+const showAnimation = urlParams.get('showAnimation') || 'slide-in-from-bottom';
+const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
 
 ////////////////
 // PAGE SETUP //
@@ -36,6 +40,30 @@ const hideAnimation = urlParams.get('hideAnimation') || 'fade';
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
+
+// Set album art visibility
+if (showAlbumArt)
+    document.documentElement.style.setProperty('--show-album-art', ``);
+else
+    document.documentElement.style.setProperty('--show-album-art', `none`);
+
+// Set text alignment
+document.documentElement.style.setProperty('--text-alignment', `${textAlignment}`);
+switch (textAlignment)
+{
+    case 'left':
+        document.documentElement.style.setProperty('--justify-content', `flex-start`);
+        document.documentElement.style.setProperty('--trailing-fade', `linear-gradient(to right, black calc(100% - 1em), transparent 100%)`);
+        break;
+    case 'center':
+        document.documentElement.style.setProperty('--justify-content', `center`);
+        document.documentElement.style.setProperty('--trailing-fade', `linear-gradient(to right, black calc(100% - 1em), transparent 100%)`);
+        break;
+    case 'right':
+        document.documentElement.style.setProperty('--justify-content', `flex-end`);
+        document.documentElement.style.setProperty('--trailing-fade', ``);
+        break;
+}
 
 
 
@@ -104,8 +132,18 @@ function ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(time) {
     if (isNaN(time) || time <= 0) return "0:00";
 
     const totalSeconds = Math.floor(time / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    return `${minutes}:${('0' + seconds).slice(-2)}`;
+    // Format seconds with a leading zero
+    const paddedSeconds = ('0' + seconds).slice(-2);
+
+    if (hours > 0) {
+        // Format minutes with a leading zero if hours are present
+        const paddedMinutes = ('0' + minutes).slice(-2);
+        return `${hours}:${paddedMinutes}:${paddedSeconds}`;
+    }
+
+    return `${minutes}:${paddedSeconds}`;
 }

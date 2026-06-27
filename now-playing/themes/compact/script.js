@@ -16,8 +16,8 @@ const songInfoContainer = document.getElementById('song-info-container');
 const progressBar = document.getElementById('progress-bar');
 const trackLabel = document.getElementById('track-label');
 const artistLabel = document.getElementById('artist-label');
-const trackLabelBase = document.getElementById('track-label-background');
-const artistLabelBase = document.getElementById('artist-label-background');
+const trackLabelBackground = document.getElementById('track-label-background');
+const artistLabelBackground = document.getElementById('artist-label-background');
 const songLabel = document.getElementById('song-label');
 const songLabelBackground = document.getElementById('song-label-background');
 
@@ -27,6 +27,13 @@ const songLabelBackground = document.getElementById('song-label-background');
 // PAGE SETUP //
 ////////////////
 
+// Set property visibility
+trackLabel.style.display = showPrimary ? '' : 'none';
+artistLabel.style.display = showSecondary ? '' : 'none';
+trackLabelBackground.style.display = showPrimary ? '' : 'none';
+artistLabelBackground.style.display = showSecondary ? '' : 'none';
+
+// Set container width
 if (maxWidth > 0)
     mainWrapper.style.width = `${maxWidth}px`;
 else
@@ -150,10 +157,10 @@ async function ChangeTrack(mediaProps, accentColor) {
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(() => {
-        trackLabel.innerText = mediaProps.Title;
-        artistLabel.innerText = mediaProps.Artist;
-        trackLabelBase.innerText = mediaProps.Title;
-        artistLabelBase.innerText = mediaProps.Artist;
+        trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
+        artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
+        trackLabelBackground.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
+        artistLabelBackground.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
 
         // Extract the image source string (use fallback if Windows has no art)
         
