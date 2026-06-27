@@ -16,7 +16,7 @@
     position: relative;
     background-size: cover;
     background-position: center;
-	margin: 0.5em 0em 1em 0em;
+	margin: 0em 0em 1em 0em;
 }
 
 #album-art-layer,
@@ -81,7 +81,7 @@
     position: relative; /* Keeps it in the document flow */
     z-index: 2;         /* Sits above the background-layer */
     
-    padding: 1em 1.75em;
+    padding: 1.5em 1.25em;
     display: flex;
     flex-direction: column;
     gap: 0.3em;
@@ -162,130 +162,4 @@
 	justify-content: space-between;
 	font-size: 0.7em;
 	opacity: 0.5;
-}
-
-@keyframes fade-in {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
-@keyframes fade-out {
-	0% {
-		opacity: 1;
-	}
-
-	100% {
-		opacity: 0;
-	}
-}@keyframes slide-in-from-top {
-	0% {
-		transform: translateY(-1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-in-from-top {
-	0% {
-		transform: translateY(-1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-top {
-	0% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateY(-1em);
-		opacity: 0;
-	}
-}
-
-@keyframes slide-in-from-bottom {
-	0% {
-		transform: translateY(1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-bottom {
-	0% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateY(1em);
-		opacity: 0;
-	}
-}
-
-@keyframes slide-in-from-left {
-	0% {
-		transform: translateX(-1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-left {
-	0% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateX(-1em);
-		opacity: 0;
-	}
-}
-
-@keyframes slide-in-from-right {
-	0% {
-		transform: translateX(1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-right {
-	0% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateX(1em);
-		opacity: 0;
-	}
 }

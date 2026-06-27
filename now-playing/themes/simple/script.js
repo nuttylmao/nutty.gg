@@ -174,7 +174,7 @@ async function ChangeTrack(mediaProps) {
 
         // Extract the image source string (use fallback if Windows has no art)
         const newArtUrl = mediaProps.Base64Image;
-        const accent = mediaProps.AccentColor || "#ffffff";
+        // const accent = mediaProps.AccentColor || "#ffffff";
 
         // Set the image
         // backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;

@@ -2,7 +2,6 @@
     width: 500px;
     display: flex;
     flex-direction: row;
-    /* This forces both containers to be the same height */
     align-items: stretch; 
     gap: 1em;
     opacity: 0;
@@ -17,186 +16,76 @@
     overflow: hidden;
 	align-items: center;
 	border-radius: 1em;
-	padding: 0.25em 0.75em;
-	background-color: #00000080;
+	transition: all 1s ease-in-out;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+
+	display: grid;
+    /* This creates a single cell that both children will occupy */
+    grid-template-areas: "stack";
 }
 
 /* The content sits on top */
-#song-info-wrapper {
-    position: relative; /* Keeps it in the document flow */
-    z-index: 2;         /* Sits above the background-layer */
-    width: 100%;
-    /* padding: 1em 1.75em;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3em; */
+#progress-bar {
+	grid-area: stack;
+    position: relative;
+    z-index: 2;         /* Sits above the progress bar */
+	transition: all 1s ease-in-out;
+	width: 100%;
+	/* mask-image: linear-gradient(to right, black calc(100% - 4em), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 4em), transparent 100%); */
 }
 
-#song-label {
+.progress {
+	box-sizing: border-box;
+	padding: 0.25em 0.75em;
+	grid-area: stack;
+	display: flex;
+	/* justify-content: center; */
+	min-width: 0;
+}
+
+#song-label,
+#song-label-background {
 	font-size: 1em;
-	width: 100%;
 	display: flex;
 	flex-direction: row;
 	align-items: baseline;
 	gap: 0.5em;
+	min-width: 100%;
+	/* justify-content: center; */
+	overflow: visible;
 }
 
-#artist-label {
+#artist-label,
+#artist-label-background {
 	font-size: 0.8em;
 	font-weight: 400;
 	opacity: 0.7;
 }
 
-#track-label {
+#track-label,
+#track-label-background {
 	font-weight: 700;
 }
 
-
 .text-label {
 	white-space: nowrap;
-    overflow: hidden;
-    mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
+    /* overflow: hidden; */
     transition: opacity 0.25s ease-in-out;
 }
 
-/* The background now fills the frame */
-#background-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    z-index: 1;
-	transition: all 1s ease;
-	mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 1em), transparent 100%);
-	transition: all 1s ease-in-out;
-	opacity: 0.7;
+
+/* TODO: Marquee doesn't work that well, disabling for now */
+/* .scrolling-text {
+    animation: marquee var(--scroll-duration, 15s) linear infinite;
+    display: inline-block;
 }
 
-@keyframes fade-in {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
-@keyframes fade-out {
-	0% {
-		opacity: 1;
-	}
-
-	100% {
-		opacity: 0;
-	}
-}@keyframes slide-in-from-top {
-	0% {
-		transform: translateY(-1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-in-from-top {
-	0% {
-		transform: translateY(-1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-top {
-	0% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateY(-1em);
-		opacity: 0;
-	}
-}
-
-@keyframes slide-in-from-bottom {
-	0% {
-		transform: translateY(1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-bottom {
-	0% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateY(1em);
-		opacity: 0;
-	}
-}
-
-@keyframes slide-in-from-left {
-	0% {
-		transform: translateX(-1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-left {
-	0% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateX(-1em);
-		opacity: 0;
-	}
-}
-
-@keyframes slide-in-from-right {
-	0% {
-		transform: translateX(1em);
-		opacity: 0;
-	}
-
-	100% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-}
-
-@keyframes slide-out-right {
-	0% {
-		transform: translateX(0);
-		opacity: 1;
-	}
-
-	100% {
-		transform: translateX(1em);
-		opacity: 0;
-	}
-}
+@keyframes marquee {
+    0% { 
+        transform: translateX(var(--container-width)); 
+    }
+    100% { 
+        transform: translateX(var(--text-width));
+    }
+} */

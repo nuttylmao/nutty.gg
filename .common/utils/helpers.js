@@ -412,3 +412,76 @@ async function LoadHTMLTemplate(name) {
         document.body.appendChild(template.cloneNode(true));
     }
 }
+
+// Calculate an accent color given an image
+// async function GetAccentPalette(imageUrl, count = 20) {
+//     if (typeof ColorThief === 'undefined') {
+//         await new Promise((resolve, reject) => {
+//             const script = document.createElement('script');
+//             script.src = "https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.min.js";
+//             script.onload = resolve;
+//             script.onerror = reject;
+//             document.head.appendChild(script);
+//         });
+//     }
+
+//     return new Promise((resolve) => {
+//         const img = new Image();
+//         img.crossOrigin = "Anonymous";
+//         img.src = imageUrl;
+        
+//         img.onload = () => {
+//             const colorThief = new ColorThief();
+//             // Clamp count between 2 and 20 to ensure algorithm stability
+//             const safeCount = Math.max(2, Math.min(20, count));
+//             const palette = colorThief.getPalette(img, safeCount);
+
+//             // Convert RGB array to Hex
+//             const hexPalette = palette.map(([r, g, b]) => {
+//                 return "#" + ((1 << 24) + (r << 16) + (g << 8) + b)
+//                     .toString(16)
+//                     .slice(1);
+//             });
+                
+//             resolve(hexPalette);
+//         };
+
+//         img.onerror = () => resolve(["#ffffff"]); 
+//     });
+// }
+
+async function GetAccentPalette(imageUrl) {
+    // 1. Dynamic Loader: Load Vibrant.js
+    if (typeof Vibrant === 'undefined') {
+        await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/node-vibrant/3.1.6/vibrant.min.js";
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    return new Promise((resolve) => {
+        // Vibrant can take the URL directly!
+        Vibrant.from(imageUrl).getPalette((err, palette) => {
+            if (err) {
+                console.warn("Vibrant failed, using fallback.");
+                return resolve({
+                    Vibrant: "#ffffff",
+                    Muted: "#cccccc",
+                    DarkVibrant: "#000000"
+                });
+            }
+
+            // Extract Hex from each swatch
+            const hexPalette = {};
+            for (let role in palette) {
+                if (palette[role]) {
+                    hexPalette[role] = palette[role].getHex();
+                }
+            }
+            resolve(hexPalette);
+        });
+    });
+}

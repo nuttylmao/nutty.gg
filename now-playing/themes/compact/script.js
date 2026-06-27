@@ -13,17 +13,13 @@ let hideTimeout = null;
 const mainWrapper = document.getElementById('main-wrapper');
 const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
-const albumArtLayer = document.getElementById('album-art-layer');
-const albumArtTransition = document.getElementById('album-art-transition-layer');
-const backgroundLayer = document.getElementById('background-layer');
-// const backgroundTransitionLayer = document.getElementById('background-transition-layer');
+const progressBar = document.getElementById('progress-bar');
 const trackLabel = document.getElementById('track-label');
 const artistLabel = document.getElementById('artist-label');
+const trackLabelBase = document.getElementById('track-label-background');
+const artistLabelBase = document.getElementById('artist-label-background');
 const songLabel = document.getElementById('song-label');
-// const progressContainer = document.getElementById('progress-container');
-// const progressBarFill = document.getElementById('progress-bar-fill');
-// const currentTimeLabel = document.getElementById('current-time');
-// const durationLabel = document.getElementById('duration');
+const songLabelBackground = document.getElementById('song-label-background');
 
 
 
@@ -36,23 +32,6 @@ if (maxWidth > 0)
 else
     mainWrapper.style.width = `100%`;
 
-// // Set album art style
-// switch (albumArt)
-// {
-//     case 'none':
-//         albumArtContainer.style.display = 'none';
-//         break;
-//     case 'show':
-//         albumArtContainer.style.display = '';
-//         break;
-//     case 'spinny':
-//         break;
-// }
-
-// // Set progress bar visibility
-// if (!showProgressBar)
-//     progressContainer.style.display = 'none';
-
 
 
 ////////////////////
@@ -60,7 +39,7 @@ else
 ////////////////////
 
 // Each theme must implement the following
-function UpdatePlayerState(data) {
+async function UpdatePlayerState(data) {
     // Check if the user has provided a target application in the settings
     const isFiltering = targetApplication && targetApplication.trim() !== "";
 
@@ -81,6 +60,9 @@ function UpdatePlayerState(data) {
         const playbackInfo = targetSession.playback_info;
         const mediaProps = targetSession.media_properties;
         const timelineProps = targetSession.timeline_properties;
+        
+        // Calcualte an accent color
+        const accentColorPalette = await GetAccentPalette(mediaProps.Base64Image);
 
         // 1. Check if playback status has changed and update visibility accordingly
         if (playbackInfo.PlaybackStatus !== CurrentPlaybackStatus) {
@@ -94,7 +76,7 @@ function UpdatePlayerState(data) {
         // 2. Check if the track name/artist have changed - this is our indicator that the next track has loaded
         const newTrackKey = `${mediaProps.Title}|${mediaProps.Artist}`;
         if (newTrackKey !== CurrentSong) {
-            ChangeTrack(mediaProps);        // Now trigger your cross-fade logic here!
+            ChangeTrack(mediaProps, accentColorPalette);        // Now trigger your cross-fade logic here!
             CurrentSong = newTrackKey;      // Update the tracker with the string key
         }
 
@@ -112,20 +94,20 @@ function UpdatePlayerState(data) {
             const isPlaying = (targetSession.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
             const currentPositionMs = isPlaying && timelineProps.EndTime > 0 ? timelineProps.Position + driftMs : timelineProps.Position;
 
-            // // Update the label using your naming convention
-            // currentTimeLabel.innerText =
-            //     ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(currentPositionMs);
-
-            // durationLabel.innerText =
-            //     ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(timelineProps.EndTime);
-
             // Set progressbar
             // Ensure we don't divide by zero or exceed 100%
             const durationMs = timelineProps.EndTime;
             let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
             progressPercent = Math.min(100, Math.max(0, progressPercent));
-            backgroundLayer.style.width = `${progressPercent}%`;
-            // progressBarFill.style.setProperty('--accent-color', mediaProps.AccentColor);
+
+            // Calculate how much needs to be hidden (the right-side offset)
+            const clipRight = 100 - progressPercent;
+
+            // Update the clip-path
+            progressBar.style.clipPath = `inset(0 ${clipRight}% 0 0)`;
+            
+            // const clipRight = progressPercent;
+            // progressBar.style.maskImage = `linear-gradient(to right, black calc(${clipRight}% - 4em), transparent ${clipRight}%)`
         }
     }
     else
@@ -161,59 +143,55 @@ function SetVisibility(visible) {
     }
 }
 
-async function ChangeTrack(mediaProps) {
+async function ChangeTrack(mediaProps, accentColor) {
     // Fade in the overlay (shows the new text)
     songLabel.style.opacity = "0";
-    // trackLabel.style.opacity = "0";
-    // artistLabel.style.opacity = "0";
-    // backgroundLayer.style.opacity = "0";
-    // albumArtLayer.style.opacity = "0";
+    songLabelBackground.style.opacity = "0";
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(() => {
         trackLabel.innerText = mediaProps.Title;
         artistLabel.innerText = mediaProps.Artist;
-        // songLabel.innerText = `${mediaProps.Artist}${mediaProps.Title}`
+        trackLabelBase.innerText = mediaProps.Title;
+        artistLabelBase.innerText = mediaProps.Artist;
 
         // Extract the image source string (use fallback if Windows has no art)
-        // const newArtUrl = mediaProps.Base64Image;
-        const accent = mediaProps.AccentColor || "#ffffff";
         
         // Set the pill color
-        backgroundLayer.style.background = accent;
+        songInfoContainer.style.background = accentColor.DarkMuted + "80";
+        progressBar.style.background = accentColor.LightVibrant;
+        songLabel.style.color = accentColor.DarkVibrant;
+        songLabelBackground.style.color = accentColor.LightVibrant;
 
-        // Set the image
-        // backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
-        // albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;
-
-        // // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-        // // 'rgba(0,0,0,0.6)' ensures the text stays readable
-        // backgroundLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
-
-        // trackLabel.style.opacity = "";
-        // artistLabel.style.opacity = "";
         songLabel.style.opacity = "";
-        // backgroundLayer.style.opacity = "";
-        // albumArtLayer.style.opacity = "";
+        songLabelBackground.style.opacity = "";
+
+        // // If text is too long, add a marquee
+        // requestAnimationFrame(() => {
+        //     const containerWidth = songInfoContainer.clientWidth;
+        //     const textWidth = trackLabel.clientWidth + artistLabel.clientWidth;
+            
+
+        //     console.log(containerWidth);
+        //     console.log(textWidth);
+
+        //     if (textWidth > containerWidth) {
+        //         songLabel.classList.add('scrolling-text');
+        //         songLabelBackground.classList.add('scrolling-text');
+        //         // Calculate speed: 50 pixels per second is a good standard
+        //         const duration = (textWidth + containerWidth) / 50; 
+        //         console.log(duration);
+        //         document.documentElement.style.setProperty('--scroll-duration', `${duration}s`);
+        //         document.documentElement.style.setProperty('--container-width', `${textWidth}px`);
+        //         document.documentElement.style.setProperty('--text-width', `-${textWidth}px`);
+        //     } else {
+        //         songLabel.classList.remove('scrolling-text');
+        //         songLabelBackground.classList.remove('scrolling-text');
+        //     }
+        // });
 
         setTimeout(() => {
-            // // Set the image
-            // backgroundTransitionLayer.style.backgroundImage = `url('${newArtUrl}')`;
-            // albumArtTransition.style.backgroundImage = `url('${newArtUrl}')`;
-
-            // // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-            // // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            // backgroundTransitionLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
-
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);
     }, 250);
 }
-
-// function SetAlbumArtSize() {
-//     const height = songInfoContainer.offsetHeight;
-//     albumArtContainer.style.height = `${1.5 * height}px`;
-//     albumArtContainer.style.width = `${1.5 * height}px`;
-// }
-
-// SetAlbumArtSize();
