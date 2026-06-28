@@ -1,45 +1,39 @@
-import sys
-import subprocess
-
-# --- SELF-HEALING DEPENDENCY CHECK ---
-def check_dependencies():
-    required = {'flask': 'flask', 'flask_cors': 'flask_cors', 'winsdk': 'winsdk', 'PIL': 'Pillow'}
-    for mod, pkg in required.items():
-        try:
-            __import__(mod)
-        except ImportError:
-            print(f"--- Missing dependency: {pkg}. Installing now... ---")
-            try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
-            except subprocess.CalledProcessError:
-                print(f"--- Failed to install {pkg}. Please install it manually. ---")
-                sys.exit(0)
-
-check_dependencies()
+###############
+### IMPORTS ###
+###############
 
 import asyncio
 import json
 import base64
 import io
-from PIL import Image
+import threading
+import os
+import pystray # New dependency
+from PIL import Image, ImageDraw
 from flask import Flask, jsonify
 from flask_cors import CORS
 from winsdk.windows.media.control import GlobalSystemMediaTransportControlsSessionManager as SMTC
 from winsdk.windows.storage.streams import DataReader
+import winsdk._winrt as winrt
+
+
+
+######################
+### INITIALIZATION ###
+######################
 
 app = Flask(__name__)
 CORS(app)
-
-# --- GLOBAL MEMORY CACHE ---
 ARTWORK_CACHE = {}
+
+
+
+######################
+### CORE FUNCTIONS ###
+######################
 
 async def get_all_media_info():
     global ARTWORK_CACHE
-    import winsdk._winrt
-    try:
-        winsdk._winrt.init_apartment(1) 
-    except Exception:
-        pass 
         
     try:
         # Instantiate the SMTC manager -> This allows use to "talk" to the Windows Media API
@@ -200,6 +194,12 @@ async def get_all_media_info():
     except Exception as e:
         return {"current_session_id": None, "sessions": [], "error": str(e)}
 
+
+
+#################
+### ENDPOINTS ###
+#################
+
 @app.route('/now-playing')
 def now_playing():
     loop = asyncio.new_event_loop()
@@ -242,6 +242,12 @@ def get_sessions():
         return f"<body style='background-color: #121212; color: #ff5555;'>Error: {str(e)}</body>"
     finally:
         loop.close()
+
+
+
+#################
+### KICK OFF! ###
+#################
 
 if __name__ == '__main__':
     app.run(port=5000, threaded=True)
