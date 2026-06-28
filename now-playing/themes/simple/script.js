@@ -165,7 +165,7 @@ async function ChangeTrack(mediaProps) {
         artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist; 
 
         // Extract the image source string (use fallback if Windows has no art)
-        const newArtUrl = mediaProps.Base64Image;
+        const newArtUrl = mediaProps.Thumbnail;
         // const accent = mediaProps.AccentColor || "#ffffff";
 
         // Set the image

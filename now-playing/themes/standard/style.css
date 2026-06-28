@@ -31,12 +31,12 @@
     transition: opacity 0.5s ease;
 }
 
-#art-layer {
+#album-art-layer {
     z-index: 1;
 	transition: all 0.5s ease;
 }
 
-#art-transition-layer {
+#album-art-transition-layer {
     z-index: 0;
 }
 

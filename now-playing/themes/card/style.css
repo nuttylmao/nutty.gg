@@ -32,12 +32,12 @@
     transition: opacity 0.5s ease;
 }
 
-#art-layer {
+#album-art-layer {
     z-index: 1;
 	transition: all 0.5s ease;
 }
 
-#art-transition-layer {
+#album-art-transition-layer {
     z-index: 0;
 }
 
@@ -82,7 +82,7 @@
     position: relative; /* Keeps it in the document flow */
     z-index: 2;         /* Sits above the background-layer */
     
-    padding: 1.5em 1.25em;
+    padding: 2em 1.75em;
     display: flex;
     flex-direction: column;
     gap: 0.3em;

@@ -69,7 +69,7 @@ async function UpdatePlayerState(data) {
         const timelineProps = targetSession.timeline_properties;
         
         // Calcualte an accent color
-        const accentColorPalette = await GetAccentPalette(mediaProps.Base64Image);
+        const accentColorPalette = await GetAccentPalette(mediaProps.Thumbnail);
 
         // 1. Check if playback status has changed and update visibility accordingly
         if (playbackInfo.PlaybackStatus !== CurrentPlaybackStatus) {

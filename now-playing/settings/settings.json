@@ -39,6 +39,7 @@
 			"label": "Font Size",
 			"description": "",
 			"type": "number",
+			"min": 0,
 			"defaultValue": 20,
 			"group": "Appearance"
 		},
@@ -47,6 +48,7 @@
 			"label": "Max Width",
 			"description": "Set to 0 to utilize full browser width",
 			"type": "number",
+			"min": 0,
 			"defaultValue": 500,
 			"group": "Appearance"
 		},

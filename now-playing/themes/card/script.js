@@ -74,7 +74,7 @@ async function UpdatePlayerState(data) {
         const timelineProps = targetSession.timeline_properties;
         
         // Calcualte an accent color
-        const accentColorPalette = await GetAccentPalette(mediaProps.Base64Image);
+        const accentColorPalette = await GetAccentPalette(mediaProps.Thumbnail);
 
         // 1. Check if playback status has changed and update visibility accordingly
         if (playbackInfo.PlaybackStatus !== CurrentPlaybackStatus) {
@@ -168,7 +168,7 @@ async function ChangeTrack(mediaProps, tintColor) {
         artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;     
 
         // Extract the image source string (use fallback if Windows has no art)
-        const newArtUrl = mediaProps.Base64Image;
+        const newArtUrl = mediaProps.Thumbnail;
 
         // Set the image
         backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
