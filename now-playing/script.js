@@ -33,6 +33,14 @@ const displayDuration = GetIntParam("displayDuration", 5);
 const showAnimation = urlParams.get('showAnimation') || 'slide-in-from-bottom';
 const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
 
+/////////////////
+// GLOBAL VARS //
+/////////////////
+
+let CurrentPlaybackStatus;
+let CurrentSong;
+let hideTimeout = null;
+
 ////////////////
 // PAGE SETUP //
 ////////////////

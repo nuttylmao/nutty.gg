@@ -1,11 +1,3 @@
-/////////////////
-// GLOBAL VARS //
-/////////////////
-
-let CurrentPlaybackStatus;
-let CurrentSong;
-let hideTimeout = null;
-
 ///////////////////
 // PAGE ELEMENTS //
 ///////////////////
@@ -86,10 +78,14 @@ async function UpdatePlayerState(data) {
         }
 
         // 2. Check if the track name/artist have changed - this is our indicator that the next track has loaded
-        const newTrackKey = `${mediaProps.Title}|${mediaProps.Artist}`;
-        if (newTrackKey !== CurrentSong) {
-            ChangeTrack(mediaProps, accentColorPalette.LightVibrant);       // Now trigger your cross-fade logic here!
-            CurrentSong = newTrackKey;                  // Update the tracker with the string key
+        // Only proceed if the player state is actively playing audio
+        if (CurrentPlaybackStatus == PlaybackStatus.PLAYING)
+        {
+            const newTrackKey = `${mediaProps.Title}|${mediaProps.Artist}`;
+            if (newTrackKey !== CurrentSong) {
+                ChangeTrack(mediaProps, accentColorPalette.LightVibrant);       // Now trigger your cross-fade logic here!
+                CurrentSong = newTrackKey;                  // Update the tracker with the string key
+            }
         }
 
         // 3. Update the progress info
