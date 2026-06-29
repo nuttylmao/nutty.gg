@@ -1,3 +1,8 @@
+:root {
+    --border-radius: 20px;
+    --component-radius: calc(var(--border-radius) * 0.75);
+}
+
 #main-wrapper {
     width: 500px;
     display: flex;
@@ -12,7 +17,7 @@
     /* 1. Tell it to maintain a 1:1 square ratio */
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: 1em;
+    border-radius: var(--component-radius);
     position: relative;
     background-size: cover;
     background-position: center;
@@ -46,7 +51,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    border-radius: 1em;
+    border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
@@ -119,7 +124,7 @@
 #progress-bar-track {
     width: 100%;
     height: 0.4em;
-	border-radius: 1em;
+	border-radius: 10000px;
 	background-color: #ffffff3a;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
 }
@@ -127,7 +132,7 @@
 #progress-bar-fill {
     height: 100%;
     width: 0%; /* JS will control this */
-    border-radius: 1em;
+    border-radius: 10000px;
     background-color: var(--accent-color, #ffffff);
     transition: width 1s ease-in-out, background-color 1s ease-in-out;
     

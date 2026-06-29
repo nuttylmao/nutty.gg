@@ -1,3 +1,7 @@
+:root {
+    --border-radius: 10px;
+}
+
 #main-wrapper {
     width: 500px;
     display: flex;
@@ -13,7 +17,7 @@
     /* 1. Tell it to maintain a 1:1 square ratio */
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: 0.25em;
+    border-radius: var(--border-radius);
     position: relative;
     background-size: cover;
     background-position: center;

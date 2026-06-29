@@ -193,12 +193,12 @@ async function ChangeTrack(mediaProps, tintColor) {
     }, 250);
 }
 
-// function SetAlbumArtSize() {
-//     const height = songInfoContainer.offsetHeight;
-//     albumArtContainer.style.height = `${height}px`;
-//     albumArtContainer.style.width = `${height}px`;
-// }
+function SetAlbumArtSize() {
+    const height = songInfoContainer.offsetHeight;
+    albumArtContainer.style.height = `${height}px`;
+    albumArtContainer.style.width = `${height}px`;
+}
 
-// requestAnimationFrame(() => {
-//     SetAlbumArtSize();
-// });
+requestAnimationFrame(() => {
+    SetAlbumArtSize();
+});
