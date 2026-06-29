@@ -82,14 +82,27 @@ switch (textAlignment)
 // Load the theme
 async function LoadTheme()
 {
-    const response = await fetch(`./themes/${theme}/index.html`);
+    // Check if the theme inherits from a base theme
+    let baseTheme = theme;
+    try {
+        const response = await fetch(`./themes/${theme}/inherits.json`);
+        if (response.ok) {
+            const config = await response.json();
+            baseTheme = config['base-theme'];
+        }
+    } catch (e) {
+        // No inheritance file found, assume it is a base theme
+    }
+    
+    // Fetch the HTML structure from the base theme folder
+    const response = await fetch(`./themes/${baseTheme}/index.html`);
     const html = await response.text();
 
     mainContainer.innerHTML = html;
     
     // Swap the CSS file
     const link = document.getElementById('theme-style');
-    link.href = `./themes/${theme}/style.css`;
+    link.href = `./themes/${baseTheme}/style.css`;
     
     // Load the theme-specific JS
     // We remove the old script tag and add a new one
@@ -97,9 +110,22 @@ async function LoadTheme()
     if (oldScript) oldScript.remove();
 
     const script = document.createElement('script');
-    script.src = `./themes/${theme}/script.js`;
+    script.src = `./themes/${baseTheme}/script.js`;
     script.id = 'theme-script';
     document.body.appendChild(script);
+
+    // If the base theme != theme, that means this is a variant, so load the variant's CSS
+    if (baseTheme != theme)
+    {
+        // Load the variant CSS
+        const baseLink = document.createElement('link');
+        baseLink.rel = 'stylesheet';
+        baseLink.className = 'theme-style'; // Use class for easy batch removal
+        baseLink.href = `./themes/${theme}/style.css`;
+        document.head.appendChild(baseLink);
+
+        window.ThemeVariant = theme;
+    }
 }
 
 LoadTheme();

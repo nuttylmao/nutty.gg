@@ -172,7 +172,7 @@ async function ChangeTrack(mediaProps, tintColor) {
 
         // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
         // 'rgba(0,0,0,0.6)' ensures the text stays readable
-        backgroundLayer.style.backgroundColor = tintColor + "80"; // 80 is 50% opacity in hex
+        // backgroundLayer.style.backgroundColor = tintColor + "80"; // 80 is 50% opacity in hex
 
         trackLabel.style.opacity = "";
         artistLabel.style.opacity = "";
@@ -186,7 +186,7 @@ async function ChangeTrack(mediaProps, tintColor) {
 
             // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
             // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            backgroundTransitionLayer.style.backgroundColor = tintColor + "80"; // 80 is 50% opacity in hex
+            // backgroundTransitionLayer.style.backgroundColor = tintColor + "80"; // 80 is 50% opacity in hex
 
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);

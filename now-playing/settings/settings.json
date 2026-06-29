@@ -20,11 +20,11 @@
 				},
 				{
 					"value": "compact",
-					"label": "Compact (Light)"
+					"label": "Compact"
 				},
 				{
-					"value": "compact-dark",
-					"label": "Compact (Dark)"
+					"value": "compact",
+					"label": "Compact (Inverted)"
 				},
 				{
 					"value": "simple",

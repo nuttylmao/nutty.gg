@@ -1,0 +1,17 @@
+#track-label {
+	font-weight: 800;
+}
+
+#artist-label {
+	font-weight: 500;
+	opacity: 0.7;
+}
+
+.progress-text {
+	font-weight: 500;
+	opacity: 0.7;
+}
+
+#progress-bar-track {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Adds depth */
+}

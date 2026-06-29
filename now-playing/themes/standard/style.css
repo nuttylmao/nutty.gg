@@ -58,6 +58,7 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     gap: 1.5em;
     padding: 0.75em 1em;
+    transition: all 0.25s ease-in-out;
 }
 
 /* The background now fills the frame */
@@ -74,7 +75,7 @@
     background-repeat: no-repeat;
 
 	background-blend-mode: overlay; /* Or 'soft-light' for a subtler effect */
-    filter: blur(5px) brightness(0.3) saturate(1.2);
+    filter: blur(10px) brightness(0.3) saturate(1.2);
     transform: scale(1.1); /* Slightly zoom in to cover edges when blurred */
 }
 

@@ -19,6 +19,9 @@ const songLabelBackground = document.getElementById('song-label-background');
 // PAGE SETUP //
 ////////////////
 
+// This theme has variants
+const themeVariant = window.ThemeVariant ? window.ThemeVariant : '';
+
 // Set property visibility
 trackLabel.style.display = showPrimary ? '' : 'none';
 artistLabel.style.display = showSecondary ? '' : 'none';
@@ -146,7 +149,7 @@ function SetVisibility(visible) {
     }
 }
 
-async function ChangeTrack(mediaProps, accentColor) {
+async function ChangeTrack(mediaProps, accentColorPalette) {
     // Fade in the overlay (shows the new text)
     songLabel.style.opacity = "0";
     songLabelBackground.style.opacity = "0";
@@ -161,10 +164,20 @@ async function ChangeTrack(mediaProps, accentColor) {
         // Extract the image source string (use fallback if Windows has no art)
         
         // Set the pill color
-        songInfoContainer.style.background = accentColor.DarkMuted + "80";
-        progressBar.style.background = accentColor.LightVibrant;
-        songLabel.style.color = accentColor.DarkVibrant;
-        songLabelBackground.style.color = accentColor.LightVibrant;
+        switch (themeVariant) {
+            case "compact-inverted":
+                songInfoContainer.style.backgroundColor = accentColorPalette.LightVibrant;
+                progressBar.style.background = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
+                songLabel.style.color = accentColorPalette.LightVibrant;
+                songLabelBackground.style.color = accentColorPalette.DarkVibrant;
+                break;
+            default:
+                songInfoContainer.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
+                progressBar.style.background = accentColorPalette.LightVibrant;
+                songLabel.style.color = accentColorPalette.DarkVibrant;
+                songLabelBackground.style.color = accentColorPalette.LightVibrant;
+                break;
+        }
 
         songLabel.style.opacity = "";
         songLabelBackground.style.opacity = "";
