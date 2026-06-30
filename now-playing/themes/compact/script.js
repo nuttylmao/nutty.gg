@@ -6,6 +6,7 @@ const mainWrapper = document.getElementById('main-wrapper');
 const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
 const progressBar = document.getElementById('progress-bar');
+const progressBarTrack = document.getElementById('progress-bar-track');
 const trackLabel = document.getElementById('track-label');
 const artistLabel = document.getElementById('artist-label');
 const trackLabelBackground = document.getElementById('track-label-background');
@@ -107,6 +108,17 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     // Set progressbar
     // Ensure we don't divide by zero or exceed 100%
     const durationMs = timelineProps.EndTime;
+
+    // If the duration is 0, that means the session isn't returning any timeline info, so just put the progress at 100%
+    if (durationMs <= 0 || !showProgressBar)
+    {
+        progressBarTrack.style.display = 'none';
+        return;
+    }
+    else
+        progressBarTrack.style.display = '';
+
+    // Calculate the progress percentage
     let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
     progressPercent = Math.min(100, Math.max(0, progressPercent));
 
