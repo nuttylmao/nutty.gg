@@ -37,6 +37,11 @@ const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
 // GLOBAL VARS //
 /////////////////
 
+const REQUIRED_VERSION = '0.0.1';
+const SMTC_BRIDGE_DOWNLOAD_URL = 'https://github.com/nuttylmao/smtc-bridge/releases';
+let smtcBridgePopup = null;
+let versionCheckPopup = null;
+let skipVersionCheck = false;
 let CurrentPlaybackStatus;
 let CurrentSong;
 let hideTimeout = null;
@@ -141,26 +146,126 @@ async function FetchMedia() {
         const response = await fetch('http://localhost:5000/now-playing');
         const data = await response.json();
 
+        // Remove the SMTC Bridge popup if it's on screen
+        if (smtcBridgePopup) {
+            smtcBridgePopup.close();
+            smtcBridgePopup = null;
+        }
+
+        // Check the SMTC Bridge version
+        CheckSMTCBridgeVersion(data.app_version);
+
         // Update the UI with the received data
         // console.log(data);
         UpdatePlayerState(data);
-
     } catch (error) {
         console.error("Failed to connect to Flask media server:", error);
+
+        // Show a popup to instruct the user to install SMTC Bridge
+        const newPopup = showPopup(
+            '/.common/resources/smtc-bridge-icon.png', 
+            'Waiting for SMTC Bridge', 
+            'Please launch SMTC Bridge',
+            '', // Attribute text
+            'linear-gradient(0deg, #111111 0%, #11001f 100%)',
+            { 
+                text: 'Download', 
+                action: () => { 
+                    window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
+                } 
+            }
+        );
+
+        if (newPopup) {
+            smtcBridgePopup = newPopup;
+        }
     }
 }
 
-// Start polling every 1000 milliseconds
-setInterval(FetchMedia, 1000);
+window.addEventListener('DOMContentLoaded', () => {
+    // Start polling every 1000 milliseconds
+    setInterval(FetchMedia, 1000);
 
-// Run once immediately on script load
-FetchMedia();
+    // Run once immediately on script load
+    FetchMedia();
+});
 
 
 
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
+
+function CheckSMTCBridgeVersion(installedVersion) {
+    // Check that the server/client are on the same SMTC Bridge version
+    // const VersionStatus = VersionCheck(REQUIRED_VERSION, installedVersion);
+    const versionStatus = VersionCheck(REQUIRED_VERSION, installedVersion);
+    
+    if (skipVersionCheck)
+        return;
+
+    switch (versionStatus)
+    {
+        case 'incompatible':
+            {
+                const newPopup = showPopup(
+                    '/.common/resources/smtc-bridge-icon.png',
+                    'Update Required',
+                    'Your version of SMTC Bridge is out of date.',
+                    `<b>Installed Version: ${installedVersion}</b><br><b>New Version: ${REQUIRED_VERSION}</b>`,
+                    'linear-gradient(0deg, #1b0005 0%, #4f000d 100%)',
+                    { 
+                        text: 'Download', 
+                        action: () => { 
+                            window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
+                        } 
+                    }
+                );
+
+                if (newPopup) {
+                    versionCheckPopup = newPopup;
+                }
+            }
+
+            skipVersionCheck = false;
+            break;
+        case 'soft-warning':
+            {
+                const newPopup = showPopup(
+                    '/.common/resources/smtc-bridge-icon.png',
+                    'Update Available',
+                    'A new version of SMTC Bridge is available.',
+                    `<b>Installed Version: ${installedVersion}</b><br><b>New Version: ${REQUIRED_VERSION}</b>`,
+                    'linear-gradient(0deg, #2a004f 0%, #4f2675 100%)',
+                    { 
+                        text: 'Download', 
+                        action: () => { 
+                            window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
+                        } 
+                    }
+                );
+
+                if (newPopup) {
+                    versionCheckPopup = newPopup;
+                }
+
+                setTimeout(() => {
+                    if (versionCheckPopup) {
+                        versionCheckPopup.close();
+                        versionCheckPopup = null;
+                    }
+                }, 10000);
+            }
+            skipVersionCheck = true;
+            break;
+        default:
+            if (versionCheckPopup) {
+                versionCheckPopup.close();
+                versionCheckPopup = null;
+            }
+            break;
+    }
+}
 
 function ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(time) {
     if (isNaN(time) || time <= 0) return "0:00";
