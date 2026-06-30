@@ -22,6 +22,9 @@ const mainContainer = document.getElementById('main-container');
 // OPTIONS //
 /////////////
 
+const smtcBridgeAddress = urlParams.get('smtcBridgeAddress') || '127.0.0.1';
+const smtcBridgePort = urlParams.get('smtcBridgePort') || '5000';
+
 const theme = urlParams.get('theme') || 'standard';
 const font = urlParams.get("font") || "";
 const fontSize = GetIntParam("fontSize", 20);
@@ -147,7 +150,7 @@ LoadTheme();
 
 async function FetchMedia() {
     try {
-        const response = await fetch('http://localhost:5000/now-playing');
+        const response = await fetch(`http://${smtcBridgeAddress}:${smtcBridgePort}/now-playing`);
         const data = await response.json();
 
         // Remove the SMTC Bridge popup if it's on screen

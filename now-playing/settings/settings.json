@@ -221,6 +221,22 @@
 			],
 			"defaultValue": "slide-out-bottom",
 			"group": "General"
+		},
+		{
+			"id": "smtcBridgeAddress",
+			"label": "Address",
+			"description": "",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "SMTC Bridge"
+		},
+		{
+			"id": "smtcBridgePort",
+			"label": "Port",
+			"description": "",
+			"type": "text",
+			"defaultValue": "5000",
+			"group": "SMTC Bridge"
 		}
 	]
 }
