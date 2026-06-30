@@ -7,14 +7,11 @@ const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
 const albumArtLayer = document.getElementById('album-art-layer');
 const albumArtTransition = document.getElementById('album-art-transition-layer');
-// const backgroundLayer = document.getElementById('background-layer');
-// const backgroundTransitionLayer = document.getElementById('background-transition-layer');
 const trackLabel = document.getElementById('track-label');
 const artistLabel = document.getElementById('artist-label');
-// const progressContainer = document.getElementById('progress-container');
-// const progressBarFill = document.getElementById('progress-bar-fill');
-// const currentTimeLabel = document.getElementById('current-time');
-// const durationLabel = document.getElementById('duration');
+const progressContainer = document.getElementById('progress-container');
+const currentTimeLabel = document.getElementById('current-time');
+const durationLabel = document.getElementById('duration');
 
 
 
@@ -32,9 +29,13 @@ if (maxWidth > 0)
 else
     mainWrapper.style.width = `100%`;
 
-// // Set progress bar visibility
-// if (!showProgressBar)
-//     progressContainer.style.display = 'none';
+// Set progress bar visibility
+if (!showProgressBar)
+    progressContainer.style.display = 'none';
+
+// If text alignment is 'right', swap the album art to the right hand side too
+if (textAlignment == 'right')
+    document.getElementById('yet-another-wrapper-yup').appendChild(document.getElementById('album-art-container'));
 
 
 
@@ -43,10 +44,8 @@ else
 ////////////////////
 
 async function ChangeTrack(mediaProps) {
-    // Fade in the overlay (shows the new text)
     trackLabel.style.opacity = "0";
     artistLabel.style.opacity = "0";
-    // backgroundLayer.style.opacity = "0";
     albumArtLayer.style.opacity = "0";
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
@@ -58,39 +57,26 @@ async function ChangeTrack(mediaProps) {
         const newArtUrl = mediaProps.Thumbnail;
 
         // Set the image
-        // backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;
-
-        // // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-        // // 'rgba(0,0,0,0.6)' ensures the text stays readable
-        // backgroundLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
 
         trackLabel.style.opacity = "";
         artistLabel.style.opacity = "";
-        // backgroundLayer.style.opacity = "";
         albumArtLayer.style.opacity = "";
 
         setTimeout(() => {
-            // // Set the image
-            // backgroundTransitionLayer.style.backgroundImage = `url('${newArtUrl}')`;
+            // Set the image
             albumArtTransition.style.backgroundImage = `url('${newArtUrl}')`;
-
-            // // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-            // // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            // backgroundTransitionLayer.style.backgroundColor = accent + "80"; // 80 is 50% opacity in hex
-
+            
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);
     }, 250);
 }
 
 function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
-}
+    // Update the label using your naming convention
+    currentTimeLabel.innerText =
+        ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(currentPositionMs);
 
-function SetAlbumArtSize() {
-    const height = songInfoContainer.offsetHeight;
-    albumArtContainer.style.height = `${1.5 * height}px`;
-    albumArtContainer.style.width = `${1.5 * height}px`;
+    durationLabel.innerText =
+        ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(timelineProps.EndTime);
 }
-
-SetAlbumArtSize();

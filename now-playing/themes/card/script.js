@@ -100,11 +100,3 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     progressBarFill.style.width = `${progressPercent}%`;
     progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
 }
-
-function SetAlbumArtSize() {
-    // const height = songInfoContainer.offsetHeight;
-    albumArtContainer.style.height = `100%`;
-    // albumArtContainer.style.width = `100%`;
-}
-
-SetAlbumArtSize();

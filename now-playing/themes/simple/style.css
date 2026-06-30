@@ -6,14 +6,23 @@
     width: 500px;
     display: flex;
     flex-direction: row;
-    align-items: stretch; 
-    gap: 1em;
+    align-items: stretch;
     opacity: 0;
-	align-items: center;
+}
+
+#yet-another-wrapper-yup {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75em;
+    transition: all 0.25s ease-in-out;
 }
 
 #album-art-container {
     /* 1. Tell it to maintain a 1:1 square ratio */
+    height: 150%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: var(--border-radius);
@@ -21,6 +30,7 @@
     background-size: cover;
     background-position: center;
     display: var(--show-album-art);
+    flex-shrink: 0;
 }
 
 #album-art-layer,
@@ -50,6 +60,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex-grow: 1;
+    min-width: 0;
 }
 
 #background-transition-layer {
@@ -75,9 +87,17 @@
 
 #artist-label {
 	font-size: 0.8em;
-	font-weight: 300;
+	font-weight: 400;
 	opacity: 0.6;
     text-align: var(--text-alignment);
+}
+
+#progress-container {
+	font-size: 0.6em;
+	font-weight: 400;
+	opacity: 0.6;
+    text-align: var(--text-alignment);
+    margin-top: 0.5em;
 }
 
 .text-label {

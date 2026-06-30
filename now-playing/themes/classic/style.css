@@ -13,6 +13,7 @@
 
 #album-art-container {
     /* 1. Tell it to maintain a 1:1 square ratio */
+    height: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: var(--border-radius);
@@ -20,6 +21,7 @@
     background-size: cover;
     background-position: center;
     display: var(--show-album-art);
+    flex-shrink: 0;
 }
 
 #album-art-layer,
@@ -45,13 +47,25 @@
 
 #song-info-container {
     position: relative;
-    flex: 1;
+    flex-grow: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#yet-another-wrapper-yup {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    gap: 0.5em;
+    transition: all 0.25s ease-in-out;
 }
 
 /* The background now fills the frame */

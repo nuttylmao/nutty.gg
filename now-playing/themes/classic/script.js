@@ -77,7 +77,7 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
 
             // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
             // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            backgroundTransitionLayer.style.backgroundColor = aaccentColorPalette.DarkMuted + "80"; // 80 is 50% opacity in hex
+            backgroundTransitionLayer.style.backgroundColor = accentColorPalette.DarkMuted + "80"; // 80 is 50% opacity in hex
 
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);
@@ -100,13 +100,3 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     progressBarFill.style.width = `${progressPercent}%`;
     progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
 }
-
-function SetAlbumArtSize() {
-    const height = songInfoContainer.offsetHeight;
-    albumArtContainer.style.height = `${height}px`;
-    albumArtContainer.style.width = `${height}px`;
-}
-
-requestAnimationFrame(() => {
-    SetAlbumArtSize();
-});
