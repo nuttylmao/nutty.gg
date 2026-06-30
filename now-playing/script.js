@@ -147,10 +147,7 @@ async function FetchMedia() {
         const data = await response.json();
 
         // Remove the SMTC Bridge popup if it's on screen
-        if (smtcBridgePopup) {
-            smtcBridgePopup.close();
-            smtcBridgePopup = null;
-        }
+        CloseSMTCBridgePopup();
 
         // Check the SMTC Bridge version
         CheckSMTCBridgeVersion(data.app_version);
@@ -162,23 +159,7 @@ async function FetchMedia() {
         console.error("Failed to connect to Flask media server:", error);
 
         // Show a popup to instruct the user to install SMTC Bridge
-        const newPopup = showPopup(
-            '/.common/resources/smtc-bridge-icon.png', 
-            'Waiting for SMTC Bridge', 
-            'Please launch SMTC Bridge',
-            '', // Attribute text
-            'linear-gradient(0deg, #111111 0%, #11001f 100%)',
-            { 
-                text: 'Download', 
-                action: () => { 
-                    window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
-                } 
-            }
-        );
-
-        if (newPopup) {
-            smtcBridgePopup = newPopup;
-        }
+        ShowWaitingForSMTCBridgePopup();
     }
 }
 
@@ -191,6 +172,91 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
+////////////
+// POPUPS //
+////////////
+
+function ShowWaitingForSMTCBridgePopup() {
+    const newPopup = showPopup(
+        '/.common/resources/smtc-bridge-icon.png', 
+        'Waiting for SMTC Bridge', 
+        'Please launch SMTC Bridge',
+        '', // Attribute text
+        'linear-gradient(0deg, #111111 0%, #11001f 100%)',
+        { 
+            text: 'Download', 
+            action: () => { 
+                window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
+            } 
+        }
+    );
+
+    if (newPopup) {
+        smtcBridgePopup = newPopup;
+    }
+}
+
+
+function ShowSMTCBridgeUpdateRequiredPopup(installedVersion) {
+    const newPopup = showPopup(
+        '/.common/resources/smtc-bridge-icon.png',
+        'Update Required',
+        'Your version of SMTC Bridge is out of date.',
+        `<b>Installed Version: ${installedVersion}</b><br><b>New Version: ${REQUIRED_VERSION}</b>`,
+        'linear-gradient(0deg, #1b0005 0%, #4f000d 100%)',
+        { 
+            text: 'Download', 
+            action: () => { 
+                window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
+            } 
+        }
+    );
+
+    if (newPopup) {
+        versionCheckPopup = newPopup;
+    }
+}
+
+function ShowSMTCBridgeUpdateAvailablePopup(installedVersion) {
+    const newPopup = showPopup(
+        '/.common/resources/smtc-bridge-icon.png',
+        'Update Available',
+        'A new version of SMTC Bridge is available.',
+        `<b>Installed Version: ${installedVersion}</b><br><b>New Version: ${REQUIRED_VERSION}</b>`,
+        'linear-gradient(0deg, #2a004f 0%, #4f2675 100%)',
+        { 
+            text: 'Download', 
+            action: () => { 
+                window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
+            } 
+        }
+    );
+
+    if (newPopup) {
+        versionCheckPopup = newPopup;
+    }
+
+    setTimeout(() => {
+        CloseVersionCheckPopup();
+    }, 10000);
+}
+
+function CloseSMTCBridgePopup()
+{
+    if (smtcBridgePopup) {
+        smtcBridgePopup.close();
+        smtcBridgePopup = null;
+    }
+}
+
+function CloseVersionCheckPopup()
+{
+    if (versionCheckPopup) {
+        versionCheckPopup.close();
+        versionCheckPopup = null;
+    }
+}
 
 //////////////////////
 // HELPER FUNCTIONS //
@@ -207,62 +273,15 @@ function CheckSMTCBridgeVersion(installedVersion) {
     switch (versionStatus)
     {
         case 'incompatible':
-            {
-                const newPopup = showPopup(
-                    '/.common/resources/smtc-bridge-icon.png',
-                    'Update Required',
-                    'Your version of SMTC Bridge is out of date.',
-                    `<b>Installed Version: ${installedVersion}</b><br><b>New Version: ${REQUIRED_VERSION}</b>`,
-                    'linear-gradient(0deg, #1b0005 0%, #4f000d 100%)',
-                    { 
-                        text: 'Download', 
-                        action: () => { 
-                            window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
-                        } 
-                    }
-                );
-
-                if (newPopup) {
-                    versionCheckPopup = newPopup;
-                }
-            }
-
+            ShowSMTCBridgeUpdateRequiredPopup(installedVersion);
             skipVersionCheck = false;
             break;
         case 'soft-warning':
-            {
-                const newPopup = showPopup(
-                    '/.common/resources/smtc-bridge-icon.png',
-                    'Update Available',
-                    'A new version of SMTC Bridge is available.',
-                    `<b>Installed Version: ${installedVersion}</b><br><b>New Version: ${REQUIRED_VERSION}</b>`,
-                    'linear-gradient(0deg, #2a004f 0%, #4f2675 100%)',
-                    { 
-                        text: 'Download', 
-                        action: () => { 
-                            window.open(SMTC_BRIDGE_DOWNLOAD_URL, "_blank");
-                        } 
-                    }
-                );
-
-                if (newPopup) {
-                    versionCheckPopup = newPopup;
-                }
-
-                setTimeout(() => {
-                    if (versionCheckPopup) {
-                        versionCheckPopup.close();
-                        versionCheckPopup = null;
-                    }
-                }, 10000);
-            }
+            ShowSMTCBridgeUpdateAvailablePopup(installedVersion);
             skipVersionCheck = true;
             break;
         default:
-            if (versionCheckPopup) {
-                versionCheckPopup.close();
-                versionCheckPopup = null;
-            }
+            CloseVersionCheckPopup();
             break;
     }
 }
