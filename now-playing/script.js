@@ -5,6 +5,12 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
+////////////////
+// CONSTANTS //
+////////////////
+
+const REQUIRED_VERSION = '0.0.1';
+const SMTC_BRIDGE_DOWNLOAD_URL = 'https://github.com/nuttylmao/smtc-bridge/releases';
 
 ///////////////////
 // PAGE ELEMENTS //
@@ -37,13 +43,11 @@ const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
 // GLOBAL VARS //
 /////////////////
 
-const REQUIRED_VERSION = '0.0.1';
-const SMTC_BRIDGE_DOWNLOAD_URL = 'https://github.com/nuttylmao/smtc-bridge/releases';
 let smtcBridgePopup = null;
 let versionCheckPopup = null;
 let skipVersionCheck = false;
 let CurrentPlaybackStatus;
-let CurrentSong;
+let CurrentSongKey;
 let hideTimeout = null;
 
 ////////////////
@@ -178,7 +182,7 @@ window.addEventListener('DOMContentLoaded', () => {
 ////////////
 
 function ShowWaitingForSMTCBridgePopup() {
-    const newPopup = showPopup(
+    const newPopup = SplashscreenPopup(
         '/.common/resources/smtc-bridge-icon.png', 
         'Waiting for SMTC Bridge', 
         'Please launch SMTC Bridge',
@@ -199,7 +203,7 @@ function ShowWaitingForSMTCBridgePopup() {
 
 
 function ShowSMTCBridgeUpdateRequiredPopup(installedVersion) {
-    const newPopup = showPopup(
+    const newPopup = SplashscreenPopup(
         '/.common/resources/smtc-bridge-icon.png',
         'Update Required',
         'Your version of SMTC Bridge is out of date.',
@@ -219,7 +223,7 @@ function ShowSMTCBridgeUpdateRequiredPopup(installedVersion) {
 }
 
 function ShowSMTCBridgeUpdateAvailablePopup(installedVersion) {
-    const newPopup = showPopup(
+    const newPopup = SplashscreenPopup(
         '/.common/resources/smtc-bridge-icon.png',
         'Update Available',
         'A new version of SMTC Bridge is available.',
@@ -286,22 +290,90 @@ function CheckSMTCBridgeVersion(installedVersion) {
     }
 }
 
-function ConvertMillisecondsToMinutesSoThatItLooksBetterOnTheOverlay(time) {
-    if (isNaN(time) || time <= 0) return "0:00";
+// Each theme must implement the following
+async function UpdatePlayerState(data) {
+    // Check if the user has provided a target application in the settings
+    const isFiltering = targetApplication && targetApplication.trim() !== "";
 
-    const totalSeconds = Math.floor(time / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+    // Search for the session that matches the target application
+    const sessionToFind = isFiltering ? targetApplication : data.current_session_id;
+    let targetSession = data.sessions.find(s => {
+        // If filtering, check if the source_app_id matches the user's string
+        if (isFiltering) {
+            return s.source_app_id.toLowerCase() === targetApplication.toLowerCase();
+        }
+        // Otherwise, match the system's current active session ID
+        return s.source_app_id === sessionToFind;
+    });
 
-    // Format seconds with a leading zero
-    const paddedSeconds = ('0' + seconds).slice(-2);
+    // If a target session was found, update the state of the widget
+    if (targetSession) {
+        // Extract the relevant properties from the session
+        const playbackInfo = targetSession.playback_info;
+        const mediaProps = targetSession.media_properties;
+        const timelineProps = targetSession.timeline_properties;
 
-    if (hours > 0) {
-        // Format minutes with a leading zero if hours are present
-        const paddedMinutes = ('0' + minutes).slice(-2);
-        return `${hours}:${paddedMinutes}:${paddedSeconds}`;
+        // Calcualte an accent color
+        const accentColorPalette = await GetAccentPalette(mediaProps.Thumbnail);
+
+        // 1. Check if playback status has changed and update visibility accordingly
+        if (playbackInfo.PlaybackStatus !== CurrentPlaybackStatus) {
+            if (playbackInfo.PlaybackStatus === PlaybackStatus.PLAYING)
+                SetVisibility(true);
+            else
+                SetVisibility(false);
+            CurrentPlaybackStatus = playbackInfo.PlaybackStatus;
+        }
+        
+
+        // 2. Check if the track name/artist have changed - this is our indicator that the next track has loaded
+        // Only proceed if the player state is actively playing audio
+        if (CurrentPlaybackStatus == PlaybackStatus.PLAYING) {
+            const newTrackKey = `${mediaProps.Title}|${mediaProps.Artist}`;
+            if (newTrackKey !== CurrentSongKey) {
+                ChangeTrack(mediaProps, accentColorPalette);       // Now trigger your cross-fade logic here!
+                CurrentSongKey = newTrackKey;                  // Update the tracker with the string key
+            }
+        }
+
+        // 3. Update the progress info
+        if (timelineProps) {
+            // Parse the Windows timestamp into a JavaScript time object
+            const lastUpdateAnchor = Date.parse(timelineProps.LastUpdatedTime.replace(' ', 'T'));
+
+            // Calculate the drift (i.e. how many milliseconds have passed since Windows last updated)
+            const driftMs = Date.now() - lastUpdateAnchor;
+
+            // Add that drift to the reported Position
+            // Only add drift if the status is PLAYING
+            const isPlaying = (targetSession.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
+            const currentPositionMs = isPlaying && timelineProps.EndTime > 0 ? timelineProps.Position + driftMs : timelineProps.Position;
+
+            SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette);
+        }
+    }
+    else {
+        SetVisibility(false);
+    }
+}
+
+function SetVisibility(visible) {
+    // Always clear any pending hide timers whenever we change visibility
+    if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
     }
 
-    return `${minutes}:${paddedSeconds}`;
+    if (visible) {
+        mainWrapper.style.animation = `${showAnimation} 0.5s ease-out forwards`;
+
+        // Only set a new timer if autoHide is enabled
+        if (autoHide) {
+            hideTimeout = setTimeout(() => {
+                SetVisibility(false);
+            }, displayDuration * 1000);
+        }
+    } else {
+        mainWrapper.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
+    }
 }

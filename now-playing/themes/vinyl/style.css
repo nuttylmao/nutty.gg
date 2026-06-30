@@ -4,7 +4,6 @@
     width: 500px;
     display: flex;
     flex-direction: row;
-    /* This forces both containers to be the same height */
     gap: 1em;
     opacity: 0;
 	align-items: center;

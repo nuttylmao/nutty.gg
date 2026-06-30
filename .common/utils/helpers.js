@@ -413,42 +413,25 @@ async function LoadHTMLTemplate(name) {
     }
 }
 
-// Calculate an accent color given an image
-// async function GetAccentPalette(imageUrl, count = 20) {
-//     if (typeof ColorThief === 'undefined') {
-//         await new Promise((resolve, reject) => {
-//             const script = document.createElement('script');
-//             script.src = "https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.min.js";
-//             script.onload = resolve;
-//             script.onerror = reject;
-//             document.head.appendChild(script);
-//         });
-//     }
+function ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(time) {
+    if (isNaN(time) || time <= 0) return "0:00";
 
-//     return new Promise((resolve) => {
-//         const img = new Image();
-//         img.crossOrigin = "Anonymous";
-//         img.src = imageUrl;
-        
-//         img.onload = () => {
-//             const colorThief = new ColorThief();
-//             // Clamp count between 2 and 20 to ensure algorithm stability
-//             const safeCount = Math.max(2, Math.min(20, count));
-//             const palette = colorThief.getPalette(img, safeCount);
+    const totalSeconds = Math.floor(time / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-//             // Convert RGB array to Hex
-//             const hexPalette = palette.map(([r, g, b]) => {
-//                 return "#" + ((1 << 24) + (r << 16) + (g << 8) + b)
-//                     .toString(16)
-//                     .slice(1);
-//             });
-                
-//             resolve(hexPalette);
-//         };
+    // Format seconds with a leading zero
+    const paddedSeconds = ('0' + seconds).slice(-2);
 
-//         img.onerror = () => resolve(["#ffffff"]); 
-//     });
-// }
+    if (hours > 0) {
+        // Format minutes with a leading zero if hours are present
+        const paddedMinutes = ('0' + minutes).slice(-2);
+        return `${hours}:${paddedMinutes}:${paddedSeconds}`;
+    }
+
+    return `${minutes}:${paddedSeconds}`;
+}
 
 async function GetAccentPalette(imageUrl) {
     // 1. Dynamic Loader: Load Vibrant.js
@@ -487,7 +470,7 @@ async function GetAccentPalette(imageUrl) {
 }
 
 // Generic popup
-function showPopup(iconSrc, title, subtitle, attribute, background, button) {
+function SplashscreenPopup(iconSrc, title, subtitle, attribute, background, button) {
     // 1. Check if a popup is already on screen
     const existingOverlay = document.getElementById('global-common-overlay');
     
