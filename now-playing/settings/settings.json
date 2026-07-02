@@ -97,7 +97,7 @@
 		{
 			"id": "targetApplication",
 			"label": "Target Application",
-			"description": "Specific app to track. Leave empty to automatically follow the active player.<br><a href='http://127.0.0.1:5000/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"description": "Specific app to track. Leave empty to automatically follow the active player.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
 			"type": "text",
 			"placeholder": "e.g., Spotify.exe",
 			"defaultValue": "",

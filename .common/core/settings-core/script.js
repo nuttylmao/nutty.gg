@@ -211,6 +211,7 @@ function LoadJSON(settingsJson) {
 
 						SaveSettingsToStorage();
 						RefreshWidgetPreview();
+						InterpolatePlaceholders();
 					});
 
 					settingItemContent.appendChild(inputElement);
@@ -257,6 +258,7 @@ function LoadJSON(settingsJson) {
 			UpdateSettingItemVisibility();
 			RefreshWidgetPreview();
 			SaveSettingsToStorage();
+			InterpolatePlaceholders();
 		})
 		.catch(error => console.error('Error loading settings:', error));
 }
@@ -485,6 +487,47 @@ function GetSettingDepth(setting, allSettings) {
     }
 
     return depth;
+}
+
+function InterpolatePlaceholders() {
+    // Regex to match anything inside curly braces, e.g., {smtcBridgeAddress}
+    const tokenRegex = /\{([^}]+)\}/g;
+
+    // Iterate over all settings from the original JSON in memory
+    settingsData.settings.forEach(setting => {
+        
+        // Only process settings that actually have a placeholder in their description
+        if (setting.description && setting.description.includes('{')) {
+            
+            // Start with the original untouched description from the JSON
+            let dynamicHTML = setting.description;
+            let match;
+
+            // Reset regex state (required when reusing a global regex in a loop)
+            tokenRegex.lastIndex = 0;
+
+            // Find all {tokens} in the string
+            while ((match = tokenRegex.exec(setting.description)) !== null) {
+                const targetId = match[1]; // The exact text inside the braces
+                const targetInput = document.getElementById(targetId);
+
+                if (targetInput) {
+                    // Get current value, or fallback to the JSON default if the box is empty
+                    const fallback = settingsData.settings.find(s => s.id === targetId)?.defaultValue || '';
+                    const currentValue = targetInput.value || fallback;
+                    
+                    // Replace the token with the actual value in our temporary string
+                    dynamicHTML = dynamicHTML.replace(match[0], currentValue);
+                }
+            }
+
+            // Find the specific <p> tag for this setting in the DOM and overwrite its HTML
+            const descriptionParagraph = document.querySelector(`#item-${setting.id} p`);
+            if (descriptionParagraph) {
+                descriptionParagraph.innerHTML = dynamicHTML;
+            }
+        }
+    });
 }
 
 
