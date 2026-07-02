@@ -48,6 +48,7 @@ const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
 
 let smtcBridgePopup = null;
 let versionCheckPopup = null;
+let errorPopup = null;
 let skipVersionCheck = false;
 let CurrentPlaybackStatus;
 let CurrentSongKey;
@@ -156,6 +157,15 @@ async function FetchMedia() {
         // Remove the SMTC Bridge popup if it's on screen
         CloseSMTCBridgePopup();
 
+        // Check for errors in the response
+        if (data.error) {
+            ShowErrorPopup(data.error);
+            return;
+        }
+        else {
+            CloseErrorPopup();
+        }
+
         // Check the SMTC Bridge version
         CheckSMTCBridgeVersion(data.app_version);
 
@@ -247,6 +257,27 @@ function ShowSMTCBridgeUpdateAvailablePopup(installedVersion) {
     setTimeout(() => {
         CloseVersionCheckPopup();
     }, 10000);
+}
+
+function ShowErrorPopup(errorMessage) {
+    const newPopup = SplashscreenPopup(
+        '/.common/resources/smtc-bridge-icon.png',
+        'SMTC Bridge Error',
+        `I'm a shit programmer and I fucked something up.`,
+        `Error: ${errorMessage}`,
+        'linear-gradient(0deg, #1b0005 0%, #4f000d 100%)'
+    );
+
+    if (newPopup) {
+        errorPopup = newPopup;
+    }
+}
+
+function CloseErrorPopup() {
+    if (errorPopup) {
+        errorPopup.close();
+        errorPopup = null;
+    }
 }
 
 function CloseSMTCBridgePopup()
