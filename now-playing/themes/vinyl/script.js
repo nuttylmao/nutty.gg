@@ -46,7 +46,7 @@ async function ChangeTrack(mediaProps) {
     setTimeout(() => {
 
         // Extract the image source string (use fallback if Windows has no art)
-        const newArtUrl = mediaProps.Thumbnail;
+        const newArtUrl = mediaProps.Thumbnail ?? './images/placeholder.png';
 
         // Set the image
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;

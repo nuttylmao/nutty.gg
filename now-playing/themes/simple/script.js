@@ -44,8 +44,10 @@ if (textAlignment == 'right')
 ////////////////////
 
 async function ChangeTrack(mediaProps) {
-    trackLabel.style.opacity = "0";
-    artistLabel.style.opacity = "0";
+    if (trackLabel.innerText != (swapArtistTrack ? mediaProps.Artist : mediaProps.Title))
+        trackLabel.style.opacity = "0";
+    if (artistLabel.innerText != (swapArtistTrack ? mediaProps.Title : mediaProps.Artist))
+        artistLabel.style.opacity = "0";
     albumArtLayer.style.opacity = "0";
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
@@ -54,7 +56,7 @@ async function ChangeTrack(mediaProps) {
         artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist; 
 
         // Extract the image source string (use fallback if Windows has no art)
-        const newArtUrl = mediaProps.Thumbnail;
+        const newArtUrl = mediaProps.Thumbnail ?? './images/placeholder.png';
 
         // Set the image
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;

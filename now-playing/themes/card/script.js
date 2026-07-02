@@ -44,8 +44,10 @@ if (!showProgressBar)
 
 async function ChangeTrack(mediaProps, accentColorPalette) {
     // Fade in the overlay (shows the new text)
-    trackLabel.style.opacity = "0";
-    artistLabel.style.opacity = "0";
+    if (trackLabel.innerText != (swapArtistTrack ? mediaProps.Artist : mediaProps.Title))
+        trackLabel.style.opacity = "0";
+    if (artistLabel.innerText != (swapArtistTrack ? mediaProps.Title : mediaProps.Artist))
+        artistLabel.style.opacity = "0";
     backgroundLayer.style.opacity = "0";
     albumArtLayer.style.opacity = "0";
     
@@ -55,15 +57,14 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;     
 
         // Extract the image source string (use fallback if Windows has no art)
-        const newArtUrl = mediaProps.Thumbnail;
+        const newArtUrl = mediaProps.Thumbnail ?? './images/placeholder.png';
 
         // Set the image
         backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;
 
-        // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-        // 'rgba(0,0,0,0.6)' ensures the text stays readable
-        // backgroundLayer.style.backgroundColor = accentColorPalette.DarkMuted + "80"; // 80 is 50% opacity in hex
+        // Apply a tint
+        backgroundLayer.style.backgroundColor = accentColorPalette.DarkMuted + "80"; // 80 is 50% opacity in hex
 
         trackLabel.style.opacity = "";
         artistLabel.style.opacity = "";
@@ -75,9 +76,8 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
             backgroundTransitionLayer.style.backgroundImage = `url('${newArtUrl}')`;
             albumArtTransition.style.backgroundImage = `url('${newArtUrl}')`;
 
-            // Apply a tint: Use 30% opacity of the accent color + a dark overlay for contrast
-            // 'rgba(0,0,0,0.6)' ensures the text stays readable
-            // backgroundTransitionLayer.style.backgroundColor = accentColorPalette.DarkMuted + "80"; // 80 is 50% opacity in hex
+            // Apply a tint:
+            backgroundTransitionLayer.style.backgroundColor = accentColorPalette.DarkMuted + "80"; // 80 is 50% opacity in hex
 
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
         }, 250);
