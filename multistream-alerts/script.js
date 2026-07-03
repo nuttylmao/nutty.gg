@@ -255,6 +255,11 @@ client.on('YouTube.GiftMembershipReceived', (response) => {
 	YouTubeGiftMembershipReceived(response.data);
 })
 
+client.on('Kick.Follow', (response) => {
+	console.debug(response.data);
+	KickFollow(response.data);
+})
+
 client.on('Streamlabs.Donation', (response) => {
 	console.debug(response.data);
 	StreamlabsDonation(response.data);
