@@ -101,6 +101,7 @@ function LoadJSON(settingsJson) {
 							inputElement.id = setting.id; //Added setting ID
 							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
 							inputElement.autocomplete = 'new-password';
+							inputElement.placeholder = setting.placeholder ? setting.placeholder : '';
 							break;
 						case 'password':
 							inputElement = document.createElement('input');

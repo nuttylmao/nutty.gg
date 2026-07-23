@@ -95,11 +95,20 @@
 			"group": "Appearance"
 		},
 		{
-			"id": "targetApplication",
-			"label": "Target Application",
-			"description": "Specific app to track. Leave empty to automatically follow the active player.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"id": "includedApplications",
+			"label": "Included Apps",
+			"description": "List of apps to display, in order of priority.<br>Leave empty to track currently focused app.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
 			"type": "text",
-			"placeholder": "e.g., Spotify.exe",
+			"placeholder": "Spotify.exe, vlc.exe",
+			"defaultValue": "",
+			"group": "General"
+		},
+		{
+			"id": "excludedApplications",
+			"label": "Excluded Apps",
+			"description": "Apps listed here will not be displayed.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"type": "text",
+			"placeholder": "Chrome, vlc.exe",
 			"defaultValue": "",
 			"group": "General"
 		},

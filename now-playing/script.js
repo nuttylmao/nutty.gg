@@ -32,7 +32,8 @@ const fontSize = GetIntParam("fontSize", 20);
 const maxWidth = GetIntParam("maxWidth", 500);
 const textAlignment = urlParams.get('textAlignment') || 'left';
 
-const targetApplication = urlParams.get('targetApplication') || '';
+const includedApplications = urlParams.get('includedApplications') || '';
+const excludedApplications = urlParams.get('excludedApplications') || '';
 const showAlbumArt = GetBooleanParam("showAlbumArt", true);
 const showProgressBar = GetBooleanParam("showProgressBar", true);
 const swapArtistTrack = GetBooleanParam("swapArtistTrack", false);
@@ -42,6 +43,8 @@ const autoHide = GetBooleanParam("autoHide", false);
 const displayDuration = GetIntParam("displayDuration", 5);
 const showAnimation = urlParams.get('showAnimation') || 'slide-in-from-bottom';
 const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
+
+
 
 /////////////////
 // GLOBAL VARS //
@@ -315,19 +318,61 @@ function CheckSMTCBridgeVersion(installedVersion) {
 
 // Each theme must implement the following
 async function UpdatePlayerState(data) {
-    // Check if the user has provided a target application in the settings
-    const isFiltering = targetApplication && targetApplication.trim() !== "";
+    // Parse and clean settings arrays
+    const includedList = includedApplications 
+        ? includedApplications.split(',').map(app => app.trim().toLowerCase()).filter(Boolean)
+        : [];
+        
+    const excludedList = excludedApplications 
+        ? excludedApplications.split(',').map(app => app.trim().toLowerCase()).filter(Boolean)
+        : [];
 
-    // Search for the session that matches the target application
-    const sessionToFind = isFiltering ? targetApplication : data.current_session_id;
-    let targetSession = data.sessions.find(s => {
-        // If filtering, check if the source_app_id matches the user's string
-        if (isFiltering) {
-            return s.source_app_id.toLowerCase() === targetApplication.toLowerCase();
-        }
-        // Otherwise, match the system's current active session ID
-        return s.source_app_id === sessionToFind;
+    // Filter out any sessions belonging to excluded apps
+    const validSessions = data.sessions.filter(s => {
+        const appId = (s.source_app_id || "").toLowerCase();
+        // Check if the source app ID matches any exclusion entry
+        const isExcluded = excludedList.some(excluded => appId.includes(excluded));
+        return !isExcluded;
     });
+
+    let targetSession = null;
+
+    // Priority Check: If user specified included apps, hunt for them in exact order
+    if (includedList.length > 0) {
+        // Step 1: Look through the included list for an app that is CURRENTLY PLAYING
+        for (const targetApp of includedList) {
+            targetSession = validSessions.find(s => {
+                const matchesApp = (s.source_app_id || "").toLowerCase().includes(targetApp);
+                const isPlaying = s.playback_info && s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING;
+                return matchesApp && isPlaying;
+            });
+            if (targetSession) break;
+        }
+
+        // Step 2: If none of the included apps are playing, fall back to ANY session in the included list (even if paused)
+        if (!targetSession) {
+            for (const targetApp of includedList) {
+                targetSession = validSessions.find(s => 
+                    (s.source_app_id || "").toLowerCase().includes(targetApp)
+                );
+                if (targetSession) break;
+            }
+        }
+    } else {
+        // Fallback when no included list is provided:
+        // Priority 1: Find any session that is currently playing
+        targetSession = validSessions.find(s => s.playback_info && s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
+
+        // Priority 2: If nothing is playing, use system's current active session ID
+        if (!targetSession) {
+            targetSession = validSessions.find(s => s.source_app_id === data.current_session_id);
+        }
+        
+        // Priority 3: Ultimate fallback to the first valid session available
+        if (!targetSession && validSessions.length > 0) {
+            targetSession = validSessions[0];
+        }
+    }
 
     // If a target session was found, update the state of the widget
     if (targetSession) {
