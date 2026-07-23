@@ -690,19 +690,23 @@ function VersionCheck(requiredVersion, installedVersion) {
 
     // 1. CRITICAL: Major versions must match exactly.
     if (iMajor !== rMajor) {
+        console.log(`VersionCheck: Major version mismatch. Required: ${rMajor}, Installed: ${iMajor}`);
         return 'incompatible';
     }
 
     // 2. SOFT WARNING: The installed minor version is lower than what is required.
     if (iMinor < rMinor) {
+        console.log(`VersionCheck: Minor version mismatch. Required: ${rMinor}, Installed: ${iMinor}`);
         return 'soft-warning';
     }
 
-    // 3. SOFT WARNING: Minors match, but the installed patch version is lagging.
+    // 3. SILENT WARNING: Minors match, but the installed patch version is lagging.
     if (iMinor === rMinor && iPatch < rPatch) {
-        return 'soft-warning';
+        console.log(`VersionCheck: Patch version mismatch. Required: ${rPatch}, Installed: ${iPatch}`);
+        return 'compatible';
     }
 
     // 4. PERFECT: Installed version meets or exceeds the required baseline.
+    console.log(`VersionCheck: Installed version meets or exceeds the required baseline. Required: ${requiredVersion}, Installed: ${installedVersion}`);
     return 'compatible';
 }
