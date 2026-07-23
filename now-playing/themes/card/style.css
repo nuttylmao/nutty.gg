@@ -7,13 +7,12 @@
     width: 500px;
     display: flex;
     flex-direction: row;
-    align-items: stretch; 
+    align-items: stretch;
     gap: 0.5em;
     opacity: 0;
 }
 
 #album-art-container {
-    /* 1. Tell it to maintain a 1:1 square ratio */
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: var(--component-radius);
@@ -85,11 +84,12 @@
 #song-info-wrapper {
     position: relative; /* Keeps it in the document flow */
     z-index: 2;         /* Sits above the background-layer */
-    
+
     padding: 10% 7.5%;
     display: flex;
     flex-direction: column;
     gap: 0.3em;
+    max-height: 100%;
 }
 
 #track-label {
@@ -134,9 +134,9 @@
     border-radius: 10000px;
     background-color: var(--accent-color, #ffffff);
     transition: width 1s ease-in-out, background-color 1s ease-in-out;
-    
+
     /* This makes the handle track the end of the bar */
-    position: relative; 
+    position: relative;
 }
 
 #progress-bar-fill::after {
@@ -145,16 +145,16 @@
     right: -6px; /* Adjust to center the circle on the end of the bar */
     top: 50%;
     transform: translateY(-50%);
-    
+
     width: 0.8em;  /* Diameter of your circle */
     height: 0.8em;
     background-color: var(--accent-color, #ffffff);
     border-radius: 50%;
-    filter: brightness(1.4); 
+    filter: brightness(1.4);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
-    
+
     /* Optional: Hide it if the width is too small */
-    opacity: 0; 
+    opacity: 0;
     transition: all 1s ease-in-out;
 }
 

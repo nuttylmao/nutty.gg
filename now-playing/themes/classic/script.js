@@ -53,8 +53,8 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(async () => {
-        trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist; 
+        SetLabelText('track-label', swapArtistTrack ? mediaProps.Artist : mediaProps.Title);
+        SetLabelText('artist-label', swapArtistTrack ? mediaProps.Title : mediaProps.Artist);
 
         // Extract the image source string (use fallback if Windows has no art)
         const newArtUrl = mediaProps.Thumbnail ?? './images/placeholder.png';

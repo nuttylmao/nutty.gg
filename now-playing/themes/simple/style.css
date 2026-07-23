@@ -6,23 +6,13 @@
     width: 500px;
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    opacity: 0;
-}
-
-#yet-another-wrapper-yup {
-    position: relative;
-    flex: 1;
-    display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 0.75em;
-    transition: all 0.25s ease-in-out;
+    gap: 1em;
+    opacity: 0;
 }
 
 #album-art-container {
     /* 1. Tell it to maintain a 1:1 square ratio */
-    height: 150%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: var(--border-radius);
@@ -62,21 +52,11 @@
     overflow: hidden;
     flex-grow: 1;
     min-width: 0;
+    gap: 0.25em;
 }
 
 #background-transition-layer {
 	z-index: 0;
-}
-
-/* The content sits on top */
-#song-info-wrapper {
-    position: relative; /* Keeps it in the document flow */
-    z-index: 2;         /* Sits above the background-layer */
-    
-    padding: 1em 1.75em;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3em;
 }
 
 #track-label {
@@ -93,11 +73,36 @@
 }
 
 #progress-container {
-	font-size: 0.6em;
-	font-weight: 400;
-	opacity: 0.6;
-    text-align: var(--text-alignment);
-    margin-top: 0.5em;
+	display: flex;
+	flex-direction: row;
+    align-items: center;
+	gap: 0.2em;
+	margin-top: 0.2em;
+    gap: 0.5em;
+}
+
+#progress-bar-track {
+    width: 100%;
+    height: 0.4em;
+	border-radius: 1em;
+	background-color: #ffffff3a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+}
+
+#progress-bar-fill {
+    height: 100%;
+    width: 0%; /* JS will control this */
+    border-radius: 1em;
+    background-color: var(--accent-color, #ffffff);
+    transition: width 1s ease-in-out, background-color 1s ease-in-out;
+    
+    /* This makes the handle track the end of the bar */
+    position: relative; 
+}
+
+.progress-text {
+	font-size: 0.7em;
+	opacity: 0.5;
 }
 
 .text-label {

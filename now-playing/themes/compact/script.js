@@ -48,23 +48,28 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(() => {
-        trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
-        trackLabelBackground.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        artistLabelBackground.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
+        // trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
+        // artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
+        // trackLabelBackground.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
+        // artistLabelBackground.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
+        if (swapArtistTrack) {
+            SetSongInfo(mediaProps.Artist, mediaProps.Title);
+        } else {
+            SetSongInfo(mediaProps.Title, mediaProps.Artist);
+        }
 
         // Extract the image source string (use fallback if Windows has no art)
         
         // Set the pill color
         switch (themeVariant) {
             case "compact-inverted":
-                songInfoContainer.style.backgroundColor = accentColorPalette.LightVibrant;
+                progressBarTrack.style.backgroundColor = accentColorPalette.LightVibrant;
                 progressBar.style.background = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
                 songLabel.style.color = accentColorPalette.LightVibrant;
                 songLabelBackground.style.color = accentColorPalette.DarkVibrant;
                 break;
             default:
-                songInfoContainer.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
+                progressBarTrack.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
                 progressBar.style.background = accentColorPalette.LightVibrant;
                 songLabel.style.color = accentColorPalette.DarkVibrant;
                 songLabelBackground.style.color = accentColorPalette.LightVibrant;
@@ -73,30 +78,6 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
 
         songLabel.style.opacity = "";
         songLabelBackground.style.opacity = "";
-
-        // // If text is too long, add a marquee
-        // requestAnimationFrame(() => {
-        //     const containerWidth = songInfoContainer.clientWidth;
-        //     const textWidth = trackLabel.clientWidth + artistLabel.clientWidth;
-            
-
-        //     console.log(containerWidth);
-        //     console.log(textWidth);
-
-        //     if (textWidth > containerWidth) {
-        //         songLabel.classList.add('scrolling-text');
-        //         songLabelBackground.classList.add('scrolling-text');
-        //         // Calculate speed: 50 pixels per second is a good standard
-        //         const duration = (textWidth + containerWidth) / 50; 
-        //         console.log(duration);
-        //         document.documentElement.style.setProperty('--scroll-duration', `${duration}s`);
-        //         document.documentElement.style.setProperty('--container-width', `${textWidth}px`);
-        //         document.documentElement.style.setProperty('--text-width', `-${textWidth}px`);
-        //     } else {
-        //         songLabel.classList.remove('scrolling-text');
-        //         songLabelBackground.classList.remove('scrolling-text');
-        //     }
-        // });
 
         setTimeout(() => {
             SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
@@ -127,7 +108,62 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
 
     // Update the clip-path
     progressBar.style.clipPath = `inset(0 ${clipRight}% 0 0)`;
+    progressBarTrack.style.clipPath = `inset(0 0 0 ${progressPercent}%)`;
     
+    // // Set the progress bar but with a transition for smoothness
     // const clipRight = progressPercent;
-    // progressBar.style.maskImage = `linear-gradient(to right, black calc(${clipRight}% - 4em), transparent ${clipRight}%)`
+    // const transitionWidth = '1em';
+    // progressBar.style.maskImage = `linear-gradient(to right, black calc(${clipRight}% - ${transitionWidth}), transparent ${clipRight}%)`
+    // progressBarTrack.style.maskImage = `linear-gradient(to right, transparent calc(${clipRight}% - ${transitionWidth}), black ${clipRight}%)`;
+}
+
+// MARQUEE LOGIC
+// This is a more advanced marquee implementation that calculates the overflow distance and adjusts the scroll speed accordingly
+
+// Call this function whenever the track changes
+function SetSongInfo(trackName, artistName) {
+    // Update main text and background layer simultaneously
+    UpdateSingleSongLabel('song-label', trackName, artistName);
+    UpdateSingleSongLabel('song-label-background', trackName, artistName);
+}
+
+function UpdateSingleSongLabel(containerId, trackName, artistName) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // 1. Structure the inner HTML with a wrapper so we can measure exact inline width
+    container.classList.remove('is-overflowing');
+    container.innerHTML = `
+        <span class="scroll-content">
+            <span class="track-label">${trackName}</span>
+            <span class="artist-label">${artistName}</span>
+        </span>
+    `;
+
+    const scrollContent = container.querySelector('.scroll-content');
+    
+    // 2. Measure total width of (Track + Artist) against parent width
+    const textWidth = scrollContent.scrollWidth;
+    const containerWidth = container.clientWidth;
+    const overflowDistance = textWidth - containerWidth;
+
+    // 3. If the combined row overflows, set the CSS variables and add class
+    if (overflowDistance > 0) {
+        const distancePercent = (overflowDistance / textWidth) * 100;
+        const travelTime = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
+        const totalDuration = (travelTime * 2) + 3; // 3 seconds total for start/end pauses
+
+        scrollContent.style.setProperty('--scroll-distance', `-${distancePercent}%`);
+        container.style.setProperty('--marquee-duration', `${totalDuration}s`);
+
+        container.classList.add('is-overflowing');
+    }
+
+    // 4. Attach ResizeObserver once to handle responsive window resizes
+    if (!container._resizeObserver) {
+        container._resizeObserver = new ResizeObserver(() => {
+            UpdateSingleSongLabel(containerId, trackName, artistName);
+        });
+        container._resizeObserver.observe(container);
+    }
 }

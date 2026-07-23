@@ -11,6 +11,7 @@ const urlParams = new URLSearchParams(queryString);
 
 const REQUIRED_VERSION = '0.0.2';
 const SMTC_BRIDGE_DOWNLOAD_URL = 'https://github.com/nuttylmao/smtc-bridge/releases';
+let VersionChecked = false;
 
 ///////////////////
 // PAGE ELEMENTS //
@@ -70,21 +71,6 @@ else
 
 // Set text alignment
 document.documentElement.style.setProperty('--text-alignment', `${textAlignment}`);
-switch (textAlignment)
-{
-    case 'left':
-        document.documentElement.style.setProperty('--justify-content', `flex-start`);
-        document.documentElement.style.setProperty('--trailing-fade', `linear-gradient(to right, black calc(100% - 1em), transparent 100%)`);
-        break;
-    case 'center':
-        document.documentElement.style.setProperty('--justify-content', `center`);
-        document.documentElement.style.setProperty('--trailing-fade', `linear-gradient(to right, black calc(100% - 1em), transparent 100%)`);
-        break;
-    case 'right':
-        document.documentElement.style.setProperty('--justify-content', `flex-end`);
-        document.documentElement.style.setProperty('--trailing-fade', ``);
-        break;
-}
 
 
 
@@ -167,7 +153,10 @@ async function FetchMedia() {
         }
 
         // Check the SMTC Bridge version
-        CheckSMTCBridgeVersion(data.app_version);
+        if (!VersionChecked) {
+            CheckSMTCBridgeVersion(data.app_version);
+            VersionChecked = true;
+        }
 
         // Update the UI with the received data
         // console.log(data);
@@ -409,5 +398,58 @@ function SetVisibility(visible) {
         }
     } else {
         mainWrapper.style.animation = `${hideAnimation} 0.5s ease-out forwards`;
+    }
+}
+
+// MARQUEE LOGIC
+// This is a more advanced marquee implementation that calculates the overflow distance and adjusts the scroll speed accordingly
+const labelData = new Map();
+
+// Adjust this value to change scroll speed (pixels per second)
+const SCROLL_SPEED_PX_PER_SEC = 40; 
+
+function SetLabelText(elementId, text) {
+    const label = document.getElementById(elementId);
+    if (!label) return;
+
+    labelData.set(elementId, text);
+    ApplyMarquee(label, text);
+
+    // Keep it responsive on container resize
+    if (!label._resizeObserver) {
+        label._resizeObserver = new ResizeObserver(() => {
+            const currentText = labelData.get(elementId);
+            if (currentText) ApplyMarquee(label, currentText);
+        });
+        label._resizeObserver.observe(label);
+    }
+}
+
+function ApplyMarquee(label, text) {
+    // 1. Render single span to measure dimensions
+    label.classList.remove('is-overflowing');
+    label.innerHTML = `<span class="scroll-content">${text}</span>`;
+    
+    const scrollContent = label.querySelector('.scroll-content');
+    
+    const textWidth = scrollContent.scrollWidth;
+    const containerWidth = label.clientWidth;
+    const overflowDistance = textWidth - containerWidth;
+
+    // 2. Check if text exceeds container
+    if (overflowDistance > 0) {
+        // Calculate travel distance in percentage relative to scrollContent's width
+        const distancePercent = (overflowDistance / textWidth) * 100;
+        
+        // Compute duration to keep speed consistent regardless of length
+        // We multiply travel time by 2 (for both directions) plus 3 seconds for pauses
+        const travelTime = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
+        const totalDuration = (travelTime * 2) + 3;
+
+        // Pass calculated variables to CSS
+        scrollContent.style.setProperty('--scroll-distance', `-${distancePercent}%`);
+        label.style.setProperty('--marquee-duration', `${totalDuration}s`);
+        
+        label.classList.add('is-overflowing');
     }
 }

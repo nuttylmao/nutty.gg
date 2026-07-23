@@ -10,6 +10,7 @@ const albumArtTransition = document.getElementById('album-art-transition-layer')
 const trackLabel = document.getElementById('track-label');
 const artistLabel = document.getElementById('artist-label');
 const progressContainer = document.getElementById('progress-container');
+const progressBarFill = document.getElementById('progress-bar-fill');
 const currentTimeLabel = document.getElementById('current-time');
 const durationLabel = document.getElementById('duration');
 
@@ -34,8 +35,9 @@ if (!showProgressBar)
     progressContainer.style.display = 'none';
 
 // If text alignment is 'right', swap the album art to the right hand side too
-if (textAlignment == 'right')
-    document.getElementById('yet-another-wrapper-yup').appendChild(document.getElementById('album-art-container'));
+if (textAlignment == 'right') {
+    mainWrapper.style.flexDirection = 'row-reverse';
+}
 
 
 
@@ -52,8 +54,10 @@ async function ChangeTrack(mediaProps) {
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(() => {
-        trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist; 
+        // trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
+        // artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;        
+        SetLabelText('track-label', swapArtistTrack ? mediaProps.Artist : mediaProps.Title);
+        SetLabelText('artist-label', swapArtistTrack ? mediaProps.Title : mediaProps.Artist);
 
         // Extract the image source string (use fallback if Windows has no art)
         const newArtUrl = mediaProps.Thumbnail ?? './images/placeholder.png';
@@ -81,4 +85,42 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
 
     durationLabel.innerText =
         ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(timelineProps.EndTime);
+
+    // Set progressbar
+    // Ensure we don't divide by zero or exceed 100%
+    const durationMs = timelineProps.EndTime;
+    let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
+    progressPercent = Math.min(100, Math.max(0, progressPercent));
+    progressBarFill.style.width = `${progressPercent}%`;
+    progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+    switch (themeVariant) {
+        case "matte":
+            progressBarFill.style.setProperty('--accent-color', accentColorPalette.DarkVibrant);
+            break;
+        case "matte-dark":
+        default:
+            progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+            break;
+    }
 }
+
+
+// Helper function to calculate height of album art
+const observer = new ResizeObserver(entries => {
+    for (let entry of entries) {
+        // Get the accurate rendered height of song-info-container
+        const infoHeight = entry.contentRect.height;
+        
+        // Calculate 125% of that height
+        const targetSize = infoHeight * 1.5;
+
+        console.log(targetSize);
+
+        // Apply to album art (setting both width & height ensures it stays square)
+        albumArtContainer.style.height = `${targetSize}px`;
+        albumArtContainer.style.width = `${targetSize}px`;
+    }
+});
+
+// Start watching the song info container for size changes
+observer.observe(songInfoContainer);

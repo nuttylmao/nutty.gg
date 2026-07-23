@@ -5,6 +5,7 @@
 const mainWrapper = document.getElementById('main-wrapper');
 const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
+const songInfoWrapper = document.getElementById('song-info-wrapper');
 const albumArtLayer = document.getElementById('album-art-layer');
 const albumArtTransition = document.getElementById('album-art-transition-layer');
 const backgroundLayer = document.getElementById('background-layer');
@@ -48,6 +49,10 @@ switch (themeVariant) {
         break;
 }
 
+// If text alignment is 'right', swap the album art to the right hand side too
+if (textAlignment == 'right') {
+    songInfoContainer.style.flexDirection = 'row-reverse';
+}
 
 
 ////////////////////
@@ -65,8 +70,8 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
 
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(async () => {
-        trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
+        SetLabelText('track-label', swapArtistTrack ? mediaProps.Artist : mediaProps.Title);
+        SetLabelText('artist-label', swapArtistTrack ? mediaProps.Title : mediaProps.Artist);
 
         switch (themeVariant) {
             case "matte":
@@ -99,6 +104,8 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         artistLabel.style.opacity = "";
         backgroundLayer.style.opacity = "";
         albumArtLayer.style.opacity = "";
+
+        console.log(songInfoWrapper.clientWidth);
 
         setTimeout(() => {
             // Set the image

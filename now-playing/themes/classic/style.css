@@ -64,7 +64,7 @@
     flex-direction: row;
     align-items: center;
     overflow: hidden;
-    gap: 0.5em;
+    gap: 1em;
     transition: all 0.25s ease-in-out;
 }
 
@@ -99,7 +99,7 @@
     position: relative; /* Keeps it in the document flow */
     z-index: 2;         /* Sits above the background-layer */
     
-    padding: 1em 1.75em;
+    padding: 1em 1.3em;
     display: flex;
     flex-direction: column;
     gap: 0.3em;

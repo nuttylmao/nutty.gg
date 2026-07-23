@@ -7,7 +7,7 @@
     width: 500px;
     display: flex;
     flex-direction: row;
-    align-items: stretch; 
+    align-items: stretch;
     gap: 0.5em;
     opacity: 0;
 }
@@ -115,14 +115,6 @@
     text-align: var(--text-alignment);
 }
 
-.text-label {
-	white-space: nowrap;
-    overflow: hidden;
-    mask-image: var(--trailing-fade);
-    -webkit-mask-image: var(--trailing-fade);
-    transition: opacity 0.25s ease-in-out;
-}
-
 #progress-container {
 	display: flex;
 	flex-direction: row;
@@ -150,14 +142,6 @@
     /* This makes the handle track the end of the bar */
     position: relative; 
 }
-
-/* #time-container {
-	display: flex;
-	justify-content: space-between;
-	font-size: 0.7em;
-	opacity: 0.5;
-    display: none;
-} */
 
 .progress-text {
 	font-size: 0.7em;
