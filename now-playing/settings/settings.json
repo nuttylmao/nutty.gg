@@ -73,6 +73,28 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "verticalAlignment",
+			"label": "Vertical Alignment",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "align-to-top",
+					"label": "Align To Top"
+				},
+				{
+					"value": "align-to-center",
+					"label": "Align To Center"
+				},
+				{
+					"value": "align-to-bottom",
+					"label": "Align To Bottom"
+				}
+			],
+			"defaultValue": "align-to-center",
+			"group": "Appearance"
+		},
+		{
 			"id": "textAlignment",
 			"label": "Text Alignment",
 			"description": "",

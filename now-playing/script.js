@@ -30,6 +30,7 @@ const theme = urlParams.get('theme') || 'standard';
 const font = urlParams.get("font") || "";
 const fontSize = GetIntParam("fontSize", 20);
 const maxWidth = GetIntParam("maxWidth", 500);
+const verticalAlignment = urlParams.get('verticalAlignment') || 'align-to-center';
 const textAlignment = urlParams.get('textAlignment') || 'left';
 
 const includedApplications = urlParams.get('includedApplications') || '';
@@ -74,6 +75,19 @@ else
 
 // Set text alignment
 document.documentElement.style.setProperty('--text-alignment', `${textAlignment}`);
+
+// Set vertical alignment
+switch (verticalAlignment) {
+    case 'align-to-top':
+        mainContainer.style.alignItems = 'flex-start';
+        break;
+    case 'align-to-center':
+        mainContainer.style.alignItems = 'center';
+        break;
+    case 'align-to-bottom':
+        mainContainer.style.alignItems = 'flex-end';
+        break;
+}
 
 
 
