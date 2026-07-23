@@ -26,13 +26,10 @@
 
 /* The content sits on top */
 #progress-bar {
-	grid-area: stack;
     position: relative;
     z-index: 2;         /* Sits above the progress bar */
 	transition: all 1s ease-in-out;
 	width: 100%;
-	/* mask-image: linear-gradient(to right, black calc(100% - 4em), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 4em), transparent 100%); */
 }
 
 #progress-bar-track {
@@ -44,20 +41,13 @@
 	padding: 0.25em 0.75em;
 	grid-area: stack;
 	display: flex;
-	/* justify-content: center; */
 	min-width: 0;
 }
 
 #song-label,
 #song-label-background {
-	font-size: 1em;
-	display: flex;
-	flex-direction: row;
-	align-items: baseline;
-	gap: 0.5em;
-	min-width: 100%;
-	justify-content: var(--justify-content);
-	overflow: hidden;
+    width: 100%;
+    text-align: var(--text-alignment);
 }
 
 #artist-label,
@@ -67,8 +57,7 @@
 	opacity: 0.7;
 }
 
-#track-label,
-#track-label-background {
+#track-label {
 	font-weight: 700;
 }
 
@@ -81,7 +70,7 @@
 #song-label-background .scroll-content {
     display: inline-flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     gap: 0.5em; /* Spacing between Track and Artist */
     white-space: nowrap;
     will-change: transform;
@@ -90,12 +79,14 @@
 /* Preserve original font weights */
 .track-label {
     font-weight: 700;
+    display: var(--show-primary);
 }
 
 .artist-label {
     font-size: 0.8em;
     font-weight: 400;
     opacity: 0.7;
+    display: var(--show-secondary);
 }
 
 /* Marquee scroll animation */

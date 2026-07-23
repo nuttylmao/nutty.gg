@@ -75,18 +75,6 @@ else
 
 // Set text alignment
 document.documentElement.style.setProperty('--text-alignment', `${textAlignment}`);
-switch (textAlignment)
-{
-    case 'left':
-        document.documentElement.style.setProperty('--justify-content', `flex-start`);
-        break;
-    case 'center':
-        document.documentElement.style.setProperty('--justify-content', `center`);
-        break;
-    case 'right':
-        document.documentElement.style.setProperty('--justify-content', `flex-end`);
-        break;
-}
 
 // Set vertical alignment
 switch (verticalAlignment) {
@@ -199,11 +187,13 @@ async function FetchMedia() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    // Start polling every 1000 milliseconds
-    setInterval(FetchMedia, 1000);
+    setTimeout(() => {
+        // Start polling every 1000 milliseconds
+        setInterval(FetchMedia, 1000);
 
-    // Run once immediately on script load
-    FetchMedia();
+        // Run once immediately on script load
+        FetchMedia();
+    }, 100);
 });
 
 

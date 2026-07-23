@@ -4,6 +4,7 @@ const urlParams = new URLSearchParams(queryString);
 const settingsJson = urlParams.get("settingsJson") || "";
 const widgetURL = urlParams.get("widgetURL") || "";
 const showUnmuteIndicator = GetBooleanParam("showUnmuteIndicator", false);
+const useStreamerBot = GetBooleanParam("usesStreamerBot", false);
 
 // Page elements
 const widgetUrlInputWrapper = document.getElementById('widgetUrlInputWrapper');
@@ -318,6 +319,9 @@ function RefreshWidgetPreview() {
 }
 
 function UpdateStreamerBotConnection() {
+	if (!useStreamerBot)
+		return;
+
 	let addressElement = document.getElementById('address');
 	let portElement = document.getElementById('port');
 

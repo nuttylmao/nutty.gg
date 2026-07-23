@@ -7,10 +7,6 @@ const albumArtContainer = document.getElementById('album-art-container');
 const songInfoContainer = document.getElementById('song-info-container');
 const progressBar = document.getElementById('progress-bar');
 const progressBarTrack = document.getElementById('progress-bar-track');
-const trackLabel = document.getElementById('track-label');
-const artistLabel = document.getElementById('artist-label');
-const trackLabelBackground = document.getElementById('track-label-background');
-const artistLabelBackground = document.getElementById('artist-label-background');
 const songLabel = document.getElementById('song-label');
 const songLabelBackground = document.getElementById('song-label-background');
 
@@ -24,10 +20,10 @@ const songLabelBackground = document.getElementById('song-label-background');
 const themeVariant = window.ThemeVariant ? window.ThemeVariant : '';
 
 // Set property visibility
-trackLabel.style.display = showPrimary ? '' : 'none';
-artistLabel.style.display = showSecondary ? '' : 'none';
-trackLabelBackground.style.display = showPrimary ? '' : 'none';
-artistLabelBackground.style.display = showSecondary ? '' : 'none';
+if (!showPrimary)
+    document.documentElement.style.setProperty('--show-primary', `none`);
+if (!showSecondary)
+    document.documentElement.style.setProperty('--show-secondary', `none`);
 
 // Set container width
 if (maxWidth > 0)
@@ -48,10 +44,6 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     
     // Wait for fade (0.5s), then swap the real text and hide overlay
     setTimeout(() => {
-        // trackLabel.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        // artistLabel.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
-        // trackLabelBackground.innerText = swapArtistTrack ? mediaProps.Artist : mediaProps.Title;
-        // artistLabelBackground.innerText = swapArtistTrack ? mediaProps.Title : mediaProps.Artist;
         if (swapArtistTrack) {
             SetSongInfo(mediaProps.Artist, mediaProps.Title);
         } else {
@@ -131,38 +123,50 @@ function UpdateSingleSongLabel(containerId, trackName, artistName) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // 1. Structure the inner HTML with a wrapper so we can measure exact inline width
-    container.classList.remove('is-overflowing');
-    container.innerHTML = `
-        <span class="scroll-content">
-            <span class="track-label">${trackName}</span>
-            <span class="artist-label">${artistName}</span>
-        </span>
-    `;
+    let scrollContent = container.querySelector('.scroll-content');
 
-    const scrollContent = container.querySelector('.scroll-content');
+    // Only rebuild the HTML structure if the text content actually changed or doesn't exist yet
+    const currentTrackEl = container.querySelector('.track-label');
+    const currentArtistEl = container.querySelector('.artist-label');
     
-    // 2. Measure total width of (Track + Artist) against parent width
-    const textWidth = scrollContent.scrollWidth;
-    const containerWidth = container.clientWidth;
-    const overflowDistance = textWidth - containerWidth;
-
-    // 3. If the combined row overflows, set the CSS variables and add class
-    if (overflowDistance > 0) {
-        const distancePercent = (overflowDistance / textWidth) * 100;
-        const travelTime = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
-        const totalDuration = (travelTime * 2) + 3; // 3 seconds total for start/end pauses
-
-        scrollContent.style.setProperty('--scroll-distance', `-${distancePercent}%`);
-        container.style.setProperty('--marquee-duration', `${totalDuration}s`);
-
-        container.classList.add('is-overflowing');
+    if (!scrollContent || !currentTrackEl || currentTrackEl.textContent !== trackName || currentArtistEl.textContent !== artistName) {
+        container.classList.remove('is-overflowing');
+        container.innerHTML = `
+            <span class="scroll-content">
+                <span class="track-label">${trackName}</span>
+                <span class="artist-label">${artistName}</span>
+            </span>
+        `;
+        scrollContent = container.querySelector('.scroll-content');
     }
 
-    // 4. Attach ResizeObserver once to handle responsive window resizes
+    // Encapsulate measurement logic so it can be called safely by the observer
+    const updateMetrics = () => {
+        scrollContent = container.querySelector('.scroll-content');
+
+        const textWidth = scrollContent.scrollWidth;
+        const containerWidth = container.clientWidth;
+        const overflowDistance = textWidth - containerWidth;
+
+        if (overflowDistance > 0) {
+            const distancePercent = (overflowDistance / textWidth) * 100;
+            const travelTime = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
+            const totalDuration = (travelTime * 2) + 3;
+
+            container.style.setProperty('--scroll-distance', `-${distancePercent}%`);
+            container.style.setProperty('--marquee-duration', `${totalDuration}s`);
+            container.classList.add('is-overflowing');
+        } else {
+            container.classList.remove('is-overflowing');
+        }
+    };
+
+    updateMetrics();
+
+    // Attach ResizeObserver once to update metrics only (No recursive function resets!)
     if (!container._resizeObserver) {
         container._resizeObserver = new ResizeObserver(() => {
-            UpdateSingleSongLabel(containerId, trackName, artistName);
+            updateMetrics();
         });
         container._resizeObserver.observe(container);
     }
