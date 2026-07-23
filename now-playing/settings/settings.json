@@ -39,6 +39,10 @@
 					"label": "Card"
 				},
 				{
+					"value": "album-art",
+					"label": "Album Art"
+				},
+				{
 					"value": "vinyl",
 					"label": "Vinyl"
 				}
