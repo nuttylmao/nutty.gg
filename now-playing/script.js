@@ -75,6 +75,18 @@ else
 
 // Set text alignment
 document.documentElement.style.setProperty('--text-alignment', `${textAlignment}`);
+switch (textAlignment)
+{
+    case 'left':
+        document.documentElement.style.setProperty('--justify-content', `flex-start`);
+        break;
+    case 'center':
+        document.documentElement.style.setProperty('--justify-content', `center`);
+        break;
+    case 'right':
+        document.documentElement.style.setProperty('--justify-content', `flex-end`);
+        break;
+}
 
 // Set vertical alignment
 switch (verticalAlignment) {
