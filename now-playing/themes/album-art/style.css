@@ -31,6 +31,7 @@
     background-size: cover;
     background-position: center;
     transition: opacity 0.5s ease;
+    border-radius: var(--border-radius);
 }
 
 #album-art-layer {
@@ -83,7 +84,7 @@
     background: linear-gradient(to top, #ffffff00, var(--accent-color, #ffffff));
     /* background-color: var(--accent-color, #ffffff); */
     transition: width 1s ease-in-out, background 1s ease-in-out;
-    border-radius: 10000px;
+    /* border-radius: 10000px; */
     position: absolute;
     bottom: 0;
     left: 0;

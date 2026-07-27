@@ -63,7 +63,8 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         const baseColor = accentColorPalette.DarkMuted;
         // Solid from 0% to 30%, then fading to 0% opacity at 100%
         textInfoContainer.style.background = `linear-gradient(to top, ${baseColor}FF 0%, ${baseColor}FF 10%, ${baseColor}00 100%)`;
-        songInfoContainer.style.background = accentColorPalette.LightVibrant;
+        if (!showAlbumArt)
+            songInfoContainer.style.background = accentColorPalette.LightVibrant;
 
         // Apply text color
         document.body.style.color = accentColorPalette.LightVibrant;
@@ -89,5 +90,5 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
     progressPercent = Math.min(100, Math.max(0, progressPercent));
     progressBar.style.width = `${progressPercent}%`;
-    progressBar.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+    progressBar.style.setProperty('--accent-color', `${accentColorPalette.LightVibrant}`);
 }
