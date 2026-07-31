@@ -184,11 +184,11 @@ body {
 }
 
 .text-label.is-overflowing .scroll-content {
-    animation: ping-pong-scroll var(--marquee-duration, 8s) linear infinite;
+    animation: ping-pong-scroll var(--marquee-duration, 8s) ease-in-out infinite;
 }
 
 .text-label.is-overflowing {
-    animation: ping-pong-mask var(--marquee-duration, 8s) linear infinite;
+    animation: ping-pong-mask var(--marquee-duration, 8s) ease-in-out infinite;
     
     /* Static gradient structure referencing dynamic color variables */
     mask-image: linear-gradient(

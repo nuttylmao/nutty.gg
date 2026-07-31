@@ -92,15 +92,16 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
     progressPercent = Math.min(100, Math.max(0, progressPercent));
     progressBarFill.style.width = `${progressPercent}%`;
-    progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
-    switch (themeVariant) {
-        case "matte":
-            progressBarFill.style.setProperty('--accent-color', accentColorPalette.DarkVibrant);
-            break;
-        case "matte-dark":
-        default:
-            progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
-            break;
+    
+    if (!useCustomColors)
+    {
+        progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+        document.body.style.color = accentColorPalette.LightVibrant;
+    }
+    else
+    {
+        progressBarFill.style.setProperty('--accent-color', color1);
+        document.body.style.color = color1;
     }
 }
 

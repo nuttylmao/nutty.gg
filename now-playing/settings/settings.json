@@ -125,6 +125,32 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "useCustomColors",
+			"label": "Use Custom Colors",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Appearance"
+		},
+		{
+			"id": "color1",
+			"label": "Primary Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#ffffff",
+			"showIf": "useCustomColors",
+			"group": "Appearance"
+		},
+		{
+			"id": "color2",
+			"label": "Secondary Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#1d1d1d",
+			"showIf": "useCustomColors",
+			"group": "Appearance"
+		},
+		{
 			"id": "includedApplications",
 			"label": "Included Apps",
 			"description": "List of apps to display, in order of priority.<br>Leave empty to track currently focused app.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",

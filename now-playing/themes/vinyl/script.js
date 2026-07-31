@@ -66,7 +66,10 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     const durationMs = timelineProps.EndTime;
     progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
     progressPercent = Math.min(100, Math.max(0, progressPercent));
-    document.documentElement.style.setProperty('--accent-color', `${accentColorPalette.LightVibrant}`);
+    if (!useCustomColors)
+        document.documentElement.style.setProperty('--accent-color', `${accentColorPalette.LightVibrant}`);
+    else
+        document.documentElement.style.setProperty('--accent-color', color1);
     
     // Calculate the offset. 
     // 0% progress = 157.1 offset. 100% progress = 0 offset.

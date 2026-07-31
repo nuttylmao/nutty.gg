@@ -60,14 +60,28 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;
 
         // Apply a tint
-        const baseColor = accentColorPalette.DarkMuted;
-        // Solid from 0% to 30%, then fading to 0% opacity at 100%
-        textInfoContainer.style.background = `linear-gradient(to top, ${baseColor}FF 0%, ${baseColor}FF 10%, ${baseColor}00 100%)`;
-        if (!showAlbumArt)
-            songInfoContainer.style.background = accentColorPalette.LightVibrant;
+        if (!useCustomColors)
+        {
+            const baseColor = accentColorPalette.DarkMuted;
+            // Solid from 0% to 30%, then fading to 0% opacity at 100%
+            textInfoContainer.style.background = `linear-gradient(to top, ${baseColor}FF 0%, ${baseColor}FF 10%, ${baseColor}00 100%)`;
+            if (!showAlbumArt)
+                songInfoContainer.style.background = accentColorPalette.LightVibrant;
 
-        // Apply text color
-        document.body.style.color = accentColorPalette.LightVibrant;
+            // Apply text color
+            document.body.style.color = accentColorPalette.LightVibrant;
+        }
+        else
+        {
+            const baseColor = color2;
+            // Solid from 0% to 30%, then fading to 0% opacity at 100%
+            textInfoContainer.style.background = `linear-gradient(to top, ${baseColor}FF 0%, ${baseColor}FF 10%, ${baseColor}00 100%)`;
+            if (!showAlbumArt)
+                songInfoContainer.style.background = color1;
+
+            // Apply text color
+            document.body.style.color = color1;
+        }
 
         trackLabel.style.opacity = "";
         artistLabel.style.opacity = "";
@@ -89,6 +103,9 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     const durationMs = timelineProps.EndTime;
     let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;
     progressPercent = Math.min(100, Math.max(0, progressPercent));
-    progressBar.style.width = `${progressPercent}%`;
-    progressBar.style.setProperty('--accent-color', `${accentColorPalette.LightVibrant}`);
+    progressBar.style.width = `${progressPercent}%`;    
+    if (!useCustomColors)
+        progressBar.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+    else
+        progressBar.style.setProperty('--accent-color', color1);
 }

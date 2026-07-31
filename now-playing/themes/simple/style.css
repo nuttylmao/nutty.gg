@@ -53,6 +53,7 @@
     flex-grow: 1;
     min-width: 0;
     gap: 0.25em;
+    transition: color 1s ease;
 }
 
 #background-transition-layer {

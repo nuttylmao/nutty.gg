@@ -32,6 +32,9 @@ const fontSize = GetIntParam("fontSize", 20);
 const maxWidth = GetIntParam("maxWidth", 500);
 const verticalAlignment = urlParams.get('verticalAlignment') || 'align-to-center';
 const textAlignment = urlParams.get('textAlignment') || 'left';
+const useCustomColors = GetBooleanParam("useCustomColors", false);
+const color1 = urlParams.get('color1') || '#ffffff';
+const color2 = urlParams.get('color2') || '#1d1d1d';
 
 const includedApplications = urlParams.get('includedApplications') || '';
 const excludedApplications = urlParams.get('excludedApplications') || '';

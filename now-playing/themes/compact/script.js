@@ -53,19 +53,39 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         // Extract the image source string (use fallback if Windows has no art)
         
         // Set the pill color
-        switch (themeVariant) {
-            case "compact-inverted":
-                progressBarTrack.style.backgroundColor = accentColorPalette.LightVibrant;
-                progressBar.style.background = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
-                songLabel.style.color = accentColorPalette.LightVibrant;
-                songLabelBackground.style.color = accentColorPalette.DarkVibrant;
-                break;
-            default:
-                progressBarTrack.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
-                progressBar.style.background = accentColorPalette.LightVibrant;
-                songLabel.style.color = accentColorPalette.DarkVibrant;
-                songLabelBackground.style.color = accentColorPalette.LightVibrant;
-                break;
+        if (!useCustomColors)
+        {
+            switch (themeVariant) {
+                case "compact-inverted":
+                    progressBarTrack.style.backgroundColor = accentColorPalette.LightVibrant;
+                    progressBar.style.background = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
+                    songLabel.style.color = accentColorPalette.LightVibrant;
+                    songLabelBackground.style.color = accentColorPalette.DarkVibrant;
+                    break;
+                default:
+                    progressBarTrack.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
+                    progressBar.style.background = accentColorPalette.LightVibrant;
+                    songLabel.style.color = accentColorPalette.DarkVibrant;
+                    songLabelBackground.style.color = accentColorPalette.LightVibrant;
+                    break;
+            }
+        }
+        else
+        {
+            switch (themeVariant) {
+                case "compact-inverted":
+                    progressBarTrack.style.backgroundColor = `color-mix(in srgb, ${color1}, black 60%)`;
+                    progressBar.style.background = color2;
+                    songLabel.style.color = color1;
+                    songLabelBackground.style.color = color2;
+                    break;
+                default:
+                    progressBarTrack.style.backgroundColor = color2;
+                    progressBar.style.background = color1;
+                    songLabel.style.color = color2;
+                    songLabelBackground.style.color = color1;
+                    break;
+            }
         }
 
         songLabel.style.opacity = "";

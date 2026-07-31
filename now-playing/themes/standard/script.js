@@ -73,26 +73,55 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         SetLabelText('track-label', swapArtistTrack ? mediaProps.Artist : mediaProps.Title);
         SetLabelText('artist-label', swapArtistTrack ? mediaProps.Title : mediaProps.Artist);
 
-        switch (themeVariant) {
-            case "matte":
-                document.body.style.color = accentColorPalette.DarkVibrant;
-                break;
-            case "matte-dark":
-                document.body.style.color = accentColorPalette.LightVibrant;
-                break;
+        if (!useCustomColors)
+        {
+            switch (themeVariant) {
+                case "matte":
+                    document.body.style.color = accentColorPalette.DarkVibrant;
+                    break;
+                case "matte-dark":
+                    document.body.style.color = accentColorPalette.LightVibrant;
+                    break;
+            }
+        }
+        else
+        {
+            switch (themeVariant) {
+                case "matte":
+                    document.body.style.color = color2;
+                    break;
+                // case "matte-dark":
+                default:
+                    document.body.style.color = color1;
+                    break;
+            }
         }
 
         // Extract the image source string (use fallback if Windows has no art)
         const newArtUrl = mediaProps.Thumbnail ?? './images/placeholder.png';
 
         // Set the image
-        switch (themeVariant) {
-            case "matte":
-                songInfoContainer.style.backgroundColor = accentColorPalette.LightVibrant;
-                break;
-            case "matte-dark":
-                songInfoContainer.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
-                break;
+        if (!useCustomColors) {
+            switch (themeVariant) {
+                case "matte":
+                    songInfoContainer.style.backgroundColor = accentColorPalette.LightVibrant;
+                    break;
+                case "matte-dark":
+                    songInfoContainer.style.backgroundColor = `color-mix(in srgb, ${accentColorPalette.DarkMuted}, black 60%)`;
+                    break;
+            }
+        }
+        else
+        {
+            switch (themeVariant) {
+                case "matte":
+                    songInfoContainer.style.backgroundColor = color1;
+                    break;
+                // case "matte-dark":
+                default:
+                    songInfoContainer.style.backgroundColor = `color-mix(in srgb, ${color2}, black 60%)`;
+                    break;
+            }
         }
         backgroundLayer.style.backgroundImage = `url('${newArtUrl}')`;
         albumArtLayer.style.backgroundImage = `url('${newArtUrl}')`;
@@ -135,13 +164,27 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     progressPercent = Math.min(100, Math.max(0, progressPercent));
     progressBarFill.style.width = `${progressPercent}%`;
     progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
-    switch (themeVariant) {
-        case "matte":
-            progressBarFill.style.setProperty('--accent-color', accentColorPalette.DarkVibrant);
-            break;
-        case "matte-dark":
-        default:
-            progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
-            break;
+    if (!useCustomColors) {
+        switch (themeVariant) {
+            case "matte":
+                progressBarFill.style.setProperty('--accent-color', accentColorPalette.DarkVibrant);
+                break;
+            case "matte-dark":
+            default:
+                progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+                break;
+        }
+    }
+    else
+    {
+        switch (themeVariant) {
+            case "matte":
+                progressBarFill.style.setProperty('--accent-color', color2);
+                break;
+            // case "matte-dark":
+            default:
+                progressBarFill.style.setProperty('--accent-color', color1);
+                break;
+        }
     }
 }
