@@ -1,0 +1,64 @@
+:root {
+    --border-radius: 10px;
+}
+
+#main-wrapper {
+    width: 500px;
+    opacity: 0;
+}
+
+#color-palette {
+    display: flex;
+    gap: 0.5em;
+    flex-direction: column;
+    width: 100%;
+}
+
+.color-box {
+    display: flex;
+    align-items: flex-end;
+    padding: 0.5em;
+    border-radius: var(--border-radius);
+    text-align: var(--text-alignment);
+    height: 5em;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--box-bg);
+    clip-path: inset(0 var(--clip-right, 0%) 0 0);
+    z-index: 1;
+    transition: all 1s ease;
+}
+
+.color-box .color-info {
+    position: relative;
+    z-index: 2;
+}
+
+.color-info {
+    text-transform: uppercase;
+    opacity: 0.5;
+    width: 100%;
+    mix-blend-mode: difference;
+    display: flex;
+    flex-direction: column;
+}
+
+.primary-text {
+    font-size: 1em;
+    font-weight: 700;
+    transition: opacity 0.5s ease;
+    display: var(--show-primary);
+}
+
+.secondary-text {
+    opacity: 0.7;
+    font-size: 0.7em;
+    font-weight: 700;
+    display: var(--show-secondary);
+}

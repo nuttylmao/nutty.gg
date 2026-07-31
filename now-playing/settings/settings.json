@@ -45,6 +45,10 @@
 				{
 					"value": "vinyl",
 					"label": "Vinyl"
+				},
+				{
+					"value": "color-palette",
+					"label": "Color Palette"
 				}
 			],
 			"defaultValue": "standard",
