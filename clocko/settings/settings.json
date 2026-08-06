@@ -1,0 +1,280 @@
+{
+    "settings": [
+        {
+            "id": "enableLine1",
+            "label": "Enable Line 1",
+            "description": "Show the first line of the clock",
+            "type": "checkbox",
+            "defaultValue": true,
+            "group": "Appearance"
+        },
+        {
+            "id": "line1Format",
+            "label": "Format",
+            "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
+            "type": "text",
+            "defaultValue": "ddd DD MMM YYYY hh:mm:ss A z",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "line1Font",
+            "label": "Font",
+            "description": "",
+            "type": "text",
+            "defaultValue": "",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "line1FontSize",
+            "label": "Font Size",
+            "description": "",
+            "type": "number",
+            "min": 1,
+            "max": 120,
+            "defaultValue": 50,
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "line1FontWeight",
+            "label": "Font Weight",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "100", "label": "Thin" },
+                { "value": "200", "label": "Extra Light" },
+                { "value": "300", "label": "Light" },
+                { "value": "400", "label": "Regular" },
+                { "value": "500", "label": "Medium" },
+                { "value": "600", "label": "Semi Bold" },
+                { "value": "700", "label": "Bold" },
+                { "value": "800", "label": "Extra Bold" },
+                { "value": "900", "label": "Black" }
+            ],
+            "defaultValue": "700",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "line1FontColor",
+            "label": "Font Color",
+            "description": "",
+            "type": "color",
+            "defaultValue": "#ffffff",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "line1FontOpacity",
+            "label": "Font Opacity",
+            "description": "",
+            "type": "number",
+            "defaultValue": "1",
+            "min": 0,
+            "max": 1,
+            "step": ".01",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "line1TextAlignment",
+            "label": "Text Alignment",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
+            ],
+            "defaultValue": "center",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
+            "id": "enableLine2",
+            "label": "Enable Line 2",
+            "description": "Show the second line of the clock",
+            "type": "checkbox",
+            "defaultValue": false,
+            "group": "Appearance"
+        },
+        {
+            "id": "line2Format",
+            "label": "Format",
+            "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
+            "type": "text",
+            "defaultValue": "hh:mm:ss A",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2Font",
+            "label": "Font",
+            "description": "",
+            "type": "text",
+            "defaultValue": "",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2FontSize",
+            "label": "Font Size",
+            "description": "",
+            "type": "number",
+            "min": 1,
+            "max": 120,
+            "defaultValue": 40,
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2FontWeight",
+            "label": "Font Weight",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "100", "label": "Thin" },
+                { "value": "200", "label": "Extra Light" },
+                { "value": "300", "label": "Light" },
+                { "value": "400", "label": "Regular" },
+                { "value": "500", "label": "Medium" },
+                { "value": "600", "label": "Semi Bold" },
+                { "value": "700", "label": "Bold" },
+                { "value": "800", "label": "Extra Bold" },
+                { "value": "900", "label": "Black" }
+            ],
+            "defaultValue": "600",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2FontColor",
+            "label": "Font Color",
+            "description": "",
+            "type": "color",
+            "defaultValue": "#ffffff",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2FontOpacity",
+            "label": "Font Opacity",
+            "description": "",
+            "type": "number",
+            "defaultValue": "0.9",
+            "min": 0,
+            "max": 1,
+            "step": ".01",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2TextAlignment",
+            "label": "Text Alignment",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
+            ],
+            "defaultValue": "center",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "enableLine3",
+            "label": "Enable Line 3",
+            "description": "Show the third line of the clock",
+            "type": "checkbox",
+            "defaultValue": false,
+            "group": "Appearance"
+        },
+        {
+            "id": "line3Format",
+            "label": "Format",
+            "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
+            "type": "text",
+            "defaultValue": "ddd DD MMM YYYY",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3Font",
+            "label": "Font",
+            "description": "",
+            "type": "text",
+            "defaultValue": "",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3FontSize",
+            "label": "Font Size",
+            "description": "",
+            "type": "number",
+            "min": 1,
+            "max": 120,
+            "defaultValue": 30,
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3FontWeight",
+            "label": "Font Weight",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "100", "label": "Thin" },
+                { "value": "200", "label": "Extra Light" },
+                { "value": "300", "label": "Light" },
+                { "value": "400", "label": "Regular" },
+                { "value": "500", "label": "Medium" },
+                { "value": "600", "label": "Semi Bold" },
+                { "value": "700", "label": "Bold" },
+                { "value": "800", "label": "Extra Bold" },
+                { "value": "900", "label": "Black" }
+            ],
+            "defaultValue": "400",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3FontColor",
+            "label": "Font Color",
+            "description": "",
+            "type": "color",
+            "defaultValue": "#ffffff",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3FontOpacity",
+            "label": "Font Opacity",
+            "description": "",
+            "type": "number",
+            "defaultValue": "0.7",
+            "min": 0,
+            "max": 1,
+            "step": ".01",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3TextAlignment",
+            "label": "Text Alignment",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
+            ],
+            "defaultValue": "center",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        }
+    ]
+}
