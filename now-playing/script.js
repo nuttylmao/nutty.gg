@@ -379,15 +379,20 @@ async function UpdatePlayerState(data) {
         }
     } else {
         // Fallback when no included list is provided:
-        // Priority 1: Find any session that is currently playing
-        targetSession = validSessions.find(s => s.playback_info && s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
-
-        // Priority 2: If nothing is playing, use system's current active session ID
-        if (!targetSession) {
+        // Priority 1: Check Windows' current focused session ID first
+        if (data.current_session_id) {
             targetSession = validSessions.find(s => s.source_app_id === data.current_session_id);
         }
-        
-        // Priority 3: Ultimate fallback to the first valid session available
+
+        // Priority 2: If the current session isn't available/valid, find any session that is currently playing
+        if (!targetSession || targetSession.playback_info.PlaybackStatus !== PlaybackStatus.PLAYING) {
+            const playingSession = validSessions.find(s => s.playback_info && s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
+            if (playingSession) {
+                targetSession = playingSession;
+            }
+        }
+
+        // Priority 3: Ultimate fallback to the first valid session available if nothing else matched
         if (!targetSession && validSessions.length > 0) {
             targetSession = validSessions[0];
         }
