@@ -9,7 +9,7 @@ const urlParams = new URLSearchParams(queryString);
 // CONSTANTS //
 ////////////////
 
-const REQUIRED_VERSION = '0.0.2';
+const REQUIRED_VERSION = '0.0.3';
 const SMTC_BRIDGE_DOWNLOAD_URL = 'https://github.com/nuttylmao/smtc-bridge/releases';
 let VersionChecked = false;
 
@@ -492,7 +492,8 @@ function SetLabelText(elementId, text) {
 function ApplyMarquee(label, text) {
     // 1. Render single span to measure dimensions
     label.classList.remove('is-overflowing');
-    label.innerHTML = `<span class="scroll-content">${text}</span>`;
+    label.innerHTML = `<span class="scroll-content"></span>`;
+    label.querySelector('.scroll-content').textContent = text;
     
     const scrollContent = label.querySelector('.scroll-content');
     

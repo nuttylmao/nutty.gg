@@ -134,8 +134,6 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
         backgroundLayer.style.opacity = "";
         albumArtLayer.style.opacity = "";
 
-        console.log(songInfoWrapper.clientWidth);
-
         setTimeout(() => {
             // Set the image
             backgroundTransitionLayer.style.backgroundImage = `url('${newArtUrl}')`;
