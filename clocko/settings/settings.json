@@ -20,8 +20,8 @@
         {
             "id": "line1Font",
             "label": "Font",
-            "description": "",
-            "type": "text",
+            "description": "<a href=\"ms-settings:fonts\">Check installed fonts</a>",
+            "type": "font",
             "defaultValue": "",
             "showIf": "enableLine1",
             "group": "Appearance"
@@ -112,8 +112,8 @@
         {
             "id": "line2Font",
             "label": "Font",
-            "description": "",
-            "type": "text",
+            "description": "<a href=\"ms-settings:fonts\">Check installed PC fonts</a>",
+            "type": "font",
             "defaultValue": "",
             "showIf": "enableLine2",
             "group": "Appearance"
@@ -204,7 +204,7 @@
         {
             "id": "line3Font",
             "label": "Font",
-            "description": "",
+            "description": "<a href=\"ms-settings:fonts\">Check installed PC fonts</a>",
             "type": "text",
             "defaultValue": "",
             "showIf": "enableLine3",
