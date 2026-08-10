@@ -129,7 +129,7 @@ if (!showAvatar) {
 }
 
 // Set fonts for the widget
-document.body.style.fontFamily = font;
+document.body.style.fontFamily = `'${font}'`;
 document.body.style.fontSize = `${fontSize}px`;
 document.body.style.color = fontColor;
 

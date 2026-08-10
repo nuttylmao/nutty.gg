@@ -97,7 +97,7 @@ let youtubeUsername = urlParams.get("youtubeUsername") || "";
 ////////////////
 
 // Set fonts for the widget
-document.body.style.fontFamily = font;
+document.body.style.fontFamily = `'${font}'`;
 document.body.style.fontSize = `${fontSize}px`;
 
 // Set the background color
