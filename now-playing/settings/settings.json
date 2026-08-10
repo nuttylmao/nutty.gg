@@ -57,8 +57,8 @@
 		{
 			"id": "font",
 			"label": "Font",
-			"description": "",
-			"type": "text",
+            "description": "<a href=\"ms-settings:fonts\">Check installed fonts</a>",
+            "type": "font",
 			"defaultValue": "",
 			"group": "Appearance"
 		},
