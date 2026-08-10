@@ -1,6 +1,14 @@
 {
     "settings": [
         {
+            "id": "font",
+            "label": "Font",
+            "description": "<a href=\"ms-settings:fonts\">Check installed fonts</a>",
+            "type": "font",
+            "defaultValue": "",
+            "group": "Appearance"
+        },
+        {
             "id": "enableLine1",
             "label": "Enable Line 1",
             "description": "Show the first line of the clock",
@@ -13,16 +21,7 @@
             "label": "Format",
             "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
             "type": "text",
-            "defaultValue": "ddd DD MMM YYYY hh:mm:ss A z",
-            "showIf": "enableLine1",
-            "group": "Appearance"
-        },
-        {
-            "id": "line1Font",
-            "label": "Font",
-            "description": "<a href=\"ms-settings:fonts\">Check installed fonts</a>",
-            "type": "font",
-            "defaultValue": "",
+            "defaultValue": "hh:mm:ss A",
             "showIf": "enableLine1",
             "group": "Appearance"
         },
@@ -79,6 +78,21 @@
             "group": "Appearance"
         },
         {
+            "id": "line1TextTransform",
+            "label": "Text Transform",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "none", "label": "Normal" },
+                { "value": "uppercase", "label": "Uppercase" },
+                { "value": "lowercase", "label": "Lowercase" },
+                { "value": "capitalize", "label": "Capitalize" }
+            ],
+            "defaultValue": "uppercase",
+            "showIf": "enableLine1",
+            "group": "Appearance"
+        },
+        {
             "id": "line1TextAlignment",
             "label": "Text Alignment",
             "description": "",
@@ -97,7 +111,7 @@
             "label": "Enable Line 2",
             "description": "Show the second line of the clock",
             "type": "checkbox",
-            "defaultValue": false,
+            "defaultValue": true,
             "group": "Appearance"
         },
         {
@@ -105,16 +119,7 @@
             "label": "Format",
             "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
             "type": "text",
-            "defaultValue": "hh:mm:ss A",
-            "showIf": "enableLine2",
-            "group": "Appearance"
-        },
-        {
-            "id": "line2Font",
-            "label": "Font",
-            "description": "<a href=\"ms-settings:fonts\">Check installed PC fonts</a>",
-            "type": "font",
-            "defaultValue": "",
+            "defaultValue": "ddd, MMM D",
             "showIf": "enableLine2",
             "group": "Appearance"
         },
@@ -145,7 +150,7 @@
                 { "value": "800", "label": "Extra Bold" },
                 { "value": "900", "label": "Black" }
             ],
-            "defaultValue": "600",
+            "defaultValue": "400",
             "showIf": "enableLine2",
             "group": "Appearance"
         },
@@ -163,10 +168,25 @@
             "label": "Font Opacity",
             "description": "",
             "type": "number",
-            "defaultValue": "0.9",
+            "defaultValue": "0.7",
             "min": 0,
             "max": 1,
             "step": ".01",
+            "showIf": "enableLine2",
+            "group": "Appearance"
+        },
+        {
+            "id": "line2TextTransform",
+            "label": "Text Transform",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "none", "label": "Normal" },
+                { "value": "uppercase", "label": "Uppercase" },
+                { "value": "lowercase", "label": "Lowercase" },
+                { "value": "capitalize", "label": "Capitalize" }
+            ],
+            "defaultValue": "uppercase",
             "showIf": "enableLine2",
             "group": "Appearance"
         },
@@ -197,16 +217,7 @@
             "label": "Format",
             "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
             "type": "text",
-            "defaultValue": "ddd DD MMM YYYY",
-            "showIf": "enableLine3",
-            "group": "Appearance"
-        },
-        {
-            "id": "line3Font",
-            "label": "Font",
-            "description": "<a href=\"ms-settings:fonts\">Check installed PC fonts</a>",
-            "type": "text",
-            "defaultValue": "",
+            "defaultValue": "ddd DD MMM YYYY hh:mm:ss A z",
             "showIf": "enableLine3",
             "group": "Appearance"
         },
@@ -237,7 +248,7 @@
                 { "value": "800", "label": "Extra Bold" },
                 { "value": "900", "label": "Black" }
             ],
-            "defaultValue": "400",
+            "defaultValue": "600",
             "showIf": "enableLine3",
             "group": "Appearance"
         },
@@ -255,10 +266,25 @@
             "label": "Font Opacity",
             "description": "",
             "type": "number",
-            "defaultValue": "0.7",
+            "defaultValue": "1",
             "min": 0,
             "max": 1,
             "step": ".01",
+            "showIf": "enableLine3",
+            "group": "Appearance"
+        },
+        {
+            "id": "line3TextTransform",
+            "label": "Text Transform",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "none", "label": "Normal" },
+                { "value": "uppercase", "label": "Uppercase" },
+                { "value": "lowercase", "label": "Lowercase" },
+                { "value": "capitalize", "label": "Capitalize" }
+            ],
+            "defaultValue": "none",
             "showIf": "enableLine3",
             "group": "Appearance"
         },
