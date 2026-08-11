@@ -1,0 +1,307 @@
+{
+	"settings": [
+		{
+			"id": "theme",
+			"label": "Theme",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "standard",
+					"label": "Standard"
+				},
+				{
+					"value": "matte",
+					"label": "Matte (Light)"
+				},
+				{
+					"value": "matte-dark",
+					"label": "Matte (Dark)"
+				},
+				{
+					"value": "compact",
+					"label": "Compact"
+				},
+				{
+					"value": "compact-inverted",
+					"label": "Compact (Inverted)"
+				},
+				{
+					"value": "simple",
+					"label": "Simple"
+				},
+				{
+					"value": "classic",
+					"label": "Classic"
+				},
+				{
+					"value": "card",
+					"label": "Card"
+				},
+				{
+					"value": "album-art",
+					"label": "Album Art"
+				},
+				{
+					"value": "vinyl",
+					"label": "Vinyl"
+				},
+				{
+					"value": "color-palette",
+					"label": "Color Palette"
+				}
+			],
+			"defaultValue": "standard",
+			"group": "Appearance"
+		},
+		{
+			"id": "font",
+			"label": "Font",
+            "description": "<a href=\"ms-settings:fonts\">Check installed fonts</a>",
+            "type": "font",
+			"defaultValue": "",
+			"group": "Appearance"
+		},
+		{
+			"id": "fontSize",
+			"label": "Font Size",
+			"description": "",
+			"type": "number",
+			"min": 0,
+			"defaultValue": 20,
+			"group": "Appearance"
+		},
+		{
+			"id": "maxWidth",
+			"label": "Max Width",
+			"description": "Set to 0 to utilize full browser width",
+			"type": "number",
+			"min": 0,
+			"defaultValue": 500,
+			"group": "Appearance"
+		},
+		{
+			"id": "verticalAlignment",
+			"label": "Vertical Alignment",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "align-to-top",
+					"label": "Align To Top"
+				},
+				{
+					"value": "align-to-center",
+					"label": "Align To Center"
+				},
+				{
+					"value": "align-to-bottom",
+					"label": "Align To Bottom"
+				}
+			],
+			"defaultValue": "align-to-center",
+			"group": "Appearance"
+		},
+		{
+			"id": "textAlignment",
+			"label": "Text Alignment",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"defaultValue": "left",
+			"group": "Appearance"
+		},
+		{
+			"id": "useCustomColors",
+			"label": "Use Custom Colors",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Appearance"
+		},
+		{
+			"id": "color1",
+			"label": "Primary Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#ffffff",
+			"showIf": "useCustomColors",
+			"group": "Appearance"
+		},
+		{
+			"id": "color2",
+			"label": "Secondary Color",
+			"description": "",
+			"type": "color",
+			"defaultValue": "#1d1d1d",
+			"showIf": "useCustomColors",
+			"group": "Appearance"
+		},
+		{
+			"id": "includedApplications",
+			"label": "Included Apps",
+			"description": "List of apps to display, in order of priority.<br>Leave empty to track currently focused app.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"type": "text",
+			"placeholder": "Spotify.exe, vlc.exe",
+			"defaultValue": "",
+			"group": "General"
+		},
+		{
+			"id": "excludedApplications",
+			"label": "Excluded Apps",
+			"description": "Apps listed here will not be displayed.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
+			"type": "text",
+			"placeholder": "Chrome, vlc.exe",
+			"defaultValue": "",
+			"group": "General"
+		},
+		{
+			"id": "showAlbumArt",
+			"label": "Show Album Art",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "showProgressBar",
+			"label": "Show Progress Bar",
+			"description": "Some apps do not display progress info correctly.",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "swapArtistTrack",
+			"label": "Swap Artist and Track",
+			"description": "Displays Artist above Track instead of Track above Artist.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "showPrimary",
+			"label": "Show Primary Text",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "showSecondary",
+			"label": "Show Secondary Text",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "General"
+		},
+		{
+			"id": "autoHide",
+			"label": "Auto-Hide on Track Change",
+			"description": "If enabled, the widget will show for a set duration whenever a new track starts.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "displayDuration",
+			"label": "Display Duration (seconds)",
+			"description": "How long the widget should remain visible.",
+			"type": "number",
+			"min": 1,
+			"max": 60,
+			"defaultValue": 5,
+			"showIf": "autoHide",
+			"group": "General"
+		},
+		{
+			"id": "showAnimation",
+			"label": "Show Animation",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "fade-in",
+					"label": "Fade In"
+				},
+				{
+					"value": "slide-in-from-top",
+					"label": "Slide In From Top"
+				},
+				{
+					"value": "slide-in-from-bottom",
+					"label": "Slide In From Bottom"
+				},
+				{
+					"value": "slide-in-from-left",
+					"label": "Slide In From Left"
+				},
+				{
+					"value": "slide-in-from-right",
+					"label": "Slide In From Right"
+				}
+			],
+			"defaultValue": "slide-in-from-bottom",
+			"group": "General"
+		},
+		{
+			"id": "hideAnimation",
+			"label": "Hide Animation",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "fade-out",
+					"label": "Fade Out"
+				},
+				{
+					"value": "slide-out-top",
+					"label": "Slide Out Top"
+				},
+				{
+					"value": "slide-out-bottom",
+					"label": "Slide Out Down"
+				},
+				{
+					"value": "slide-out-left",
+					"label": "Slide Out Left"
+				},
+				{
+					"value": "slide-out-right",
+					"label": "Slide Out Right"
+				}
+			],
+			"defaultValue": "slide-out-bottom",
+			"group": "General"
+		},
+		{
+			"id": "smtcBridgeAddress",
+			"label": "Address",
+			"description": "",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "SMTC Bridge"
+		},
+		{
+			"id": "smtcBridgePort",
+			"label": "Port",
+			"description": "",
+			"type": "text",
+			"defaultValue": "5000",
+			"group": "SMTC Bridge"
+		}
+	]
+}

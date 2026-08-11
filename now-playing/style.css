@@ -1,0 +1,252 @@
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    color: white;
+    margin: 0;
+}
+
+#main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes slide-in-from-top {
+    0% {
+        transform: translateY(-1em);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-from-top {
+    0% {
+        transform: translateY(-1em);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out-top {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-1em);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-in-from-bottom {
+    0% {
+        transform: translateY(1em);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out-bottom {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(1em);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-in-from-left {
+    0% {
+        transform: translateX(-1em);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out-left {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-1em);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-in-from-right {
+    0% {
+        transform: translateX(1em);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out-right {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(1em);
+        opacity: 0;
+    }
+}
+
+
+
+@property --mask-left {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: black;
+}
+
+@property --mask-right {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+}
+
+.text-label {
+    --fade-width: 0.5em;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    mask-image: var(--trailing-fade);
+    -webkit-mask-image: var(--trailing-fade);
+    transition: opacity 0.25s ease-in-out;
+}
+
+.text-label:empty {
+    display: none !important;
+}
+
+.text-label:has(.scroll-content:empty),
+.text-label:has(#track-label:empty) {
+    display: none !important;
+}
+
+.text-label .scroll-content {
+    display: inline-flex;
+    white-space: nowrap;
+    will-change: transform;
+}
+
+.text-label.is-overflowing .scroll-content {
+    animation: ping-pong-scroll var(--marquee-duration, 8s) ease-in-out infinite;
+}
+
+.text-label.is-overflowing {
+    animation: ping-pong-mask var(--marquee-duration, 8s) ease-in-out infinite;
+    
+    /* Static gradient structure referencing dynamic color variables */
+    mask-image: linear-gradient(
+        to right, 
+        var(--mask-left) 0px, 
+        black var(--fade-width), 
+        black calc(100% - var(--fade-width)), 
+        var(--mask-right) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right, 
+        var(--mask-left) 0px, 
+        black var(--fade-width), 
+        black calc(100% - var(--fade-width)), 
+        var(--mask-right) 100%
+    );
+}
+
+@keyframes ping-pong-scroll {
+    0%, 15% {
+        transform: translateX(0%);
+    }
+    50%, 65% {
+        transform: translateX(var(--scroll-distance, -100%));
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes ping-pong-mask {
+    /* 1. AT START: Left is solid (black), Right is faded (transparent) */
+    0%, 15% {
+        --mask-left: black;
+        --mask-right: transparent;
+    }
+
+    /* 2. MOVING LEFT: Left smoothly fades in (transparent), Right stays faded */
+    22%, 43% {
+        --mask-left: transparent;
+        --mask-right: transparent;
+    }
+
+    /* 3. AT FAR END: Right smoothly solidifies (black), Left stays faded */
+    50%, 65% {
+        --mask-left: transparent;
+        --mask-right: black;
+    }
+
+    /* 4. MOVING RIGHT: Right smoothly fades back out (transparent) */
+    72%, 93% {
+        --mask-left: transparent;
+        --mask-right: transparent;
+    }
+
+    /* 5. RETURN TO START: Left smoothly solidifies (black) */
+    100% {
+        --mask-left: black;
+        --mask-right: transparent;
+    }
+}

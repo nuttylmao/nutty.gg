@@ -1,0 +1,92 @@
+:root {
+    --border-radius: 30px;
+}
+
+#main-wrapper {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5em;
+    opacity: 0;
+    aspect-ratio: 1 / 1;
+}
+
+#album-art-container {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: var(--show-album-art);
+}
+
+#album-art-layer,
+#album-art-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease;
+    border-radius: var(--border-radius);
+}
+
+#album-art-layer {
+    z-index: 1;
+	transition: all 0.5s ease;
+}
+
+#album-art-transition-layer {
+    z-index: 0;
+}
+
+#song-info-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#text-info-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 6% 7%;
+    padding-top: 50%;
+    box-sizing: border-box;
+    z-index: 2;
+    text-align: var(--text-alignment);
+}
+
+#track-label {
+	font-size: 2em;
+	font-weight: 700;
+    text-align: var(--text-alignment);
+}
+
+#artist-label {
+	font-size: 1.5em;
+	font-weight: 500;
+	opacity: 0.8;
+    text-align: var(--text-alignment);
+}
+
+#progress-bar {
+    height: 1%;
+    width: 0%; /* JS will control this */
+    background: linear-gradient(to top, #ffffff00, var(--accent-color, #ffffff));
+    /* background-color: var(--accent-color, #ffffff); */
+    transition: width 1s ease-in-out, background 1s ease-in-out;
+    /* border-radius: 10000px; */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+}

@@ -1,0 +1,115 @@
+:root {
+    --border-radius: 10px;
+}
+
+#main-wrapper {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+    opacity: 0;
+}
+
+#album-art-container {
+    /* 1. Tell it to maintain a 1:1 square ratio */
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: var(--show-album-art);
+    flex-shrink: 0;
+}
+
+#album-art-layer,
+#album-art-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease;
+}
+
+#album-art-layer {
+    z-index: 1;
+	transition: all 0.5s ease;
+}
+
+#album-art-transition-layer {
+    z-index: 0;
+}
+
+#song-info-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-grow: 1;
+    min-width: 0;
+    gap: 0.25em;
+    transition: color 1s ease;
+}
+
+#background-transition-layer {
+	z-index: 0;
+}
+
+#track-label {
+	font-size: 1em;
+	font-weight: 600;
+    text-align: var(--text-alignment);
+}
+
+#artist-label {
+	font-size: 0.8em;
+	font-weight: 400;
+	opacity: 0.6;
+    text-align: var(--text-alignment);
+}
+
+#progress-container {
+	display: flex;
+	flex-direction: row;
+    align-items: center;
+	gap: 0.2em;
+	margin-top: 0.2em;
+    gap: 0.5em;
+}
+
+#progress-bar-track {
+    width: 100%;
+    height: 0.4em;
+	border-radius: 1em;
+	background-color: #ffffff3a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+}
+
+#progress-bar-fill {
+    height: 100%;
+    width: 0%; /* JS will control this */
+    border-radius: 1em;
+    background-color: var(--accent-color, #ffffff);
+    transition: width 1s ease-in-out, background-color 1s ease-in-out;
+    
+    /* This makes the handle track the end of the bar */
+    position: relative; 
+}
+
+.progress-text {
+	font-size: 0.7em;
+	opacity: 0.5;
+}
+
+.text-label {
+	white-space: nowrap;
+    overflow: hidden;
+    mask-image: var(--trailing-fade);
+    -webkit-mask-image: var(--trailing-fade);
+    transition: opacity 0.25s ease-in-out;
+}

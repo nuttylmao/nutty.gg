@@ -192,7 +192,7 @@ async function CustomEvent(data) {
         case ('TwitchCustomPowerUpRedemption'):
             {
                 avatarEl.src = await GetAvatar(data.userName, 'twitch');
-                titleEl.innerText = `${data["customPowerUp.bits"]} BITS`;
+                titleEl.innerText = `${data["customPowerUp.bitsCost"]} BITS`;
                 subtitleEl.innerText = `${data.user}`;
 
                 const messageEl = document.createElement('div');

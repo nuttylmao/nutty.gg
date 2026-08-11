@@ -412,3 +412,301 @@ async function LoadHTMLTemplate(name) {
         document.body.appendChild(template.cloneNode(true));
     }
 }
+
+function ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(time) {
+    if (isNaN(time) || time <= 0) return "0:00";
+
+    const totalSeconds = Math.floor(time / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    // Format seconds with a leading zero
+    const paddedSeconds = ('0' + seconds).slice(-2);
+
+    if (hours > 0) {
+        // Format minutes with a leading zero if hours are present
+        const paddedMinutes = ('0' + minutes).slice(-2);
+        return `${hours}:${paddedMinutes}:${paddedSeconds}`;
+    }
+
+    return `${minutes}:${paddedSeconds}`;
+}
+
+async function GetAccentPalette(imageUrl) {
+    // 1. Dynamic Loader: Load Vibrant.js
+    if (typeof Vibrant === 'undefined') {
+        await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = "https://cdnjs.cloudflare.com/ajax/libs/node-vibrant/3.1.6/vibrant.min.js";
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    return new Promise((resolve) => {
+        // Vibrant can take the URL directly!
+        Vibrant.from(imageUrl).getPalette((err, palette) => {
+            if (err) {
+                console.warn("Vibrant failed, using fallback.");
+                return resolve({
+                    Vibrant: "#ffffff",
+                    Muted: "#cccccc",
+                    DarkVibrant: "#000000"
+                });
+            }
+
+            // Extract Hex from each swatch
+            const hexPalette = {};
+            for (let role in palette) {
+                if (palette[role]) {
+                    hexPalette[role] = palette[role].getHex();
+                }
+            }
+            resolve(hexPalette);
+        });
+    });
+}
+
+// Generic popup
+function SplashscreenPopup(iconSrc, title, subtitle, attribute, background, button) {
+    // 1. Check if a popup is already on screen
+    const existingOverlay = document.getElementById('global-common-overlay');
+    
+    // If it exists AND isn't already in the middle of fading out, DO NOTHING
+    if (existingOverlay && !existingOverlay.classList.contains('common-closing')) {
+        return null; 
+    }
+    
+    // If there IS a popup but it IS fading out, kill it instantly to make room for the new one
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
+    // 2. Inject global styles if they don't already exist in the head
+    if (!document.getElementById('global-common-popup-styles')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'global-common-popup-styles';
+        styleSheet.innerText = `
+            #global-common-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: transparent;
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 999999;
+                animation: commonFadeIn 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            .common-popup-card {
+                width: 90%;
+                max-width: 500px;
+                border-radius: 24px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                align-items: stretch;
+                overflow: hidden;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.4), 
+                            0 0 0 1px rgba(255, 255, 255, 0.08);
+                animation: commonScaleIn 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                gap: 32px;
+                padding: 32px;
+            }
+            .common-popup-icon-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: transparent;
+            }
+            .common-popup-img {
+                height: 48px;
+                width: auto;
+                object-fit: contain;
+                display: block;
+                }
+            .common-popup-text-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: left;
+                gap: 8px;
+            }
+            .common-popup-title {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 22px;
+                font-weight: 700;
+                color: #ffffff;
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+            }
+            .common-popup-title:last-child {
+                margin-bottom: 0;
+            }
+            .common-popup-subtitle {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+                color: rgba(255, 255, 255, 0.65);
+                margin: 0;
+                line-height: 1.5;
+            }
+            .common-popup-attribute {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.4);
+                word-break: break-all;
+            }
+            /* 💎 GLASSMORPHIC BUTTON STYLES */
+            .common-popup-button {
+                margin-top: 6px;
+                padding: 10px 20px;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                background: rgba(255, 255, 255, 0.1);
+                color: #ffffff;
+                font-family: system-ui, sans-serif;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+                text-align: center;
+                width: fit-content;
+            }
+            .common-popup-button:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+            .common-popup-button:active {
+                transform: scale(0.97);
+            }
+            @keyframes commonFadeIn {
+                from { opacity: 0; } to { opacity: 1; }
+            }
+            @keyframes commonScaleIn {
+                from { transform: scale(0.95) translateY(10px); opacity: 0; }
+                to { transform: scale(1) translateY(0); opacity: 1; }
+            }
+            #global-common-overlay.common-closing {
+                animation: commonFadeOut 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            .common-closing .common-popup-card {
+                animation: commonScaleOut 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            @keyframes commonFadeOut {
+                from { opacity: 1; } to { opacity: 0; }
+            }
+            @keyframes commonScaleOut {
+                from { transform: scale(1) translateY(0); opacity: 1; }
+                to { transform: scale(0.95) translateY(10px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+
+    // 3. Create elements
+    const overlay = document.createElement('div');
+    overlay.id = 'global-common-overlay';
+
+    const card = document.createElement('div');
+    card.className = 'common-popup-card';
+    card.style.background = background || 'linear-gradient(135deg, #1a1a1e 0%, #111113 100%)';
+
+    // 4. Construct Inner Content (Strict Conditional Rendering)
+    const iconMarkup = iconSrc 
+        ? `<div class="common-popup-icon-container">
+               <img src="${iconSrc}" class="common-popup-img" alt="Alert Icon" />
+           </div>` 
+        : '';
+        
+    const titleMarkup = title 
+        ? `<label class="common-popup-title">${title}</label>` 
+        : '';
+        
+    const subtitleMarkup = subtitle 
+        ? `<label class="common-popup-subtitle">${subtitle}</label>` 
+        : '';
+        
+    const attributeMarkup = attribute 
+        ? `<label class="common-popup-attribute">${attribute}</label>`
+        : '';
+
+    // Render button conditional markup
+    const buttonMarkup = (button && button.text)
+        ? `<button class="common-popup-button">${button.text}</button>`
+        : '';
+
+    card.innerHTML = `
+        ${iconMarkup}
+        <div class="common-popup-text-content">
+            ${titleMarkup}
+            ${subtitleMarkup}
+            ${attributeMarkup}
+            ${buttonMarkup}
+        </div>
+    `;
+
+    // 5. Setup Action Listeners if Button Exists
+    if (button && button.text && button.action) {
+        const actionBtn = card.querySelector('.common-popup-button');
+        if (actionBtn) {
+            actionBtn.addEventListener('click', () => {
+                if (typeof button.action === 'function') {
+                    button.action();
+                } else if (typeof button.action === 'string') {
+                    window.open(button.action, '_blank');
+                }
+            });
+        }
+    }
+
+    // 6. Append to page DOM
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    return {
+        element: overlay,
+        close: () => {
+            overlay.classList.add('common-closing');
+            overlay.addEventListener('animationend', (event) => {
+                if (event.target === overlay) {
+                    overlay.remove();
+                }
+            });
+        }
+    };
+}
+
+function VersionCheck(requiredVersion, installedVersion) {
+    const [rMajor, rMinor, rPatch] = requiredVersion.split('.').map(Number);
+    const [iMajor, iMinor, iPatch] = installedVersion.split('.').map(Number);
+
+    // 1. CRITICAL: Major versions must match exactly.
+    if (iMajor !== rMajor) {
+        console.log(`VersionCheck: Major version mismatch. Required: ${rMajor}, Installed: ${iMajor}`);
+        return 'incompatible';
+    }
+
+    // 2. SOFT WARNING: The installed minor version is lower than what is required.
+    if (iMinor < rMinor) {
+        console.log(`VersionCheck: Minor version mismatch. Required: ${rMinor}, Installed: ${iMinor}`);
+        return 'soft-warning';
+    }
+
+    // 3. SILENT WARNING: Minors match, but the installed patch version is lagging.
+    if (iMinor === rMinor && iPatch < rPatch) {
+        console.log(`VersionCheck: Patch version mismatch. Required: ${rPatch}, Installed: ${iPatch}`);
+        return 'compatible';
+    }
+
+    // 4. PERFECT: Installed version meets or exceeds the required baseline.
+    console.log(`VersionCheck: Installed version meets or exceeds the required baseline. Required: ${requiredVersion}, Installed: ${installedVersion}`);
+    return 'compatible';
+}

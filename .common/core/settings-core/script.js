@@ -4,6 +4,7 @@ const urlParams = new URLSearchParams(queryString);
 const settingsJson = urlParams.get("settingsJson") || "";
 const widgetURL = urlParams.get("widgetURL") || "";
 const showUnmuteIndicator = GetBooleanParam("showUnmuteIndicator", false);
+const useStreamerBot = GetBooleanParam("usesStreamerBot", false);
 
 // Page elements
 const widgetUrlInputWrapper = document.getElementById('widgetUrlInputWrapper');
@@ -101,6 +102,7 @@ function LoadJSON(settingsJson) {
 							inputElement.id = setting.id; //Added setting ID
 							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
 							inputElement.autocomplete = 'new-password';
+							inputElement.placeholder = setting.placeholder ? setting.placeholder : '';
 							break;
 						case 'password':
 							inputElement = document.createElement('input');
@@ -168,6 +170,24 @@ function LoadJSON(settingsJson) {
 							inputElement.setAttribute('list', 'streamer-bot-actions');
 							inputElement.autocomplete = 'off';
 							break;
+						case 'font':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.placeholder = 'Type to search...';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.setAttribute('list', 'fonts');
+							inputElement.autocomplete = 'off';
+
+							// Trigger permission prompt and load fonts on first click/focus
+							inputElement.addEventListener('focus', async function loadOnce() {
+								// Remove listener so it only triggers once per session
+								inputElement.removeEventListener('focus', loadOnce);
+								inputElement.placeholder = 'Type to search...';
+								
+								await PopulateFontDatalist();
+							}, { once: true });
+							break;
 						case 'button':
 							inputElement = document.createElement('button');
 							inputElement.id = setting.id; //Added setting ID
@@ -211,6 +231,7 @@ function LoadJSON(settingsJson) {
 
 						SaveSettingsToStorage();
 						RefreshWidgetPreview();
+						InterpolatePlaceholders();
 					});
 
 					settingItemContent.appendChild(inputElement);
@@ -257,6 +278,7 @@ function LoadJSON(settingsJson) {
 			UpdateSettingItemVisibility();
 			RefreshWidgetPreview();
 			SaveSettingsToStorage();
+			InterpolatePlaceholders();
 		})
 		.catch(error => console.error('Error loading settings:', error));
 }
@@ -315,6 +337,9 @@ function RefreshWidgetPreview() {
 }
 
 function UpdateStreamerBotConnection() {
+	if (!useStreamerBot)
+		return;
+
 	let addressElement = document.getElementById('address');
 	let portElement = document.getElementById('port');
 
@@ -368,6 +393,38 @@ async function GetSBActions() {
 	}
 
 	document.body.appendChild(datalistElement);
+}
+
+async function PopulateFontDatalist() {
+    if (!('queryLocalFonts' in window)) {
+        console.warn("Local Font Access API is not supported in this browser. Font auto-suggestions will be disabled.");
+        return;
+    }
+
+    try {
+        // Request permission and fetch local fonts
+        const availableFonts = await window.queryLocalFonts();
+
+        // Extract unique font family names and sort them alphabetically
+        const fontFamilies = [...new Set(availableFonts.map(font => font.family))].sort();
+
+        // Create the datalist element
+        const datalistElement = document.createElement('datalist');
+        datalistElement.id = 'fonts';
+
+        // Append each font family as an option
+        fontFamilies.forEach(family => {
+            const option = document.createElement('option');
+            option.value = family;
+            datalistElement.appendChild(option);
+        });
+
+        document.body.appendChild(datalistElement);
+        console.debug(`Loaded ${fontFamilies.length} local fonts into auto-suggest.`);
+
+    } catch (err) {
+        console.error("Permission denied or error fetching local fonts:", err);
+    }
 }
 
 
@@ -476,15 +533,56 @@ window.addEventListener('message', (event) => {
 });
 
 function GetSettingDepth(setting, allSettings) {
-    let depth = 0;
-    let current = setting;
+	let depth = 0;
+	let current = setting;
 
-    while (current.showIf) {
-        depth++;
-        current = allSettings.find(s => s.id === current.showIf) || {};
-    }
+	while (current.showIf) {
+		depth++;
+		current = allSettings.find(s => s.id === current.showIf) || {};
+	}
 
-    return depth;
+	return depth;
+}
+
+function InterpolatePlaceholders() {
+	// Regex to match anything inside curly braces, e.g., {smtcBridgeAddress}
+	const tokenRegex = /\{([^}]+)\}/g;
+
+	// Iterate over all settings from the original JSON in memory
+	settingsData.settings.forEach(setting => {
+
+		// Only process settings that actually have a placeholder in their description
+		if (setting.description && setting.description.includes('{')) {
+
+			// Start with the original untouched description from the JSON
+			let dynamicHTML = setting.description;
+			let match;
+
+			// Reset regex state (required when reusing a global regex in a loop)
+			tokenRegex.lastIndex = 0;
+
+			// Find all {tokens} in the string
+			while ((match = tokenRegex.exec(setting.description)) !== null) {
+				const targetId = match[1]; // The exact text inside the braces
+				const targetInput = document.getElementById(targetId);
+
+				if (targetInput) {
+					// Get current value, or fallback to the JSON default if the box is empty
+					const fallback = settingsData.settings.find(s => s.id === targetId)?.defaultValue || '';
+					const currentValue = targetInput.value || fallback;
+
+					// Replace the token with the actual value in our temporary string
+					dynamicHTML = dynamicHTML.replace(match[0], currentValue);
+				}
+			}
+
+			// Find the specific <p> tag for this setting in the DOM and overwrite its HTML
+			const descriptionParagraph = document.querySelector(`#item-${setting.id} p`);
+			if (descriptionParagraph) {
+				descriptionParagraph.innerHTML = dynamicHTML;
+			}
+		}
+	});
 }
 
 
@@ -495,3 +593,6 @@ LoadSettingsFromStorage();
 
 // Load default settings
 LoadJSON(settingsJson);
+
+// Populate local fonts for auto-suggest
+PopulateFontDatalist();

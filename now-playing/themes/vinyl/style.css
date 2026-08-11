@@ -1,0 +1,97 @@
+
+
+#main-wrapper {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    opacity: 0;
+	align-items: center;
+    justify-content: center;
+}
+
+#vinyl-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.5));
+    animation: spin 10s linear infinite;
+}
+
+#vinyl-background {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#album-art-container {
+    position: absolute;
+    width: 35%;
+    height: 35%;
+    border-radius: 50%; 
+    overflow: hidden;
+    
+    -webkit-mask-image: radial-gradient(circle, transparent 3%, black 3.5%);
+    mask-image: radial-gradient(circle, transparent 3%, black 3.5%);
+}
+
+#album-art-layer,
+#album-art-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease;
+    display: var(--show-album-art);
+}
+
+#album-art-layer {
+    z-index: 2;
+	transition: all 0.5s ease;
+}
+
+#album-art-transition-layer {
+    z-index: 1;
+}
+
+#progress-ring-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20%;
+    overflow: hidden; /* This masks the 'pie slice' */
+    z-index: 0;
+}
+
+#progress-svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    /* Rotates the start point to 12 o'clock */
+    transform: rotate(-90deg);
+    -webkit-mask-image: radial-gradient(circle, transparent 3%, black 3.5%);
+    mask-image: radial-gradient(circle, transparent 3%, black 3.5%);
+}
+
+#progress-pie-circle {
+    fill: transparent;
+    stroke: var(--accent-color); /* Falls back to red if var fails */
+    stroke-width: 50; /* This thickness makes it a solid pie */
+    
+    /* 157.1 is the exact circumference of a circle with r=25 (2 * PI * 25) */
+    stroke-dasharray: 157.1;
+    stroke-dashoffset: 157.1; /* Starts empty */
+
+    /* This creates the smooth, non-stuttering animation */
+    transition: all 1s linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

@@ -1,0 +1,185 @@
+:root {
+    --border-radius: 20px;
+}
+
+#main-wrapper {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch; 
+    gap: 0.5em;
+    opacity: 0;
+}
+
+#album-art-container {
+    /* 1. Tell it to maintain a 1:1 square ratio */
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: var(--show-album-art);
+    flex-shrink: 0;
+}
+
+#album-art-layer,
+#album-art-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease;
+}
+
+#album-art-layer {
+    z-index: 1;
+	transition: all 0.5s ease;
+}
+
+#album-art-transition-layer {
+    z-index: 0;
+}
+
+#song-info-container {
+    position: relative;
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#yet-another-wrapper-yup {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    gap: 1em;
+    transition: all 0.25s ease-in-out;
+}
+
+/* The background now fills the frame */
+#background-layer,
+#background-transition-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+	background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+	background-blend-mode: overlay; /* Or 'soft-light' for a subtler effect */
+    filter: blur(10px) brightness(0.3) saturate(1.2);
+    transform: scale(1.1); /* Slightly zoom in to cover edges when blurred */
+}
+
+#background-layer {
+	transition: all 0.5s ease;
+}
+
+#background-transition-layer {
+	z-index: 0;
+}
+
+/* The content sits on top */
+#song-info-wrapper {
+    position: relative; /* Keeps it in the document flow */
+    z-index: 2;         /* Sits above the background-layer */
+    
+    padding: 1em 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+#track-label {
+	font-size: 1em;
+	font-weight: 600;
+    text-align: var(--text-alignment);
+}
+
+#artist-label {
+	font-size: 0.8em;
+	font-weight: 300;
+	opacity: 0.6;
+    text-align: var(--text-alignment);
+}
+
+.text-label {
+	white-space: nowrap;
+    overflow: hidden;
+    mask-image: var(--trailing-fade);
+    -webkit-mask-image: var(--trailing-fade);
+    transition: opacity 0.25s ease-in-out;
+}
+
+#progress-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2em;
+	margin-top: 0.2em;
+}
+
+#progress-bar-track {
+    width: 100%;
+    height: 0.4em;
+	border-radius: 10000px;
+	background-color: #ffffff3a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+}
+
+#progress-bar-fill {
+    height: 100%;
+    width: 0%; /* JS will control this */
+	border-radius: 10000px;
+    background-color: var(--accent-color, #ffffff);
+    transition: width 1s ease-in-out, background-color 1s ease-in-out;
+    
+    /* This makes the handle track the end of the bar */
+    position: relative; 
+}
+
+#progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: -6px; /* Adjust to center the circle on the end of the bar */
+    top: 50%;
+    transform: translateY(-50%);
+    
+    width: 0.8em;  /* Diameter of your circle */
+    height: 0.8em;
+    background-color: var(--accent-color, #ffffff);
+    border-radius: 50%;
+    filter: brightness(1.4); 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+    
+    /* Optional: Hide it if the width is too small */
+    opacity: 0; 
+    transition: all 1s ease-in-out;
+}
+
+/* Show the handle when the progress bar is active */
+#progress-bar-track:hover #progress-bar-fill::after,
+#progress-bar-fill:not([style*="width: 0%"])::after {
+    opacity: 1;
+}
+
+#time-container {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.7em;
+	opacity: 0.5;
+}

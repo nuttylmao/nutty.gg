@@ -129,7 +129,8 @@ if (!showAvatar) {
 }
 
 // Set fonts for the widget
-document.body.style.fontFamily = font;
+if (font)
+	document.body.style.fontFamily = `'${font}'`;
 document.body.style.fontSize = `${fontSize}px`;
 document.body.style.color = fontColor;
 
@@ -253,6 +254,11 @@ client.on('YouTube.NewSponsor', (response) => {
 client.on('YouTube.GiftMembershipReceived', (response) => {
 	console.debug(response.data);
 	YouTubeGiftMembershipReceived(response.data);
+})
+
+client.on('Kick.Follow', (response) => {
+	console.debug(response.data);
+	KickFollow(response.data);
 })
 
 client.on('Streamlabs.Donation', (response) => {
