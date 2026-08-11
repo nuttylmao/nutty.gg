@@ -492,7 +492,7 @@ async function TwitchFollow(data) {
 		return;
 
 	// Set the text
-	const username = data.user_name;
+	const username = data.targetUser.name;
 
 	// Render avatars
 	const avatarURL = await GetAvatar(username, 'twitch');

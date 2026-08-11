@@ -689,9 +689,9 @@ function TwitchFollow(data) {
 		return;
 	
 	// Set the text
-	let username = data.user_name;
-	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
-		username = `${data.user_name} (${data.user_login})`;
+	let username = data.targetUser.name;
+	if (data.targetUser.name.toLowerCase() != data.targetUser.login.toLowerCase())
+		username = `${data.targetUser.name} (${data.targetUser.login})`;
 	
 	const message = `${username} followed`;
 
