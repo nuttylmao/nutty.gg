@@ -475,9 +475,6 @@ function SetVisibility(visible) {
 // This is a more advanced marquee implementation that calculates the overflow distance and adjusts the scroll speed accordingly
 const labelData = new Map();
 
-// Adjust this value to change scroll speed (pixels per second)
-const SCROLL_SPEED_PX_PER_SEC = 40; 
-
 function SetLabelText(elementId, text) {
     const label = document.getElementById(elementId);
     if (!label) return;
@@ -495,8 +492,11 @@ function SetLabelText(elementId, text) {
     }
 }
 
+// Adjust this value to change scroll speed (pixels per second)
+const SCROLL_SPEED_PX_PER_SEC = 30; 
+const PAUSE_SEC = 5;
+
 function ApplyMarquee(label, text) {
-    // 1. Render single span to measure dimensions
     label.classList.remove('is-overflowing');
     label.innerHTML = `<span class="scroll-content"></span>`;
     label.querySelector('.scroll-content').textContent = text;
@@ -507,20 +507,56 @@ function ApplyMarquee(label, text) {
     const containerWidth = label.clientWidth;
     const overflowDistance = textWidth - containerWidth;
 
-    // 2. Check if text exceeds container
     if (overflowDistance > 0) {
-        // Calculate travel distance in percentage relative to scrollContent's width
         const distancePercent = (overflowDistance / textWidth) * 100;
         
-        // Compute duration to keep speed consistent regardless of length
-        // We multiply travel time by 2 (for both directions) plus 3 seconds for pauses
-        const travelTime = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
-        const totalDuration = (travelTime * 2) + 3;
-
-        // Pass calculated variables to CSS
-        scrollContent.style.setProperty('--scroll-distance', `-${distancePercent}%`);
-        label.style.setProperty('--marquee-duration', `${totalDuration}s`);
+        // --- CONSTANT TIMINGS ---
+        const travelSec = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
+        const pauseSec = PAUSE_SEC; // Always constant at each end
         
+        const totalSec = (travelSec * 2) + (pauseSec * 2);
+        const totalMs = totalSec * 1000;
+        
+        const p1 = (pauseSec / totalSec);
+        const p2 = ((pauseSec + travelSec) / totalSec);
+        const p3 = ((pauseSec * 2 + travelSec) / totalSec);
+
+        scrollContent.style.setProperty('--scroll-distance', `-${distancePercent}%`);
+
+        // 1. Animate Text Translation
+        scrollContent.animate([
+            // Stay at start during pause 1 (linear/instant transition into movement)
+            { transform: 'translateX(0%)', offset: 0, easing: 'linear' },
+            { transform: 'translateX(0%)', offset: p1, easing: 'ease-in-out' }, // <--- Easing starts HERE as it leaves the edge
+            
+            // Travel to the far end with smooth ease-in-out
+            { transform: `translateX(-${distancePercent}%)`, offset: p2, easing: 'linear' }, // <--- Easing ends HERE as it arrives
+            
+            // Stay at far end during pause 2
+            { transform: `translateX(-${distancePercent}%)`, offset: p3, easing: 'ease-in-out' }, // <--- Easing starts HERE for return trip
+            
+            // Return to start with smooth ease-in-out
+            { transform: 'translateX(0%)', offset: 1, easing: 'linear' } // <--- Easing ends HERE back at start
+        ], {
+            duration: totalMs,
+            iterations: Infinity
+        });
+
+        // 2. Animate Mask Variables simultaneously to keep soft edges synced
+        label.animate([
+            { '--mask-left': 'black', '--mask-right': 'transparent', offset: 0 },
+            { '--mask-left': 'black', '--mask-right': 'transparent', offset: p1 },
+            { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p1 + 0.02 },
+            { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p2 - 0.02 },
+            { '--mask-left': 'transparent', '--mask-right': 'black', offset: p2 },
+            { '--mask-left': 'transparent', '--mask-right': 'black', offset: p3 },
+            { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p3 + 0.02 },
+            { '--mask-left': 'black', '--mask-right': 'transparent', offset: 1 }
+        ], {
+            duration: totalMs,
+            iterations: Infinity
+        });
+
         label.classList.add('is-overflowing');
     }
 }

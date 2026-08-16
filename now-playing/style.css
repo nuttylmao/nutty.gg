@@ -183,13 +183,7 @@ body {
     will-change: transform;
 }
 
-.text-label.is-overflowing .scroll-content {
-    animation: ping-pong-scroll var(--marquee-duration, 8s) ease-in-out infinite;
-}
-
-.text-label.is-overflowing {
-    animation: ping-pong-mask var(--marquee-duration, 8s) ease-in-out infinite;
-    
+.text-label.is-overflowing {    
     /* Static gradient structure referencing dynamic color variables */
     mask-image: linear-gradient(
         to right, 
@@ -205,48 +199,4 @@ body {
         black calc(100% - var(--fade-width)), 
         var(--mask-right) 100%
     );
-}
-
-@keyframes ping-pong-scroll {
-    0%, 15% {
-        transform: translateX(0%);
-    }
-    50%, 65% {
-        transform: translateX(var(--scroll-distance, -100%));
-    }
-    100% {
-        transform: translateX(0%);
-    }
-}
-
-@keyframes ping-pong-mask {
-    /* 1. AT START: Left is solid (black), Right is faded (transparent) */
-    0%, 15% {
-        --mask-left: black;
-        --mask-right: transparent;
-    }
-
-    /* 2. MOVING LEFT: Left smoothly fades in (transparent), Right stays faded */
-    22%, 43% {
-        --mask-left: transparent;
-        --mask-right: transparent;
-    }
-
-    /* 3. AT FAR END: Right smoothly solidifies (black), Left stays faded */
-    50%, 65% {
-        --mask-left: transparent;
-        --mask-right: black;
-    }
-
-    /* 4. MOVING RIGHT: Right smoothly fades back out (transparent) */
-    72%, 93% {
-        --mask-left: transparent;
-        --mask-right: transparent;
-    }
-
-    /* 5. RETURN TO START: Left smoothly solidifies (black) */
-    100% {
-        --mask-left: black;
-        --mask-right: transparent;
-    }
 }

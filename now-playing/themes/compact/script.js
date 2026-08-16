@@ -145,7 +145,6 @@ function UpdateSingleSongLabel(containerId, trackName, artistName) {
 
     let scrollContent = container.querySelector('.scroll-content');
 
-    // Only rebuild the HTML structure if the text content actually changed or doesn't exist yet
     const currentTrackEl = container.querySelector('.track-label');
     const currentArtistEl = container.querySelector('.artist-label');
     
@@ -160,7 +159,6 @@ function UpdateSingleSongLabel(containerId, trackName, artistName) {
         scrollContent = container.querySelector('.scroll-content');
     }
 
-    // Encapsulate measurement logic so it can be called safely by the observer
     const updateMetrics = () => {
         scrollContent = container.querySelector('.scroll-content');
 
@@ -170,20 +168,61 @@ function UpdateSingleSongLabel(containerId, trackName, artistName) {
 
         if (overflowDistance > 0) {
             const distancePercent = (overflowDistance / textWidth) * 100;
-            const travelTime = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
-            const totalDuration = (travelTime * 2) + 3;
+            
+            // --- CONSTANT TIMINGS ---
+            const travelSec = overflowDistance / SCROLL_SPEED_PX_PER_SEC;
+            const pauseSec = PAUSE_SEC; 
+            
+            const totalSec = (travelSec * 2) + (pauseSec * 2);
+            const totalMs = totalSec * 1000;
+            
+            const p1 = (pauseSec / totalSec);
+            const p2 = ((pauseSec + travelSec) / totalSec);
+            const p3 = ((pauseSec * 2 + travelSec) / totalSec);
 
-            container.style.setProperty('--scroll-distance', `-${distancePercent}%`);
-            container.style.setProperty('--marquee-duration', `${totalDuration}s`);
+            scrollContent.style.setProperty('--scroll-distance', `-${distancePercent}%`);
+
+            // Clear any previous active animations to prevent stacking on resize
+            if (scrollContent._anim) scrollContent._anim.cancel();
+            if (container._anim) container._anim.cancel();
+
+            // 1. Animate Text Translation inside container
+            scrollContent._anim = scrollContent.animate([
+                { transform: 'translateX(0%)', offset: 0, easing: 'linear' },
+                { transform: 'translateX(0%)', offset: p1, easing: 'ease-in-out' },
+                { transform: `translateX(-${distancePercent}%)`, offset: p2, easing: 'linear' },
+                { transform: `translateX(-${distancePercent}%)`, offset: p3, easing: 'ease-in-out' },
+                { transform: 'translateX(0%)', offset: 1, easing: 'linear' }
+            ], {
+                duration: totalMs,
+                iterations: Infinity
+            });
+
+            // 2. Animate Mask Variables simultaneously on the container
+            container._anim = container.animate([
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: 0 },
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: p1 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p1 + 0.02 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p2 - 0.02 },
+                { '--mask-left': 'transparent', '--mask-right': 'black', offset: p2 },
+                { '--mask-left': 'transparent', '--mask-right': 'black', offset: p3 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p3 + 0.02 },
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: 1 }
+            ], {
+                duration: totalMs,
+                iterations: Infinity
+            });
+
             container.classList.add('is-overflowing');
         } else {
             container.classList.remove('is-overflowing');
+            if (scrollContent._anim) scrollContent._anim.cancel();
+            if (container._anim) container._anim.cancel();
         }
     };
 
     updateMetrics();
 
-    // Attach ResizeObserver once to update metrics only (No recursive function resets!)
     if (!container._resizeObserver) {
         container._resizeObserver = new ResizeObserver(() => {
             updateMetrics();
