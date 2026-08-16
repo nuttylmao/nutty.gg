@@ -200,17 +200,26 @@ function UpdateSingleSongLabel(containerId, trackName, artistName) {
 
             // 2. Animate Mask Variables simultaneously to keep soft edges synced
             const maxOffset = 1;
-            const fadeBuffer = 0.02;
+            const fadeBuffer = Math.min(0.02, (p2 - p1) / 4); // Dynamically scale buffer if text overflow is tiny
+
+            const off0 = 0;
+            const off1 = p1;
+            const off2 = Math.min(p1 + fadeBuffer, p2);
+            const off3 = Math.max(off2, p2 - fadeBuffer);
+            const off4 = p2;
+            const off5 = p3;
+            const off6 = Math.min(p3 + fadeBuffer, maxOffset);
+            const off7 = 1;
 
             container._anim = container.animate([
-                { '--mask-left': 'black', '--mask-right': 'transparent', offset: 0 },
-                { '--mask-left': 'black', '--mask-right': 'transparent', offset: p1 },
-                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: Math.min(p1 + fadeBuffer, maxOffset) },
-                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: Math.max(0, p2 - fadeBuffer) },
-                { '--mask-left': 'transparent', '--mask-right': 'black', offset: p2 },
-                { '--mask-left': 'transparent', '--mask-right': 'black', offset: p3 },
-                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: Math.min(p3 + fadeBuffer, maxOffset) },
-                { '--mask-left': 'black', '--mask-right': 'transparent', offset: 1 }
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: off0 },
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: off1 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: off2 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: off3 },
+                { '--mask-left': 'transparent', '--mask-right': 'black', offset: off4 },
+                { '--mask-left': 'transparent', '--mask-right': 'black', offset: off5 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: off6 },
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: off7 }
             ], {
                 duration: totalMs,
                 iterations: Infinity
