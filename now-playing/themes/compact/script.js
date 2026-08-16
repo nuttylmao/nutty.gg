@@ -108,12 +108,6 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
 
     // If the duration is 0, that means the session isn't returning any timeline info, so just put the progress at 100%
     if (durationMs <= 0 || !showProgressBar)
-    // {
-    //     progressBarTrack.style.display = 'none';
-    //     return;
-    // }
-    // else
-    //     progressBarTrack.style.display = '';
         progressPercent = 100;
 
     // Calculate how much needs to be hidden (the right-side offset)
