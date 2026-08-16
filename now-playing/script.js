@@ -543,19 +543,22 @@ function ApplyMarquee(label, text) {
         });
 
         // 2. Animate Mask Variables simultaneously to keep soft edges synced
+        const maxOffset = 1;
+        const fadeBuffer = 0.02;
+
         label.animate([
-            { '--mask-left': 'black', '--mask-right': 'transparent', offset: 0 },
-            { '--mask-left': 'black', '--mask-right': 'transparent', offset: p1 },
-            { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p1 + 0.02 },
-            { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p2 - 0.02 },
-            { '--mask-left': 'transparent', '--mask-right': 'black', offset: p2 },
-            { '--mask-left': 'transparent', '--mask-right': 'black', offset: p3 },
-            { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: p3 + 0.02 },
-            { '--mask-left': 'black', '--mask-right': 'transparent', offset: 1 }
-        ], {
-            duration: totalMs,
-            iterations: Infinity
-        });
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: 0 },
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: p1 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: Math.min(p1 + fadeBuffer, maxOffset) },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: Math.max(0, p2 - fadeBuffer) },
+                { '--mask-left': 'transparent', '--mask-right': 'black', offset: p2 },
+                { '--mask-left': 'transparent', '--mask-right': 'black', offset: p3 },
+                { '--mask-left': 'transparent', '--mask-right': 'transparent', offset: Math.min(p3 + fadeBuffer, maxOffset) },
+                { '--mask-left': 'black', '--mask-right': 'transparent', offset: 1 }
+            ], {
+                duration: totalMs,
+                iterations: Infinity
+            });
 
         label.classList.add('is-overflowing');
     }
