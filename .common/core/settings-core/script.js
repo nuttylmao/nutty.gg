@@ -337,9 +337,10 @@ function RefreshWidgetPreview() {
 }
 
 function UpdateStreamerBotConnection() {
+	// If Streamer.bot is not being used, exit early
 	if (!useStreamerBot)
 		return;
-
+	
 	let addressElement = document.getElementById('address');
 	let portElement = document.getElementById('port');
 
@@ -359,40 +360,43 @@ function UpdateStreamerBotConnection() {
 //////////////////
 
 // Connect to Streamer.bot and get list of actions
-let sbServerAddress = '127.0.0.1';
-let sbServerPort = '8080';
-let client = new StreamerbotClient({
-	host: sbServerAddress,
-	port: sbServerPort,
+if (useStreamerBot)
+{
+	let sbServerAddress = '127.0.0.1';
+	let sbServerPort = '8080';
+	let client = new StreamerbotClient({
+		host: sbServerAddress,
+		port: sbServerPort,
 
-	onConnect: (data) => {
-		console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
-		console.debug(data);
+		onConnect: (data) => {
+			console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
+			console.debug(data);
 
-		// Get list of actions
-		GetSBActions();
-	},
+			// Get list of actions
+			GetSBActions();
+		},
 
-	onDisconnect: () => {
-		console.error(`Streamer.bot disconnected from ${sbServerAddress}:${sbServerPort}`)
+		onDisconnect: () => {
+			console.error(`Streamer.bot disconnected from ${sbServerAddress}:${sbServerPort}`)
+		}
+	});
+
+	async function GetSBActions() {
+		const response = await client.getActions();
+
+		console.debug(response);
+
+		const datalistElement = document.createElement('datalist');
+		datalistElement.id = 'streamer-bot-actions';
+
+		for (const action of response.actions) {
+			const option = document.createElement('option');
+			option.value = action.name;
+			datalistElement.appendChild(option);
+		}
+
+		document.body.appendChild(datalistElement);
 	}
-});
-
-async function GetSBActions() {
-	const response = await client.getActions();
-
-	console.debug(response);
-
-	const datalistElement = document.createElement('datalist');
-	datalistElement.id = 'streamer-bot-actions';
-
-	for (const action of response.actions) {
-		const option = document.createElement('option');
-		option.value = action.name;
-		datalistElement.appendChild(option);
-	}
-
-	document.body.appendChild(datalistElement);
 }
 
 async function PopulateFontDatalist() {

@@ -81,8 +81,8 @@
 #progress-bar {
     height: 1%;
     width: 0%; /* JS will control this */
-    background: linear-gradient(to top, #ffffff00, var(--accent-color, #ffffff));
-    /* background-color: var(--accent-color, #ffffff); */
+    /* background: linear-gradient(to top, #ffffff00, var(--accent-color, #ffffff)); */
+    background-color: var(--accent-color, #ffffff);
     transition: width 1s ease-in-out, background 1s ease-in-out;
     /* border-radius: 10000px; */
     position: absolute;

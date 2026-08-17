@@ -88,15 +88,3 @@
     opacity: 0.7;
     display: var(--show-secondary);
 }
-
-/* Marquee scroll animation */
-#song-label.is-overflowing .scroll-content,
-#song-label-background.is-overflowing .scroll-content {
-    animation: ping-pong-scroll var(--marquee-duration, 8s) ease-in-out infinite;
-}
-
-/* Mask animation applied to container */
-#song-label.is-overflowing,
-#song-label-background.is-overflowing {
-    animation: ping-pong-mask var(--marquee-duration, 8s) ease-in-out infinite;
-}
