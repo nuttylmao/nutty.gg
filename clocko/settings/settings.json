@@ -52,7 +52,7 @@
                 { "value": "800", "label": "Extra Bold" },
                 { "value": "900", "label": "Black" }
             ],
-            "defaultValue": "700",
+            "defaultValue": "800",
             "showIf": "enableLine1",
             "group": "Appearance"
         },
@@ -119,7 +119,7 @@
             "label": "Format",
             "description": "<a href='https://day.js.org/docs/en/display/format' target='_blank'>Click here for formatting options</a>",
             "type": "text",
-            "defaultValue": "ddd, MMM D",
+            "defaultValue": "ddd D MMM YY",
             "showIf": "enableLine2",
             "group": "Appearance"
         },
@@ -168,7 +168,7 @@
             "label": "Font Opacity",
             "description": "",
             "type": "number",
-            "defaultValue": "0.7",
+            "defaultValue": "0.9",
             "min": 0,
             "max": 1,
             "step": ".01",
