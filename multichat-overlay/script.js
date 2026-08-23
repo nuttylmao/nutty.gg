@@ -90,7 +90,7 @@ const furryMode = GetBooleanParam("furryMode", false);
 ////////////////////
 
 const animationSpeed = GetIntParam("animationSpeed", 0.1);
-const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", false);
+const randomYouTubeColors = GetBooleanParam("randomYouTubeColors", true);
 const youtubeColor = urlParams.get("youtubeColor") || "#f70000";
 const youtubeCustomSubIcon = urlParams.get("youtubeCustomSubIcon") || "";
 let twitchUsername = urlParams.get("twitchUsername") || "";
