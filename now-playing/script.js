@@ -36,6 +36,8 @@ const useCustomColors = GetBooleanParam("useCustomColors", false);
 const color1 = urlParams.get('color1') || '#ffffff';
 const color2 = urlParams.get('color2') || '#1d1d1d';
 
+const autoHide = GetBooleanParam("autoHide", false);
+const showWhilePaused = GetBooleanParam("showWhilePaused", false);
 const includedApplications = urlParams.get('includedApplications') || '';
 const excludedApplications = urlParams.get('excludedApplications') || '';
 const showAlbumArt = GetBooleanParam("showAlbumArt", true);
@@ -43,7 +45,6 @@ const showProgressBar = GetBooleanParam("showProgressBar", true);
 const swapArtistTrack = GetBooleanParam("swapArtistTrack", false);
 const showPrimary = GetBooleanParam("showPrimary", true);
 const showSecondary = GetBooleanParam("showSecondary", true);
-const autoHide = GetBooleanParam("autoHide", false);
 const displayDuration = GetIntParam("displayDuration", 5);
 const showAnimation = urlParams.get('showAnimation') || 'slide-in-from-bottom';
 const hideAnimation = urlParams.get('hideAnimation') || 'slide-out-bottom';
@@ -363,7 +364,7 @@ async function UpdatePlayerState(data) {
         for (const targetApp of includedList) {
             targetSession = validSessions.find(s => {
                 const matchesApp = (s.source_app_id || "").toLowerCase().includes(targetApp);
-                const isPlaying = s.playback_info && s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING;
+                const isPlaying = s.playback_info && (s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING || (showWhilePaused && s.playback_info.PlaybackStatus === PlaybackStatus.PAUSED));
                 return matchesApp && isPlaying;
             });
             if (targetSession) break;
@@ -387,7 +388,7 @@ async function UpdatePlayerState(data) {
 
         // Priority 2: If the current session isn't available/valid, find any session that is currently playing
         if (!targetSession || targetSession.playback_info.PlaybackStatus !== PlaybackStatus.PLAYING) {
-            const playingSession = validSessions.find(s => s.playback_info && s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
+            const playingSession = validSessions.find(s => s.playback_info && (s.playback_info.PlaybackStatus === PlaybackStatus.PLAYING || (showWhilePaused && s.playback_info.PlaybackStatus === PlaybackStatus.PAUSED)));
             if (playingSession) {
                 targetSession = playingSession;
             }
@@ -411,7 +412,7 @@ async function UpdatePlayerState(data) {
 
         // 1. Check if playback status has changed and update visibility accordingly
         if (playbackInfo.PlaybackStatus !== CurrentPlaybackStatus) {
-            if (playbackInfo.PlaybackStatus === PlaybackStatus.PLAYING)
+            if (playbackInfo.PlaybackStatus === PlaybackStatus.PLAYING || (showWhilePaused && playbackInfo.PlaybackStatus === PlaybackStatus.PAUSED))
                 SetVisibility(true);
             else
                 SetVisibility(false);
@@ -421,7 +422,7 @@ async function UpdatePlayerState(data) {
 
         // 2. Check if the track name/artist have changed - this is our indicator that the next track has loaded
         // Only proceed if the player state is actively playing audio
-        if (CurrentPlaybackStatus == PlaybackStatus.PLAYING) {
+        if (CurrentPlaybackStatus == PlaybackStatus.PLAYING || (showWhilePaused && CurrentPlaybackStatus == PlaybackStatus.PAUSED)) {
             const newTrackKey = `${mediaProps.Title}-${mediaProps.Artist}-${mediaProps.Thumbnail}`;
             if (newTrackKey !== CurrentSongKey) {
                 ChangeTrack(mediaProps, accentColorPalette);        // Now trigger your cross-fade logic here!
