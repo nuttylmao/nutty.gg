@@ -9,7 +9,7 @@ const urlParams = new URLSearchParams(queryString);
 // CONSTANTS //
 ////////////////
 
-const REQUIRED_VERSION = '0.0.4';
+const REQUIRED_VERSION = '0.0.6';
 const SMTC_BRIDGE_DOWNLOAD_URL = 'https://github.com/nuttylmao/smtc-bridge/releases';
 let VersionChecked = false;
 
