@@ -1154,7 +1154,7 @@ async function TwitchRewardRedemption(data) {
 
 	if (showAvatar) {
 		// Render avatars
-		const username = data.user_login;
+		const username = data.user_login ?? data.user.login;
 		const avatarURL = await GetAvatar(username, 'twitch');
 		const avatar = new Image();
 		avatar.src = avatarURL;
@@ -1163,12 +1163,12 @@ async function TwitchRewardRedemption(data) {
 	}
 
 	// Set the text
-	let username = data.user_name;
-	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
-		username = `${data.user_name} (${data.user_login})`;
+	let username = data.user_name ?? data.user.name;
+	if (username.toLowerCase() != (data.user_login ?? data.user.login).toLowerCase())
+		username = `${username} (${data.user_login ?? data.user.login})`;
 	const rewardName = data.reward.title;
 	const cost = data.reward.cost;
-	const userInput = data.user_input;
+	const userInput = data.user_input ?? data.userInput;
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
 
 	titleDiv.innerHTML = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;

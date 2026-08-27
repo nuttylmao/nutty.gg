@@ -687,14 +687,14 @@ async function TwitchRewardRedemption(data) {
 	if (!showTwitchChannelPointRedemptions)
 		return;
 
-	const username = data.user_name;
+	const username = data.user_name ?? data.user.name;
 	const rewardName = data.reward.title;
 	const cost = data.reward.cost;
-	const userInput = data.user_input;
+	const userInput = data.user_input ?? data.userInput;
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform" style="height: 1em"/>`;
 
 	// Render avatars
-	const avatarURL = await GetAvatar(data.user_login, 'twitch');
+	const avatarURL = await GetAvatar(data.user_login ?? data.user.login, 'twitch');
 
 	UpdateAlertBox(
 		'twitch',

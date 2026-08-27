@@ -782,12 +782,12 @@ async function TwitchRewardRedemption(data) {
 	if (!showTwitchChannelPointRedemptions)
 		return;
 
-	let username = data.user_name;
-	if (data.user_name.toLowerCase() != data.user_login.toLowerCase())
-		username = `${data.user_name} (${data.user_login})`;
+	let username = data.user_name ?? data.user.name;
+	if (username.toLowerCase() != (data.user_login ?? data.user.login).toLowerCase())
+		username = `${username} (${data.user_login ?? data.user.login})`;
 	const rewardName = data.reward.title;
 	const cost = data.reward.cost;
-	const userInput = data.user_input;
+	const userInput = data.user_input ?? data.userInput;
 	const channelPointIcon = `<img src="icons/badges/twitch-channel-point.png" class="platform"/>`;
 
 	let message = `${username} redeemed ${rewardName} ${channelPointIcon} ${cost}`;
