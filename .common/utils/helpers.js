@@ -710,3 +710,56 @@ function VersionCheck(requiredVersion, installedVersion) {
     console.log(`VersionCheck: Installed version meets or exceeds the required baseline. Required: ${requiredVersion}, Installed: ${installedVersion}`);
     return 'compatible';
 }
+
+function SanitizeHTML(htmlString) {
+    // 1. Parse the string into a temporary DOM document
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+
+    // 2. Define allowed tags and attributes
+    const allowedTags = ['IMG', 'SPAN', 'B', 'I', 'BR', 'EM', 'STRONG'];
+    const allowedAttrs = ['src', 'class'];
+
+    // 3. Walk through all elements in the parsed document
+    const allElements = doc.body.querySelectorAll('*');
+    allElements.forEach(el => {
+        // Check if it's an <img> tag and enforce class restrictions
+        if (el.tagName === 'IMG') {
+            const className = el.getAttribute('class') || '';
+            // Split classes by whitespace in case there are multiple (e.g., class="emote custom")
+            const classes = className.split(/\s+/);
+            
+            // Must contain either 'emote' or 'bits' to be allowed
+            const hasValidClass = classes.includes('emote') || classes.includes('bits');
+            
+            if (!hasValidClass) {
+                // Unwrap or remove the unauthorized <img> tag
+                const parent = el.parentNode;
+                while (el.firstChild) {
+                    parent.insertBefore(el.firstChild, el);
+                }
+                parent.removeChild(el);
+                return;
+            }
+        }
+
+        // If any other tag isn't in our allowed list, unwrap it
+        if (!allowedTags.includes(el.tagName)) {
+            const parent = el.parentNode;
+            while (el.firstChild) {
+                parent.insertBefore(el.firstChild, el);
+            }
+            parent.removeChild(el);
+            return;
+        }
+
+        // Strip out any attributes not explicitly allowed (like onerror, onload, etc.)
+        Array.from(el.attributes).forEach(attr => {
+            if (!allowedAttrs.includes(attr.name.toLowerCase())) {
+                el.removeAttribute(attr.name);
+            }
+        });
+    });
+
+    return doc.body.innerHTML;
+}

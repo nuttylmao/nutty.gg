@@ -51,7 +51,7 @@ async function CustomEvent(data) {
                 subtitleEl.innerText = `${data.user}`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerHTML = data.message;
+                messageEl.innerHTML = SanitizeHTML(data.message);
 
                 // Render emotes
                 for (i in data.emotes) {
@@ -116,7 +116,7 @@ async function CustomEvent(data) {
                 const messageEl = document.createElement('div');
                 messageEl.innerHTML = `<b>${data.cumulative} months${data.monthStreak > 1 ? ' (' + data.monthStreak + ' in a row!)' : ''}</b>`;
                 if (data.messageStripped)
-                    messageEl.innerHTML += `<br><br><i>${data.messageStripped}</i>`;
+                    messageEl.innerHTML += `<br><br><i>${SanitizeHTML(data.messageStripped)}</i>`;
 
                 contentEl.appendChild(messageEl);
 
@@ -196,7 +196,7 @@ async function CustomEvent(data) {
                 subtitleEl.innerText = `${data.user}`;
 
                 const messageEl = document.createElement('div');
-                messageEl.innerHTML = data.rawInput;
+                messageEl.innerHTML = SanitizeHTML(data.rawInput);
 
                 // // Render emotes
                 // for (i in data.emotes) {
@@ -284,7 +284,7 @@ async function CustomEvent(data) {
                 const messageEl = document.createElement('div');
                 messageEl.innerHTML = `<b>${data.user}</b><br>sent a Super Chat!`;
                 if (data.message)
-                    messageEl.innerHTML += `<br><br><i>${data.message}</i>`;
+                    messageEl.innerHTML += `<br><br><i>${SanitizeHTML(data.message)}</i>`;
 
                 contentEl.appendChild(messageEl);
 
@@ -424,7 +424,7 @@ async function CustomEvent(data) {
 
                 if (data.tipMessage) {
                     const messageEl = document.createElement('div');
-                    messageEl.innerHTML = `<i>${data.tipMessage}</i>`;
+                    messageEl.innerHTML = `<i>${SanitizeHTML(data.tipMessage)}</i>`;
 
                     contentEl.appendChild(messageEl);
                 }
@@ -448,7 +448,7 @@ async function CustomEvent(data) {
 
                 if (data.donationMessage) {
                     const messageEl = document.createElement('div');
-                    messageEl.innerHTML = `<i>${data.donationMessage}</i>`;
+                    messageEl.innerHTML = `<i>${SanitizeHTML(data.donationMessage)}</i>`;
 
                     contentEl.appendChild(messageEl);
                 }
@@ -475,7 +475,7 @@ async function CustomEvent(data) {
 
                 if (data["fw.message"]) {
                     const messageEl = document.createElement('div');
-                    messageEl.innerHTML = `<i>${data["fw.message"]}</i>`;
+                    messageEl.innerHTML = `<i>${SanitizeHTML(data["fw.message"])}</i>`;
 
                     contentEl.appendChild(messageEl);
                 }
@@ -537,7 +537,7 @@ async function CustomEvent(data) {
                 if (customMessage) {
                     const txt = document.createElement("textarea");
                     txt.innerHTML = customMessage;
-                    customMessageEl.innerHTML += `<br><i>${txt.value}</i>`;
+                    customMessageEl.innerHTML += `<br><i>${SanitizeHTML(txt.value)}</i>`;
                 }
 
                 // Add a cute thank you message because you're uwu like that
