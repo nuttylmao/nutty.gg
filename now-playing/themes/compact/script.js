@@ -97,7 +97,7 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     }, 250);
 }
 
-function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
+function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette, playbackStatus) {
     // Set progressbar
     // Ensure we don't divide by zero or exceed 100%
     const durationMs = timelineProps.EndTime;
@@ -122,6 +122,12 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     // const transitionWidth = '1em';
     // progressBar.style.maskImage = `linear-gradient(to right, black calc(${clipRight}% - ${transitionWidth}), transparent ${clipRight}%)`
     // progressBarTrack.style.maskImage = `linear-gradient(to right, transparent calc(${clipRight}% - ${transitionWidth}), black ${clipRight}%)`;
+        
+    // Set the pause overlay visibility based on playback status
+    if (playbackStatus === PlaybackStatus.PAUSED)
+        songInfoContainer.classList.add('is-paused');
+    else
+        songInfoContainer.classList.remove('is-paused');
 }
 
 // MARQUEE LOGIC

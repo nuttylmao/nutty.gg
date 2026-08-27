@@ -94,7 +94,7 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     }, 250);
 }
 
-function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
+function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette, playbackStatus) {
     const durationMs = timelineProps.EndTime;
 
     let progressPercent = durationMs > 0 ? (currentPositionMs / durationMs) * 100 : 0;

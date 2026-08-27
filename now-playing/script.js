@@ -443,7 +443,7 @@ async function UpdatePlayerState(data) {
             const isPlaying = (targetSession.playback_info.PlaybackStatus === PlaybackStatus.PLAYING);
             const currentPositionMs = isPlaying && timelineProps.EndTime > 0 ? timelineProps.Position + driftMs : timelineProps.Position;
 
-            SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette);
+            SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette, targetSession.playback_info.PlaybackStatus);
         }
     }
     else {

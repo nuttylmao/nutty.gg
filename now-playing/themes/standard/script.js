@@ -147,13 +147,19 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     }, 250);
 }
 
-function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
+function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette, playbackStatus) {
     // Update the label using your naming convention
     currentTimeLabel.innerText =
         ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(currentPositionMs);
 
     durationLabel.innerText =
         ConvertMillisecondsToHoursMinutesSecondsSoItLooksBetterAndNotCringe(timelineProps.EndTime);
+
+    // Set the pause overlay visibility based on playback status
+    if (playbackStatus === PlaybackStatus.PAUSED)
+        albumArtContainer.classList.add('is-paused');
+    else
+        albumArtContainer.classList.remove('is-paused');
 
     // Set progressbar
     // Ensure we don't divide by zero or exceed 100%
@@ -165,9 +171,11 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     if (!useCustomColors) {
         switch (themeVariant) {
             case "matte":
-                progressBarFill.style.setProperty('--accent-color', accentColorPalette.DarkVibrant);
+                document.body.style.setProperty('--accent-color', accentColorPalette.DarkVibrant);
                 break;
             case "matte-dark":
+                document.body.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+                break;
             default:
                 progressBarFill.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
                 break;
@@ -177,11 +185,11 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     {
         switch (themeVariant) {
             case "matte":
-                progressBarFill.style.setProperty('--accent-color', color2);
+                document.body.style.setProperty('--accent-color', color2);
                 break;
             // case "matte-dark":
             default:
-                progressBarFill.style.setProperty('--accent-color', color1);
+                document.body.style.setProperty('--accent-color', color1);
                 break;
         }
     }
