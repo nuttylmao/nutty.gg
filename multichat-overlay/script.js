@@ -82,6 +82,7 @@ const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
+const skipFourthwallFreeOrders = GetBooleanParam("skipFourthwallFreeOrders", true);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
@@ -2044,6 +2045,10 @@ function FourthwallOrderPlaced(data) {
 	const message = DecodeHTMLString(data.statmessageus);
 	const itemImageUrl = data.variants[0].image;
 	const fourthwallProductImage = `<img src="${itemImageUrl}" class="productImage"/>`;
+
+	// Skip free orders if the user has chosen to do so
+	if (skipFourthwallFreeOrders && orderTotal == 0)
+		return;
 
 	avatarDiv.innerHTML = fourthwallProductImage;
 

@@ -75,6 +75,7 @@ const showPatreonMemberships = GetBooleanParam("showPatreonMemberships", true);
 const showKofiDonations = GetBooleanParam("showKofiDonations", true);
 const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", true);
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", true);
+const skipFourthwallFreeOrders = GetBooleanParam("skipFourthwallFreeOrders", true);
 
 const furryMode = GetBooleanParam("furryMode", false);
 
@@ -1197,6 +1198,10 @@ function FourthwallOrderPlaced(data) {
 	const currency = data.currency;
 	const item = data.variants[0].name;
 	const itemsOrdered = data.variants.length;
+
+	// Skip free orders if the user has chosen to do so
+	if (skipFourthwallFreeOrders && orderTotal == 0)
+		return;
 
 	let message = "";
 

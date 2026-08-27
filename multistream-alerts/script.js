@@ -112,6 +112,7 @@ const showTipeeeStreamDonations = GetBooleanParam("showTipeeeStreamDonations", f
 const tipeeestreamDonationAction = urlParams.get("tipeeestreamDonationAction") || "";
 const showFourthwallAlerts = GetBooleanParam("showFourthwallAlerts", false);
 const fourthwallAlertAction = urlParams.get("fourthwallAlertAction") || "";
+const skipFourthwallFreeOrders = GetBooleanParam("skipFourthwallFreeOrders", true);
 
 ////////////////////
 // HIDDEN OPTIONS //
@@ -1123,6 +1124,10 @@ function FourthwallOrderPlaced(data) {
 	const itemsOrdered = data.variants.length;
 	const message = DecodeHTMLString(data.statmessageus);
 	const itemImageUrl = data.variants[0].image;
+
+	// Skip free orders if the user has chosen to do so
+	if (skipFourthwallFreeOrders && orderTotal == 0)
+		return;
 
 	// If there user did not provide a username, just say "Someone"
 	if (user == undefined)

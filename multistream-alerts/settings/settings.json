@@ -629,6 +629,15 @@
 			"group": "Which donation alerts do you want to see?"
 		},
 		{
+			"id": "skipFourthwallFreeOrders",
+			"label": "Skip Free Orders",
+			"description": "If enabled, free orders from Fourthwall will be skipped.",
+			"type": "checkbox",
+			"defaultValue": true,
+			"showIf": "showFourthwallAlerts",
+			"group": "Which donation alerts do you want to see?"
+		},
+		{
 			"id": "address",
 			"label": "IP Address",
 			"description": "",
