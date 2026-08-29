@@ -58,6 +58,19 @@
             "group": "Appearance"
         },
         {
+            "id": "textAlignment",
+            "label": "Text Alignment",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
+            ],
+            "defaultValue": "center",
+            "group": "Appearance"
+        },
+        {
             "id": "enableLine1",
             "label": "Enable Line 1",
             "description": "Show the first line of the clock",
@@ -138,20 +151,6 @@
                 { "value": "capitalize", "label": "Capitalize" }
             ],
             "defaultValue": "uppercase",
-            "showIf": "enableLine1",
-            "group": "Appearance"
-        },
-        {
-            "id": "line1TextAlignment",
-            "label": "Text Alignment",
-            "description": "",
-            "type": "select",
-            "options": [
-                { "value": "left", "label": "Left" },
-                { "value": "center", "label": "Center" },
-                { "value": "right", "label": "Right" }
-            ],
-            "defaultValue": "center",
             "showIf": "enableLine1",
             "group": "Appearance"
         },
@@ -240,20 +239,6 @@
             "group": "Appearance"
         },
         {
-            "id": "line2TextAlignment",
-            "label": "Text Alignment",
-            "description": "",
-            "type": "select",
-            "options": [
-                { "value": "left", "label": "Left" },
-                { "value": "center", "label": "Center" },
-                { "value": "right", "label": "Right" }
-            ],
-            "defaultValue": "center",
-            "showIf": "enableLine2",
-            "group": "Appearance"
-        },
-        {
             "id": "enableLine3",
             "label": "Enable Line 3",
             "description": "Show the third line of the clock",
@@ -334,20 +319,6 @@
                 { "value": "capitalize", "label": "Capitalize" }
             ],
             "defaultValue": "none",
-            "showIf": "enableLine3",
-            "group": "Appearance"
-        },
-        {
-            "id": "line3TextAlignment",
-            "label": "Text Alignment",
-            "description": "",
-            "type": "select",
-            "options": [
-                { "value": "left", "label": "Left" },
-                { "value": "center", "label": "Center" },
-                { "value": "right", "label": "Right" }
-            ],
-            "defaultValue": "center",
             "showIf": "enableLine3",
             "group": "Appearance"
         }
