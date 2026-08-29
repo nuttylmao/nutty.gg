@@ -188,6 +188,21 @@ function LoadJSON(settingsJson) {
 								await PopulateFontDatalist();
 							}, { once: true });
 							break;
+						case 'timezone':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.placeholder = 'Type to search timezone...';
+							inputElement.id = setting.id;
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.setAttribute('list', 'timezones');
+							inputElement.autocomplete = 'off';
+
+							// Populate datalist on focus (runs once)
+							inputElement.addEventListener('focus', function loadOnce() {
+								inputElement.removeEventListener('focus', loadOnce);
+								PopulateTimezoneDatalist();
+							}, { once: true });
+							break;
 						case 'button':
 							inputElement = document.createElement('button');
 							inputElement.id = setting.id; //Added setting ID
@@ -431,6 +446,30 @@ async function PopulateFontDatalist() {
     }
 }
 
+function PopulateTimezoneDatalist() {
+    try {
+        // Fetch all official IANA timezones natively from the browser
+        const timezones = Intl.supportedValuesOf('timeZone');
+
+        // Create the datalist element
+        const datalistElement = document.createElement('datalist');
+        datalistElement.id = 'timezones';
+
+        // Append each timezone as an option
+        timezones.forEach(tz => {
+            const option = document.createElement('option');
+            option.value = tz;
+            datalistElement.appendChild(option);
+        });
+
+        document.body.appendChild(datalistElement);
+        console.debug(`Loaded ${timezones.length} timezones into auto-suggest.`);
+
+    } catch (err) {
+        console.error("Error generating timezone suggestions:", err);
+    }
+}
+
 
 
 /////////////////////////
@@ -600,3 +639,6 @@ LoadJSON(settingsJson);
 
 // Populate local fonts for auto-suggest
 PopulateFontDatalist();
+
+// Populate timezones for auto-suggest
+PopulateTimezoneDatalist();

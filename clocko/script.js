@@ -27,6 +27,8 @@ const line3 = document.getElementById('line3');
 /////////////
 
 const font = urlParams.get("font") || "";
+const language = urlParams.get("language") || "en";
+const timezone = urlParams.get("timezone") || "";
 
 const enableLine1 = GetBooleanParam("enableLine1", true);
 const line1Format = urlParams.get("line1Format") || "hh:mm:ss A";
@@ -63,7 +65,7 @@ const line3TextAlignment = urlParams.get("line3TextAlignment") || "center";
 
 // Set the font for the entire page if specified
 if (font)
-	document.body.style.fontFamily = `'${font}'`;
+    document.body.style.fontFamily = `'${font}'`;
 
 // Hide lines that are not enabled
 if (!enableLine1)
@@ -75,38 +77,53 @@ if (!enableLine3)
 
 
 
-////////////
+////////////////
 // CLOCKO //
-////////////
+////////////////
 
-// Check if any active format string includes milliseconds (e.g., 'S', 'SS', 'SSS')
-const usesMilliseconds = 
-    (enableLine1 && line1Format.includes('S')) ||
-    (enableLine2 && line2Format.includes('S')) ||
-    (enableLine3 && line3Format.includes('S'));
+// Helper function to start the clock loop
+function StartClock() {
+    // Check if any active format string includes milliseconds (e.g., 'S', 'SS', 'SSS')
+    const usesMilliseconds =
+        (enableLine1 && line1Format.includes('S')) ||
+        (enableLine2 && line2Format.includes('S')) ||
+        (enableLine3 && line3Format.includes('S'));
 
-UpdateTime();
+    UpdateTime();
 
-if (usesMilliseconds) {
-    // High-frequency updates for millisecond precision
-    function updateFrame() {
-        UpdateTime();
+    if (usesMilliseconds) {
+        function updateFrame() {
+            UpdateTime();
+            requestAnimationFrame(updateFrame);
+        }
         requestAnimationFrame(updateFrame);
+    } else {
+        setInterval(UpdateTime, 1000);
     }
-    requestAnimationFrame(updateFrame);
-} else {
-    // Efficient 1-second interval for standard clocks
-    setInterval(UpdateTime, 1000);
 }
 
 function UpdateTime() {
-    const now = dayjs().tz(dayjs.tz.guess());
-    
+    const activeTimezone = timezone ? timezone : dayjs.tz.guess();
+    const now = dayjs().tz(activeTimezone);
+
     if (enableLine1) line1.textContent = now.format(line1Format);
     if (enableLine2) line2.textContent = now.format(line2Format);
     if (enableLine3) line3.textContent = now.format(line3Format);
 }
 
+// Set the language and start the clock only after it's loaded
+const script = document.createElement('script');
+script.src = `https://cdn.jsdelivr.net/npm/dayjs@1/locale/${language}.js`;
+script.onload = () => {
+    dayjs.locale(language);
+    StartClock();
+};
+script.onerror = () => {
+    console.warn(`Locale '${language}' failed to load. Falling back to English.`);
+    dayjs.locale('en');
+    StartClock();
+};
+document.head.appendChild(script);
 
 
 /////////////
