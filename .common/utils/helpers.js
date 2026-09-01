@@ -688,25 +688,69 @@ function VersionCheck(requiredVersion, installedVersion) {
     const [rMajor, rMinor, rPatch] = requiredVersion.split('.').map(Number);
     const [iMajor, iMinor, iPatch] = installedVersion.split('.').map(Number);
 
-    // 1. CRITICAL: Major versions must match exactly.
-    if (iMajor !== rMajor) {
-        console.log(`VersionCheck: Major version mismatch. Required: ${rMajor}, Installed: ${iMajor}`);
-        return 'incompatible';
-    }
+    // Compare Major
+    if (iMajor > rMajor) return 'compatible';
+    if (iMajor < rMajor) return 'incompatible';
 
-    // 2. SOFT WARNING: The installed minor version is lower than what is required.
-    if (iMinor < rMinor) {
-        console.log(`VersionCheck: Minor version mismatch. Required: ${rMinor}, Installed: ${iMinor}`);
-        return 'soft-warning';
-    }
+    // Major matches, compare Minor
+    if (iMinor > rMinor) return 'compatible';
+    if (iMinor < rMinor) return 'incompatible'; // or 'incompatible' depending on your policy
 
-    // 3. SILENT WARNING: Minors match, but the installed patch version is lagging.
-    if (iMinor === rMinor && iPatch < rPatch) {
-        console.log(`VersionCheck: Patch version mismatch. Required: ${rPatch}, Installed: ${iPatch}`);
-        return 'compatible';
-    }
+    // Major and Minor match, compare Patch
+    if (iPatch >= rPatch) return 'compatible';
 
-    // 4. PERFECT: Installed version meets or exceeds the required baseline.
-    console.log(`VersionCheck: Installed version meets or exceeds the required baseline. Required: ${requiredVersion}, Installed: ${installedVersion}`);
-    return 'compatible';
+    return 'soft-warning'; // Installed patch is lower than required
+}
+
+function SanitizeHTML(htmlString) {
+    // 1. Parse the string into a temporary DOM document
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+
+    // 2. Define allowed tags and attributes
+    const allowedTags = ['IMG', 'SPAN', 'B', 'I', 'BR', 'EM', 'STRONG'];
+    const allowedAttrs = ['src', 'class'];
+
+    // 3. Walk through all elements in the parsed document
+    const allElements = doc.body.querySelectorAll('*');
+    allElements.forEach(el => {
+        // Check if it's an <img> tag and enforce class restrictions
+        if (el.tagName === 'IMG') {
+            const className = el.getAttribute('class') || '';
+            // Split classes by whitespace in case there are multiple (e.g., class="emote custom")
+            const classes = className.split(/\s+/);
+            
+            // Must contain either 'emote' or 'bits' to be allowed
+            const hasValidClass = classes.includes('emote') || classes.includes('bits');
+            
+            if (!hasValidClass) {
+                // Unwrap or remove the unauthorized <img> tag
+                const parent = el.parentNode;
+                while (el.firstChild) {
+                    parent.insertBefore(el.firstChild, el);
+                }
+                parent.removeChild(el);
+                return;
+            }
+        }
+
+        // If any other tag isn't in our allowed list, unwrap it
+        if (!allowedTags.includes(el.tagName)) {
+            const parent = el.parentNode;
+            while (el.firstChild) {
+                parent.insertBefore(el.firstChild, el);
+            }
+            parent.removeChild(el);
+            return;
+        }
+
+        // Strip out any attributes not explicitly allowed (like onerror, onload, etc.)
+        Array.from(el.attributes).forEach(attr => {
+            if (!allowedAttrs.includes(attr.name.toLowerCase())) {
+                el.removeAttribute(attr.name);
+            }
+        });
+    });
+
+    return doc.body.innerHTML;
 }

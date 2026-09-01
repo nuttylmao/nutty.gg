@@ -1,11 +1,73 @@
 {
     "settings": [
         {
+            "id": "language",
+            "label": "Language",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "en", "label": "English" },
+                { "value": "ar", "label": "العربية (Arabic)" },
+                { "value": "bg", "label": "Български (Bulgarian)" },
+                { "value": "zh-cn", "label": "中文 (Chinese Simplified)" },
+                { "value": "zh-tw", "label": "中文 (Chinese Traditional)" },
+                { "value": "cs", "label": "Čeština (Czech)" },
+                { "value": "da", "label": "Dansk (Danish)" },
+                { "value": "nl", "label": "Nederlands (Dutch)" },
+                { "value": "fi", "label": "Suomi (Finnish)" },
+                { "value": "fr", "label": "Français (French)" },
+                { "value": "de", "label": "Deutsch (German)" },
+                { "value": "el", "label": "Ελληνικά (Greek)" },
+                { "value": "he", "label": "עברית (Hebrew)" },
+                { "value": "hi", "label": "हिन्दी (Hindi)" },
+                { "value": "hu", "label": "Magyar (Hungarian)" },
+                { "value": "id", "label": "Bahasa Indonesia (Indonesian)" },
+                { "value": "it", "label": "Italiano (Italian)" },
+                { "value": "ja", "label": "日本語 (Japanese)" },
+                { "value": "ko", "label": "한국어 (Korean)" },
+                { "value": "nb", "label": "Norsk bokmål (Norwegian Bokmål)" },
+                { "value": "pl", "label": "Polski (Polish)" },
+                { "value": "pt", "label": "Português (Portuguese)" },
+                { "value": "ro", "label": "Română (Romanian)" },
+                { "value": "ru", "label": "Русский (Russian)" },
+                { "value": "sk", "label": "Slovenčina (Slovak)" },
+                { "value": "es", "label": "Español (Spanish)" },
+                { "value": "sv", "label": "Svenska (Swedish)" },
+                { "value": "th", "label": "ไทย (Thai)" },
+                { "value": "tr", "label": "Türkçe (Turkish)" },
+                { "value": "uk", "label": "Українська (Ukrainian)" },
+                { "value": "vi", "label": "Tiếng Việt (Vietnamese)" }
+            ],
+            "defaultValue": "en",
+            "group": "General"
+        },
+        {
+            "id": "timezone",
+            "label": "Timezone",
+            "description": "Enter an IANA timezone (e.g., America/New_York, Europe/London). Leave blank to use local time.",
+            "type": "timezone",
+            "defaultValue": "",
+            "group": "General"
+        },
+        {
             "id": "font",
             "label": "Font",
             "description": "<a href=\"ms-settings:fonts\">Check installed fonts</a>",
             "type": "font",
             "defaultValue": "",
+            "group": "Appearance"
+        },
+        {
+            "id": "textAlignment",
+            "label": "Text Alignment",
+            "description": "",
+            "type": "select",
+            "options": [
+                { "value": "left", "label": "Left" },
+                { "value": "center", "label": "Center" },
+                { "value": "right", "label": "Right" }
+            ],
+            "defaultValue": "center",
             "group": "Appearance"
         },
         {
@@ -89,20 +151,6 @@
                 { "value": "capitalize", "label": "Capitalize" }
             ],
             "defaultValue": "uppercase",
-            "showIf": "enableLine1",
-            "group": "Appearance"
-        },
-        {
-            "id": "line1TextAlignment",
-            "label": "Text Alignment",
-            "description": "",
-            "type": "select",
-            "options": [
-                { "value": "left", "label": "Left" },
-                { "value": "center", "label": "Center" },
-                { "value": "right", "label": "Right" }
-            ],
-            "defaultValue": "center",
             "showIf": "enableLine1",
             "group": "Appearance"
         },
@@ -191,20 +239,6 @@
             "group": "Appearance"
         },
         {
-            "id": "line2TextAlignment",
-            "label": "Text Alignment",
-            "description": "",
-            "type": "select",
-            "options": [
-                { "value": "left", "label": "Left" },
-                { "value": "center", "label": "Center" },
-                { "value": "right", "label": "Right" }
-            ],
-            "defaultValue": "center",
-            "showIf": "enableLine2",
-            "group": "Appearance"
-        },
-        {
             "id": "enableLine3",
             "label": "Enable Line 3",
             "description": "Show the third line of the clock",
@@ -285,20 +319,6 @@
                 { "value": "capitalize", "label": "Capitalize" }
             ],
             "defaultValue": "none",
-            "showIf": "enableLine3",
-            "group": "Appearance"
-        },
-        {
-            "id": "line3TextAlignment",
-            "label": "Text Alignment",
-            "description": "",
-            "type": "select",
-            "options": [
-                { "value": "left", "label": "Left" },
-                { "value": "center", "label": "Center" },
-                { "value": "right", "label": "Right" }
-            ],
-            "defaultValue": "center",
             "showIf": "enableLine3",
             "group": "Appearance"
         }

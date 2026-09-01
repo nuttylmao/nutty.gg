@@ -23,6 +23,36 @@
     display: var(--show-album-art);
 }
 
+#album-art-container.is-paused #album-art-layer,
+#album-art-container.is-paused #album-art-transition-layer {
+    opacity: 0.2;
+}
+
+#pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10; 
+    border-radius: inherit;
+}
+
+#pause-overlay svg {
+    height: 30%; 
+    width: auto;
+}
+
+#album-art-container.is-paused #pause-overlay {
+    opacity: 0.8;
+}
+
 #album-art-layer,
 #album-art-transition-layer {
     position: absolute;

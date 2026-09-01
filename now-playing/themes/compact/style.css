@@ -24,6 +24,10 @@
     grid-template-areas: "stack";
 }
 
+#song-info-container.is-paused {
+    opacity: 0.8;
+}
+
 /* The content sits on top */
 #progress-bar {
     position: relative;

@@ -146,7 +146,7 @@ client.on('Twitch.UpcomingAd', (response) => {
 /////////////////////
 
 function TwitchAdRun(data) {
-	const duration = data.length_seconds;
+	const duration = data.lengthSeconds ?? data.length_seconds;
 
 	// Unset the upcoming ad countdown warning
 	upcomingAdWarningStartDelay = null;

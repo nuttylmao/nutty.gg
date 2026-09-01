@@ -151,6 +151,33 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "showWhilePaused",
+			"label": "Show While Paused",
+			"description": "If enabled, the widget will be visible even when the track is paused.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "autoHide",
+			"label": "Auto-Hide on Track Change",
+			"description": "If enabled, the widget will show for a set duration whenever a new track starts.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "displayDuration",
+			"label": "Display Duration (seconds)",
+			"description": "How long the widget should remain visible.",
+			"type": "number",
+			"min": 1,
+			"max": 60,
+			"defaultValue": 5,
+			"showIf": "autoHide",
+			"group": "General"
+		},
+		{
 			"id": "includedApplications",
 			"label": "Included Apps",
 			"description": "List of apps to display, in order of priority.<br>Leave empty to track currently focused app.<br><a href='http://{smtcBridgeAddress}:{smtcBridgePort}/sessions' target='_blank' style='color: #4da6ff; text-decoration: underline;'>View active sources</a>",
@@ -206,25 +233,6 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
-			"group": "General"
-		},
-		{
-			"id": "autoHide",
-			"label": "Auto-Hide on Track Change",
-			"description": "If enabled, the widget will show for a set duration whenever a new track starts.",
-			"type": "checkbox",
-			"defaultValue": false,
-			"group": "General"
-		},
-		{
-			"id": "displayDuration",
-			"label": "Display Duration (seconds)",
-			"description": "How long the widget should remain visible.",
-			"type": "number",
-			"min": 1,
-			"max": 60,
-			"defaultValue": 5,
-			"showIf": "autoHide",
 			"group": "General"
 		},
 		{

@@ -97,7 +97,7 @@ body {
 
 @keyframes slide-in-from-left {
     0% {
-        transform: translateX(-1em);
+        transform: translateX(-100%);
         opacity: 0;
     }
 
@@ -114,14 +114,14 @@ body {
     }
 
     100% {
-        transform: translateX(-1em);
+        transform: translateX(-100%);
         opacity: 0;
     }
 }
 
 @keyframes slide-in-from-right {
     0% {
-        transform: translateX(1em);
+        transform: translateX(100%);
         opacity: 0;
     }
 
@@ -138,7 +138,7 @@ body {
     }
 
     100% {
-        transform: translateX(1em);
+        transform: translateX(100%);
         opacity: 0;
     }
 }

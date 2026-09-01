@@ -96,7 +96,12 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
     }, 250);
 }
 
-function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
+function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette, playbackStatus) {
+    // Set the pause overlay visibility based on playback status
+    if (playbackStatus === PlaybackStatus.PAUSED)
+        albumArtContainer.classList.add('is-paused');
+    else
+        albumArtContainer.classList.remove('is-paused');
 
     // Set progressbar
     // Ensure we don't divide by zero or exceed 100%
@@ -105,7 +110,7 @@ function SetProgressInfo(timelineProps, currentPositionMs, accentColorPalette) {
     progressPercent = Math.min(100, Math.max(0, progressPercent));
     progressBar.style.width = `${progressPercent}%`;    
     if (!useCustomColors)
-        progressBar.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
+        document.body.style.setProperty('--accent-color', accentColorPalette.LightVibrant);
     else
-        progressBar.style.setProperty('--accent-color', color1);
+        document.body.style.setProperty('--accent-color', color1);
 }
