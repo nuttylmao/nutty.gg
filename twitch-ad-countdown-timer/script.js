@@ -35,6 +35,8 @@ const timerPosition = urlParams.get("timerPosition") || "top-left";
 // General
 const showUpcomingAdWarning = GetBooleanParam("showUpcomingAdWarning", true);
 const warningSeconds = GetIntParam("warningSeconds", 10);
+const warningPosition = urlParams.get("warningPosition") || "bottom-right";
+
 
 /////////////////
 // GLOBAL VARS //
@@ -107,6 +109,34 @@ switch (timerPosition) {
 		break;
 }
 
+// Set the position of the upcoming ad warning
+switch (warningPosition) {
+    case "top-left":
+        upcomingAdWarningContainer.style.top = "15%";
+        upcomingAdWarningContainer.style.left = "-100%";
+        upcomingAdWarningContainer.style.transform = "translateX(0)";
+		upcomingAdWarningContainer.style.borderRadius = "0px 10px 10px 0px";
+        break;
+    case "bottom-left":
+        upcomingAdWarningContainer.style.bottom = "15%";
+        upcomingAdWarningContainer.style.left = "-100%";
+        upcomingAdWarningContainer.style.transform = "translateX(0)";
+		upcomingAdWarningContainer.style.borderRadius = "0px 10px 10px 0px";
+        break;
+    case "bottom-right":
+        upcomingAdWarningContainer.style.bottom = "15%";
+        upcomingAdWarningContainer.style.right = "-100%";
+        upcomingAdWarningContainer.style.transform = "translateX(0)";
+        upcomingAdWarningContainer.style.borderRadius = "10px 0px 0px 10px";
+        break;
+    case "top-right":
+        upcomingAdWarningContainer.style.top = "15%";
+        upcomingAdWarningContainer.style.right = "-100%";
+        upcomingAdWarningContainer.style.transform = "translateX(0)";
+        upcomingAdWarningContainer.style.borderRadius = "10px 0px 0px 10px";
+        break;
+}
+
 
 
 /////////////////////////
@@ -152,8 +182,7 @@ function TwitchAdRun(data) {
 	upcomingAdWarningStartDelay = null;
 
 	// Slide the warning off screen
-	let width = upcomingAdWarningContainer.getBoundingClientRect().width;
-	upcomingAdWarningContainer.style.right = -width + "px";
+	SlideWarningOffScreen();
 
 	TimerBarAnimation(duration);
 	TimerLabelAnimation(duration);
@@ -279,7 +308,7 @@ function UpcomingAdWarning(warningSeconds) {
 	countdownLabel.innerHTML = formatTime(warningSeconds);
 
 	// Slide the countdown box on screen
-	upcomingAdWarningContainer.style.right = "0px";
+	SlideWarningOnScreen();
 
 	// Start the countdown timer
 	let startingTime = warningSeconds;
@@ -298,6 +327,32 @@ function UpcomingAdWarning(warningSeconds) {
 	setTimeout(() => {
 		upcomingAdWarningLocked = false;
 	}, warningSeconds * 1000);
+}
+
+function SlideWarningOnScreen() {
+    switch (warningPosition) {
+        case "top-left":
+        case "bottom-left":
+            upcomingAdWarningContainer.style.left = "0px";
+            break;
+        case "bottom-right":
+        case "top-right":
+            upcomingAdWarningContainer.style.right = "0px";
+            break;
+    }
+}
+
+function SlideWarningOffScreen() {
+    switch (warningPosition) {
+        case "top-left":
+        case "bottom-left":
+            upcomingAdWarningContainer.style.left = "-100%";
+            break;
+        case "bottom-right":
+        case "top-right":
+            upcomingAdWarningContainer.style.right = "-100%";
+            break;
+    }
 }
 
 
