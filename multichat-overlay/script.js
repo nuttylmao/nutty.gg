@@ -23,6 +23,7 @@ let kickSubBadges = [];
 const showPlatform = GetBooleanParam("showPlatform", true);
 const showAvatar = GetBooleanParam("showAvatar", true);
 const showTimestamps = GetBooleanParam("showTimestamps", true);
+const timeFormat = urlParams.get("timeFormat") || "12-hour";
 const showBadges = GetBooleanParam("showBadges", true);
 const showPronouns = GetBooleanParam("showPronouns", true);
 const showUsername = GetBooleanParam("showUsername", true);
@@ -654,7 +655,7 @@ async function TwitchChatMessage(data) {
 	// Set timestamp
 	if (showTimestamps) {
 		timestampDiv.classList.add("timestamp");
-		timestampDiv.innerText = GetCurrentTimeFormatted();
+		timestampDiv.innerText = GetCurrentTimeFormatted(timeFormat);
 	}
 
 	// Set the username info
@@ -919,7 +920,7 @@ async function TwitchAnnouncement(data) {
 	// Set timestamp
 	if (showTimestamps) {
 		content.querySelector("#timestamp").classList.add("timestamp");
-		content.querySelector("#timestamp").innerText = GetCurrentTimeFormatted();
+		content.querySelector("#timestamp").innerText = GetCurrentTimeFormatted(timeFormat);
 	}
 	if (data.user.name.toLowerCase() == data.user.login.toLowerCase())
 		content.querySelector("#username").innerText = data.user.name;
@@ -1026,8 +1027,8 @@ async function TwitchSub(data) {
 	let username = data.user.name;
 	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
 		username = `${data.user.name} (${data.user.login})`;
-	const subTier = data.sub_tier;
-	const isPrime = data.is_prime;
+	const subTier = data.sub_tier ?? data.subTier;
+	const isPrime = data.is_prime ?? data.isPrime;
 
 	if (!isPrime)
 		titleDiv.innerText = `${username} subscribed with Tier ${subTier.charAt(0)}`;
@@ -1412,7 +1413,7 @@ async function YouTubeMessage(data) {
 	// Set timestamp
 	if (showTimestamps) {
 		timestampDiv.classList.add("timestamp");
-		timestampDiv.innerText = GetCurrentTimeFormatted();
+		timestampDiv.innerText = GetCurrentTimeFormatted(timeFormat);
 	}
 
 	// Set the message data
@@ -2397,7 +2398,7 @@ async function KickChatMessage(data) {
 	// Set timestamp
 	if (showTimestamps) {
 		timestampDiv.classList.add("timestamp");
-		timestampDiv.innerText = GetCurrentTimeFormatted();
+		timestampDiv.innerText = GetCurrentTimeFormatted(timeFormat);
 	}
 
 	// Set the username info
@@ -2880,7 +2881,7 @@ async function TikTokChat(data) {
 	// Set timestamp
 	if (showTimestamps) {
 		timestampDiv.classList.add("timestamp");
-		timestampDiv.innerText = GetCurrentTimeFormatted();
+		timestampDiv.innerText = GetCurrentTimeFormatted(timeFormat);
 	}
 
 	// Set the username info

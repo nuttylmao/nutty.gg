@@ -542,8 +542,8 @@ async function TwitchSub(data) {
 
 	// Set the text
 	const username = data.user.name;
-	const subTier = data.sub_tier;
-	const isPrime = data.is_prime;
+	const subTier = data.sub_tier ?? data.subTier;
+	const isPrime = data.is_prime ?? data.isPrime;
 
 	// Render avatars
 	const avatarURL = await GetAvatar(username, 'twitch');

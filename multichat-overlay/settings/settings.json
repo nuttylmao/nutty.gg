@@ -25,6 +25,25 @@
 			"group": "Appearance"
 		},
 		{
+			"id": "timeFormat",
+			"label": "Time Format",
+			"description": "",
+			"type": "select",
+			"showIf": "showTimestamps",
+			"options": [
+				{
+					"value": "12-hour",
+					"label": "12 Hour Time"
+				},
+				{
+					"value": "24-hour",
+					"label": "24 Hour Time"
+				}
+			],
+			"defaultValue": "12-hour",
+			"group": "Appearance"
+		},
+		{
 			"id": "showBadges",
 			"label": "Show Badges",
 			"description": "",

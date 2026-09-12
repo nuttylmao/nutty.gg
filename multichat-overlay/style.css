@@ -169,6 +169,11 @@ li {
 	transform: translate(0px, 0.4em);
 }
 
+.gif {
+	width: auto;
+	padding: 20px 0px;
+}
+
 .productImage {
 	height: 3em;
 	border-radius: 0.25em;
