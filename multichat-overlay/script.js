@@ -1026,8 +1026,8 @@ async function TwitchSub(data) {
 	let username = data.user.name;
 	if (data.user.name.toLowerCase() != data.user.login.toLowerCase())
 		username = `${data.user.name} (${data.user.login})`;
-	const subTier = data.sub_tier;
-	const isPrime = data.is_prime;
+	const subTier = data.sub_tier ?? data.subTier;
+	const isPrime = data.is_prime ?? data.isPrime;
 
 	if (!isPrime)
 		titleDiv.innerText = `${username} subscribed with Tier ${subTier.charAt(0)}`;
