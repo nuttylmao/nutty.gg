@@ -202,17 +202,21 @@ function RenderKickEmotes(message) {
     });
 }
 
-function GetCurrentTimeFormatted() {
+function GetCurrentTimeFormatted(timeFormat = '12-hour') {
     const now = new Date();
     let hours = now.getHours();
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
 
+    if (timeFormat === '24-hour') {
+        const paddedHours = String(hours).padStart(2, '0');
+        return `${paddedHours}:${minutes}`;
+    }
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
 
-    const formattedTime = `${hours}:${minutes} ${ampm}`;
-    return formattedTime;
+    return `${hours}:${minutes} ${ampm}`;
 }
 
 function DecodeHTMLString(html) {
