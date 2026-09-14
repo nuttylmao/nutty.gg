@@ -779,7 +779,7 @@ async function TwitchWatchStreak(data) {
 	// Set the text
 	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
 	const displayName = data.displayName ?? data.user.name;
-	const watchStreak = data.watchStreak ?? data.streak_count;
+	const watchStreak = data.watchStreak ?? data.streak_count ?? data.streakCount;
 	
 	UpdateAlertBox(
 		'twitch',
