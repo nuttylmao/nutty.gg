@@ -68,6 +68,7 @@ const showKickGifts = GetBooleanParam("showKickGifts", true);
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
@@ -269,6 +270,11 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.NewSubscriber', (response) => {
+	console.debug(response.data);
+	YouTubeNewSubscriber(response.data);
 })
 
 client.on('YouTube.NewSponsor', (response) => {
@@ -1660,6 +1666,35 @@ function YouTubeSuperSticker(data) {
 	titleDiv.innerHTML = `${user} sent a Super Sticker (${amount})`;
 
 	AddMessageItem(instance);
+}
+
+function YouTubeNewSubscriber(data) {
+	if (!showYouTubeSubscribers)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('youtube');
+
+	// Set the text
+	let username = data.user.name;
+
+	titleDiv.innerText = `${username} subscribed`;
+
+	AddMessageItem(instance, JSON.stringify(data));
 }
 
 function YouTubeNewSponsor(data) {

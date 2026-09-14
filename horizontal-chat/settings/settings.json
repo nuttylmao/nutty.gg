@@ -251,6 +251,14 @@
 			"group": "Which YouTube messages do you want to see?"
 		},
 		{
+			"id": "showYouTubeSubscribers",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeMemberships",
 			"label": "Memberships",
 			"description": "",

@@ -89,6 +89,8 @@ const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const youtubeSuperChatAction = urlParams.get("youtubeSuperChatAction") || "";
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
 const youtubeSuperStickerAction = urlParams.get("youtubeSuperStickerAction") || "";
+const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
+const youtubeSubscriberAction = urlParams.get("youtubeSubscriberAction") || "";
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const youtubeMembershipAction = urlParams.get("youtubeMembershipAction") || "";
 
@@ -245,6 +247,11 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.NewSubscriber', (response) => {
+	console.debug(response.data);
+	YouTubeNewSubscriber(response.data);
 })
 
 client.on('YouTube.NewSponsor', (response) => {
@@ -823,6 +830,29 @@ function YouTubeSuperSticker(data) {
 		data.user.name,
 		'',
 		youtubeSuperStickerAction,
+		data
+	);
+}
+
+function YouTubeNewSubscriber(data) {
+	if (!showYouTubeSubscribers)
+		return;
+
+	// Set the text
+	const username = data.user.name;
+
+	// Render avatars
+	const avatarURL = data.user.profileImageUrl;
+
+	UpdateAlertBox(
+		'youtube',
+		avatarURL,
+		`${username}`,
+		`subscribed`,
+		``,
+		username,
+		``,
+		youtubeSubscriberAction,
 		data
 	);
 }
