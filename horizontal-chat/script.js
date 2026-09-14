@@ -839,7 +839,7 @@ async function TwitchWatchStreak(data) {
 		return;
 
 	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
-	const displayName = data.displayName ?? data.user.name;data.streakCount
+	const displayName = data.displayName ?? data.user.name;
 	const watchStreak = data.watchStreak ?? data.streak_count ?? data.streakCount;
 
 	let message = `${displayName} is currently on a ${watchStreak} stream streak!`;
