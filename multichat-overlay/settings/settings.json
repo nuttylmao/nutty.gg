@@ -380,6 +380,14 @@
 			"group": "Which YouTube messages do you want to see?"
 		},
 		{
+			"id": "showYouTubeJewelsGifted",
+			"label": "Jewels Gifted",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeSubscribers",
 			"label": "New Subscribers",
 			"description": "",

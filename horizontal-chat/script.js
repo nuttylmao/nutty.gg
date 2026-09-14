@@ -62,6 +62,7 @@ const showKickGifts = GetBooleanParam("showKickGifts", true);
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+const showYouTubeJewelsGifted = GetBooleanParam("showYouTubeJewelsGifted", true);
 const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
@@ -234,6 +235,11 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.JewelsGifted', (response) => {
+	console.debug(response.data);
+	YouTubeJewelsGifted(response.data);
 })
 
 client.on('YouTube.NewSubscriber', (response) => {
@@ -1045,6 +1051,15 @@ function YouTubeSuperSticker(data) {
 		return;
 
 	let message = `${data.user.name} sent a Super Sticker (${data.amount})`;
+
+	ShowAlert(message, 'youtube');
+}
+
+function YouTubeJewelsGifted(data) {
+	if (!showYouTubeJewelsGifted)
+		return;
+
+	let message = `${data.user.name} gifted ${data.jewelsAmount} Jewels`;
 
 	ShowAlert(message, 'youtube');
 }

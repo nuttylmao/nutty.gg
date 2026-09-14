@@ -68,6 +68,7 @@ const showKickGifts = GetBooleanParam("showKickGifts", true);
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+const showYouTubeJewelsGifted = GetBooleanParam("showYouTubeJewelsGifted", true);
 const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
@@ -270,6 +271,11 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.JewelsGifted', (response) => {
+	console.debug(response.data);
+	YouTubeJewelsGifted(response.data);
 })
 
 client.on('YouTube.NewSubscriber', (response) => {
@@ -1668,6 +1674,41 @@ function YouTubeSuperSticker(data) {
 	AddMessageItem(instance);
 }
 
+function YouTubeJewelsGifted(data) {
+	if (!showYouTubeJewelsGifted)
+		return;
+
+	// Get a reference to the template
+	const template = document.getElementById('cardTemplate');
+
+	// Create a new instance of the template
+	const instance = template.content.cloneNode(true);
+
+	// Get divs
+	const cardDiv = instance.querySelector("#card");
+	const headerDiv = instance.querySelector("#header");
+	const avatarDiv = instance.querySelector("#avatar");
+	const iconDiv = instance.querySelector("#icon");
+	const titleDiv = instance.querySelector("#title");
+	const contentDiv = instance.querySelector("#content");
+
+	// Set the card background colors
+	cardDiv.classList.add('youtube');
+
+	avatarDiv.style.width = 'auto';
+
+	// Set the text
+	const user = data.user.name;
+	const amount = data.jewelsAmount;
+	const jewelURL = data.url;
+	const jewelImage = `<img src="${jewelURL}" class="youtube-super-sticker"/>`;
+
+	avatarDiv.innerHTML = jewelImage;
+	titleDiv.innerHTML = `${user} gifted ${amount} Jewels`;
+
+	AddMessageItem(instance);
+}
+
 function YouTubeNewSubscriber(data) {
 	if (!showYouTubeSubscribers)
 		return;
@@ -1694,7 +1735,7 @@ function YouTubeNewSubscriber(data) {
 
 	titleDiv.innerText = `${username} subscribed`;
 
-	AddMessageItem(instance, JSON.stringify(data));
+	AddMessageItem(instance);
 }
 
 function YouTubeNewSponsor(data) {

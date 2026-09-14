@@ -89,6 +89,8 @@ const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const youtubeSuperChatAction = urlParams.get("youtubeSuperChatAction") || "";
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
 const youtubeSuperStickerAction = urlParams.get("youtubeSuperStickerAction") || "";
+const showYouTubeJewelsGifted = GetBooleanParam("showYouTubeJewelsGifted", true);
+const youtubeJewelsGiftedAction = urlParams.get("youtubeJewelsGiftedAction") || "";
 const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
 const youtubeSubscriberAction = urlParams.get("youtubeSubscriberAction") || "";
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
@@ -247,6 +249,11 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.JewelsGifted', (response) => {
+	console.debug(response.data);
+	YouTubeJewelsGifted(response.data);
 })
 
 client.on('YouTube.NewSubscriber', (response) => {
@@ -830,6 +837,23 @@ function YouTubeSuperSticker(data) {
 		data.user.name,
 		'',
 		youtubeSuperStickerAction,
+		data
+	);
+}
+
+function YouTubeJewelsGifted(data) {
+	if (!showYouTubeJewelsGifted)
+		return;
+
+	UpdateAlertBox(
+		'youtube',
+		data.url,
+		`${data.user.name}`,
+		`gifted ${data.jewelsAmount} Jewels`,
+		'',
+		data.user.name,
+		'',
+		youtubeJewelsGiftedAction,
 		data
 	);
 }

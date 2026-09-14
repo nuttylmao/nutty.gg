@@ -381,6 +381,23 @@
 			"group": "Which YouTube alerts do you want to see?"
 		},
 		{
+			"id": "showYouTubeJewelsGifted",
+			"label": "Jewels Gifted",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
+			"id": "youtubeJewelsGiftedAction",
+			"label": "",
+			"description": "Also run this Streamer.bot Action",
+			"type": "sb-actions",
+			"defaultValue": "",
+			"showIf": "showYouTubeJewelsGifted",
+			"group": "Which YouTube alerts do you want to see?"
+		},
+		{
 			"id": "showYouTubeSubscribers",
 			"label": "New Subscribers",
 			"description": "",
