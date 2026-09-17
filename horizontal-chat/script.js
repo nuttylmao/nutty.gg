@@ -588,7 +588,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
 	const messageColor = data.user.color;
 	const role = data.user.role;
 
@@ -693,7 +693,7 @@ async function TwitchAnnouncement(data) {
 			break;
 	}
 
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
 
 	ShowAlert(message, background);
 }
@@ -949,7 +949,7 @@ function YouTubeMessage(data) {
 
 	// Set the message data
 	//let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
 	
 	// Set furry mode
 	if (furryMode)
@@ -1394,7 +1394,7 @@ async function KickChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
 
 	// Set furry mode
 	if (furryMode)
