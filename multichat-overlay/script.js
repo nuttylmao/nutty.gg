@@ -3430,27 +3430,3 @@ async function GetYouTubeVideoData(videoId) {
 		return null;
 	}
 }
-
-let data = {
-  "gift_transaction_id": "fa306456-06d9-4e6c-8ea7-e1060f6eaf57",
-  "sender": {
-    "id": 447944,
-    "username": "DarthBlazeLive",
-    "username_color": "#E4D88F",
-    "profile_picture": "https://files.kick.com/images/user/447944/profile_image/conversion/df4eddb9-d9f3-4c50-ae30-8fd3c3dae366-fullsize.webp"
-  },
-  "gift": {
-    "gift_id": "hell_yeah",
-    "name": "Hell Yeah",
-    "amount": 1,
-    "type": "BASIC",
-    "tier": "BASIC",
-    "character_limit": 0,
-    "pinned_time": 0
-  },
-  "created_at": "2026-09-17T17:13:56.921027555Z"
-}
-
-  setTimeout(() => {
-	KickKicksGifted(data);
-  }	, 1000);
