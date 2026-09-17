@@ -325,7 +325,7 @@ function RandomHex(str) {
 }
 
 // Used to construct a message from "parts" variable commonly found in Streamer.bot chat messages
-function ConstructMessageFromParts(parts, isHorizontalChat = false) {
+function ConstructMessageFromParts(parts, isHorizontalChat = false, twitchGIFsEnabled = false) {
     return parts.map(part => {
         if (part.emoji)
             return ` <img src="${EscapeHTML(part.image)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote"> `;
@@ -358,10 +358,15 @@ function ConstructMessageFromParts(parts, isHorizontalChat = false) {
             case "mention":
                 return part.text;
             case "gif":
-                if (!isHorizontalChat)
-                    return `<img src="${EscapeHTML(part.url)}" class="gif">`;
+                if (twitchGIFsEnabled)
+                {
+                    if (!isHorizontalChat)
+                        return `<img src="${EscapeHTML(part.url)}" class="gif">`;
+                    else
+                        return `<img src="${EscapeHTML(part.url)}" class="emote">`;
+                }
                 else
-                    return `<img src="${EscapeHTML(part.url)}" class="emote">`;
+                    return `<b><i>${EscapeHTML(part.text)}</i></b>`;
             default:
                 return `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
         }

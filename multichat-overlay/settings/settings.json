@@ -356,6 +356,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchGIFs",
+			"label": "GIFs",
+			"description": "Tier 2/3 subs only",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeMessages",
 			"label": "Chat Messages",
 			"description": "",

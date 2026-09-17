@@ -51,6 +51,7 @@ const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptio
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
+const showTwitchGIFs = GetBooleanParam("showTwitchGIFs", false);
 
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 const showKickFollows = GetBooleanParam("showKickFollows", false);
@@ -588,7 +589,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 	const messageColor = data.user.color;
 	const role = data.user.role;
 
@@ -693,7 +694,7 @@ async function TwitchAnnouncement(data) {
 			break;
 	}
 
-	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 
 	ShowAlert(message, background);
 }
@@ -949,7 +950,7 @@ function YouTubeMessage(data) {
 
 	// Set the message data
 	//let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
-	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 	
 	// Set furry mode
 	if (furryMode)
@@ -1394,7 +1395,7 @@ async function KickChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts, isHorizontalChat = true);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 
 	// Set furry mode
 	if (furryMode)

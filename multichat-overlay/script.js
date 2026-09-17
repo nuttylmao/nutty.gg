@@ -57,6 +57,7 @@ const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptio
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetIntParam("showTwitchSharedChat", 2);
+const showTwitchGIFs = GetBooleanParam("showTwitchGIFs", true);
 
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 const showKickFollows = GetBooleanParam("showKickFollows", false);
@@ -687,7 +688,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, false, showTwitchGIFs);
 	const messageColor = data.user.color;
 	const role = data.user.role;
 	
@@ -939,7 +940,7 @@ async function TwitchAnnouncement(data) {
 	else
 		content.querySelector("#username").innerText = `${data.user.name} (${data.user.login})`;
 	content.querySelector("#username").style.color = data.user.color;
-	content.querySelector("#message").innerHTML = ConstructMessageFromParts(data.parts);
+	content.querySelector("#message").innerHTML = ConstructMessageFromParts(data.parts, false, showTwitchGIFs);
 
 	// Remove the line break
 	content.querySelector("#colon-separator").style.display = `inline`;
@@ -1322,7 +1323,7 @@ async function TwitchWatchStreak(data) {
 	const watchStreak = data.watchStreak ?? data.streak_count ?? data.streakCount;
 	
 	titleDiv.innerText = `${displayName} is currently on a ${watchStreak} stream streak! `;
-	contentDiv.innerHTML = ConstructMessageFromParts(data.parts);
+	contentDiv.innerHTML = ConstructMessageFromParts(data.parts, false, showTwitchGIFs);
 
 	AddMessageItem(instance, data.messageId);
 }
@@ -1439,7 +1440,7 @@ async function YouTubeMessage(data) {
 	
 	// Set the message data
 	//let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, false, showTwitchGIFs);
 	
 	// Highlight mentions
 	const mentionRgx = new RegExp(`(^|\\s)@${youtubeUsername}(\\s|$)`, 'i');
@@ -2484,7 +2485,7 @@ async function KickChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, false, showTwitchGIFs);
 	
 	// Highlight mentions
 	const mentionRgx = new RegExp(`(^|\\s)@${kickUsername}(\\s|$)`, 'i');
