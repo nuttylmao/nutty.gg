@@ -356,6 +356,14 @@
 			"group": "Which Twitch messages do you want to see?"
 		},
 		{
+			"id": "showTwitchGIFs",
+			"label": "GIFs",
+			"description": "Tier 2/3 subs only",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which Twitch messages do you want to see?"
+		},
+		{
 			"id": "showYouTubeMessages",
 			"label": "Chat Messages",
 			"description": "",
@@ -377,6 +385,22 @@
 			"description": "",
 			"type": "checkbox",
 			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
+			"id": "showYouTubeJewelsGifted",
+			"label": "Jewels Gifted",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Which YouTube messages do you want to see?"
+		},
+		{
+			"id": "showYouTubeSubscribers",
+			"label": "New Subscribers",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": false,
 			"group": "Which YouTube messages do you want to see?"
 		},
 		{

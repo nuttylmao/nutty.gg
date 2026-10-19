@@ -4,6 +4,9 @@
 
 const avatarMap = new Map();
 const pronounMap = new Map();
+// const kickPusherKey = '32cbd69e4b950bf97679';    // Updated Pusher key for Kick
+const kickPusherKey = '34bf7a0ff419a2a775b9';       // Updated Pusher key for Kick
+const kickPusherWsUrl = `wss://ws-us2.pusher.com/app/${kickPusherKey}?protocol=7&client=js&version=8.4.0&flash=false`;
 
 
 
@@ -325,7 +328,7 @@ function RandomHex(str) {
 }
 
 // Used to construct a message from "parts" variable commonly found in Streamer.bot chat messages
-function ConstructMessageFromParts(parts) {
+function ConstructMessageFromParts(parts, isHorizontalChat = false, twitchGIFsEnabled = false) {
     return parts.map(part => {
         if (part.emoji)
             return ` <img src="${EscapeHTML(part.image)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote"> `;
@@ -358,7 +361,15 @@ function ConstructMessageFromParts(parts) {
             case "mention":
                 return part.text;
             case "gif":
-                return `<img src="${EscapeHTML(part.url)}" class="gif">`;
+                if (twitchGIFsEnabled)
+                {
+                    if (!isHorizontalChat)
+                        return `<img src="${EscapeHTML(part.url)}" class="gif">`;
+                    else
+                        return `<img src="${EscapeHTML(part.url)}" class="emote">`;
+                }
+                else
+                    return `<b><i>${EscapeHTML(part.text)}</i></b>`;
             default:
                 return `<img src="${EscapeHTML(part.imageUrl)}" alt="${EscapeHTML(part.text)}" title="${EscapeHTML(part.text)}" class="emote">`;
         }

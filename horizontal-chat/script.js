@@ -16,7 +16,6 @@ let alertQueue = [];
 // GLOBAL VARS //
 /////////////////
 
-const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
 
 /////////////
@@ -51,6 +50,7 @@ const showTwitchPowerUpRedemptions = GetBooleanParam("showTwitchPowerUpRedemptio
 const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 const showTwitchWatchStreaks = GetBooleanParam("showTwitchWatchStreaks", true);
 const showTwitchSharedChat = GetBooleanParam("showTwitchSharedChat", true);
+const showTwitchGIFs = GetBooleanParam("showTwitchGIFs", false);
 
 const showKickMessages = GetBooleanParam("showKickMessages", true);
 const showKickFollows = GetBooleanParam("showKickFollows", false);
@@ -62,6 +62,8 @@ const showKickGifts = GetBooleanParam("showKickGifts", true);
 const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
 const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+const showYouTubeJewelsGifted = GetBooleanParam("showYouTubeJewelsGifted", true);
+const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
 const enableTikTokSupport = GetBooleanParam("enableTikTokSupport", false);
@@ -233,6 +235,16 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.JewelsGifted', (response) => {
+	console.debug(response.data);
+	YouTubeJewelsGifted(response.data);
+})
+
+client.on('YouTube.NewSubscriber', (response) => {
+	console.debug(response.data);
+	YouTubeNewSubscriber(response.data);
 })
 
 client.on('YouTube.NewSponsor', (response) => {
@@ -576,7 +588,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 	const messageColor = data.user.color;
 	const role = data.user.role;
 
@@ -681,7 +693,7 @@ async function TwitchAnnouncement(data) {
 			break;
 	}
 
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 
 	ShowAlert(message, background);
 }
@@ -834,7 +846,7 @@ async function TwitchWatchStreak(data) {
 
 	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
 	const displayName = data.displayName ?? data.user.name;
-	const watchStreak = data.watchStreak ?? data.streak_count;
+	const watchStreak = data.watchStreak ?? data.streak_count ?? data.streakCount;
 
 	let message = `${displayName} is currently on a ${watchStreak} stream streak!`;
 
@@ -937,7 +949,7 @@ function YouTubeMessage(data) {
 
 	// Set the message data
 	//let message = RenderMessageWithEmotesHTML(data.message, data.emotes);
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 	
 	// Set furry mode
 	if (furryMode)
@@ -1039,6 +1051,27 @@ function YouTubeSuperSticker(data) {
 		return;
 
 	let message = `${data.user.name} sent a Super Sticker (${data.amount})`;
+
+	ShowAlert(message, 'youtube');
+}
+
+function YouTubeJewelsGifted(data) {
+	if (!showYouTubeJewelsGifted)
+		return;
+
+	let message = `${data.user.name} gifted ${data.jewelsAmount} Jewels`;
+
+	ShowAlert(message, 'youtube');
+}
+
+function YouTubeNewSubscriber(data) {
+	if (!showYouTubeSubscribers)
+		return;
+	
+	// Set the text
+	let username = data.user.name;
+	
+	const message = `${username} subscribed`;
 
 	ShowAlert(message, 'youtube');
 }
@@ -1361,7 +1394,7 @@ async function KickChatMessage(data) {
 	}
 
 	// Set the message data
-	let message = ConstructMessageFromParts(data.parts);
+	let message = ConstructMessageFromParts(data.parts, true, showTwitchGIFs);
 
 	// Set furry mode
 	if (furryMode)

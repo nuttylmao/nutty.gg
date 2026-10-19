@@ -27,7 +27,6 @@ let alertQueue = [];
 // GLOBAL VARS //
 /////////////////
 
-const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
 
 
@@ -89,6 +88,10 @@ const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
 const youtubeSuperChatAction = urlParams.get("youtubeSuperChatAction") || "";
 const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
 const youtubeSuperStickerAction = urlParams.get("youtubeSuperStickerAction") || "";
+const showYouTubeJewelsGifted = GetBooleanParam("showYouTubeJewelsGifted", true);
+const youtubeJewelsGiftedAction = urlParams.get("youtubeJewelsGiftedAction") || "";
+const showYouTubeSubscribers = GetBooleanParam("showYouTubeSubscribers", false);
+const youtubeSubscriberAction = urlParams.get("youtubeSubscriberAction") || "";
 const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const youtubeMembershipAction = urlParams.get("youtubeMembershipAction") || "";
 
@@ -245,6 +248,16 @@ client.on('YouTube.SuperChat', (response) => {
 client.on('YouTube.SuperSticker', (response) => {
 	console.debug(response.data);
 	YouTubeSuperSticker(response.data);
+})
+
+client.on('YouTube.JewelsGifted', (response) => {
+	console.debug(response.data);
+	YouTubeJewelsGifted(response.data);
+})
+
+client.on('YouTube.NewSubscriber', (response) => {
+	console.debug(response.data);
+	YouTubeNewSubscriber(response.data);
 })
 
 client.on('YouTube.NewSponsor', (response) => {
@@ -772,7 +785,7 @@ async function TwitchWatchStreak(data) {
 	// Set the text
 	// TODO: Streamer.bot v1.0.5-alpha3 changed the data sent with this event, so for backwards compatibility we need to check for both the old and new properties
 	const displayName = data.displayName ?? data.user.name;
-	const watchStreak = data.watchStreak ?? data.streak_count;
+	const watchStreak = data.watchStreak ?? data.streak_count ?? data.streakCount;
 	
 	UpdateAlertBox(
 		'twitch',
@@ -823,6 +836,46 @@ function YouTubeSuperSticker(data) {
 		data.user.name,
 		'',
 		youtubeSuperStickerAction,
+		data
+	);
+}
+
+function YouTubeJewelsGifted(data) {
+	if (!showYouTubeJewelsGifted)
+		return;
+
+	UpdateAlertBox(
+		'youtube',
+		data.url,
+		`${data.user.name}`,
+		`gifted ${data.jewelsAmount} Jewels`,
+		'',
+		data.user.name,
+		'',
+		youtubeJewelsGiftedAction,
+		data
+	);
+}
+
+function YouTubeNewSubscriber(data) {
+	if (!showYouTubeSubscribers)
+		return;
+
+	// Set the text
+	const username = data.user.name;
+
+	// Render avatars
+	const avatarURL = data.user.profileImageUrl;
+
+	UpdateAlertBox(
+		'youtube',
+		avatarURL,
+		`${username}`,
+		`subscribed`,
+		``,
+		username,
+		``,
+		youtubeSubscriberAction,
 		data
 	);
 }

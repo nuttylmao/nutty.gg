@@ -9,6 +9,8 @@
     align-items: stretch; 
     gap: 0.5em;
     opacity: 0;
+    filter: drop-shadow(15px 15px 7px rgba(0, 0, 0, 1));
+    
 }
 
 #album-art-container {
