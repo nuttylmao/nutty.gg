@@ -4,6 +4,9 @@
 
 const avatarMap = new Map();
 const pronounMap = new Map();
+// const kickPusherKey = '32cbd69e4b950bf97679';    // Updated Pusher key for Kick
+const kickPusherKey = '34bf7a0ff419a2a775b9';       // Updated Pusher key for Kick
+const kickPusherWsUrl = `wss://ws-us2.pusher.com/app/${kickPusherKey}?protocol=7&client=js&version=8.4.0&flash=false`;
 
 
 

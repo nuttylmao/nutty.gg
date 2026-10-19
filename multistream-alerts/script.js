@@ -27,7 +27,6 @@ let alertQueue = [];
 // GLOBAL VARS //
 /////////////////
 
-const kickPusherWsUrl = 'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
 let kickSubBadges = [];
 
 
