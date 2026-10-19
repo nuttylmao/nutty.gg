@@ -22,20 +22,6 @@ html {
 	overflow-wrap: break-word;
 }
 
-#statusContainer {
-	font-weight: 500;
-	font-size: 30px;
-	text-align: center;
-	background-color: #D12025;
-	color: white;
-	padding: 10px;
-	border-radius: 10px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
 #mainContainer {
 	position: absolute;
 	width: 100%;

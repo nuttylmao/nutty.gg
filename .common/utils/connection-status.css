@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.connection-status {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    font-family: 'Inter', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    font-style: italic;
+    text-align: center;
+    color: white;
+
+    padding: 16px 28px;
+    border-radius: 10px;
+    background: #D12025;
+
+    /* Centering and entrance animation */
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, calc(-50% + 10px));
+
+    transition:
+        opacity 200ms ease,
+        transform 200ms ease,
+        visibility 200ms ease;
+
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.connection-status.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%);
+}
+
+/* Optional dark translucent backdrop */
+.connection-status-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 200ms ease,
+        visibility 200ms ease;
+
+    pointer-events: none;
+}
+
+.connection-status-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.connection-status--streamerbot {
+    background: linear-gradient(
+        135deg,
+        #a257ed 0%,
+        #a257ed 20%,
+        #0b72ff 100%
+    );
+}

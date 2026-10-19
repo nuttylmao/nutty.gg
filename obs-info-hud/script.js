@@ -25,6 +25,13 @@ let previousOutputTimecode = 0;
 let previousOutputBytes = 0;
 let activeFps;
 
+const connectionStatus = new ConnectionStatus({
+	showDelay: 1000,
+    disconnectedMessage: "Connecting to Streamer.bot..."
+});
+
+connectionStatus.setConnected(false);
+
 function connectws() {
 	if ("WebSocket" in window) {
 
@@ -32,7 +39,7 @@ function connectws() {
 
 		// Reconnect
 		ws.onclose = function () {
-			SetConnectionStatus(false);
+			connectionStatus.setConnected(false);
 			setTimeout(connectws, 5000);
 		};
 
@@ -67,7 +74,7 @@ function connectws() {
 					break;
 				case 2:		// Identify OpCode
 					console.log("Connected to OBS!");
-					SetConnectionStatus(true);
+					connectionStatus.setConnected(true);
 					break;
 				case 5:		// Event OpCode
 					switch (data.d.eventType) {
@@ -378,26 +385,6 @@ function hexToBase64(hexstring) {
 //////////////////////
 // WEBSOCKET STATUS //
 //////////////////////
-
-// This function sets the visibility of the Streamer.bot status label on the overlay
-function SetConnectionStatus(connected) {
-	let statusContainer = document.getElementById("statusContainer");
-	
-	if (connected) {
-		statusContainer.style.background = "#2FB774";
-		statusContainer.innerText = "Connected!";
-		mainContainer.style.visibility = `visible`;
-		var tl = new TimelineMax();
-		tl
-			.to(statusContainer, 2, { opacity: 0, ease: Linear.easeNone });
-	}
-	else {
-		statusContainer.style.background = "#D12025";
-		statusContainer.innerText = "Connecting...";
-		statusContainer.style.opacity = 1;
-		mainContainer.style.visibility = `hidden`;
-	}
-}
 
 connectws();
 

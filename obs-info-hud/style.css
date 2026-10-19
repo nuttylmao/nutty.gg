@@ -6,24 +6,6 @@ body {
     background-size: cover;
 }
 
-#statusContainer {
-	font-family: 'Metropolis';
-	font-style: italic;
-	font-weight: bold;
-	font-size: 30px;
-	width: 400px;
-	max-width: fit-content;
-	text-align: center;
-	background-color: #D12025;
-	color: white;
-	padding: 10px;
-	border-radius: 10px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
 #top,
 #bottom,
 #left,
