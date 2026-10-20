@@ -12,11 +12,11 @@
     text-align: center;
     color: white;
 
-    padding: 0.25em 0.5em;
+    padding: 0.25em 1em;
     border-radius: 10px;
     background: #D12025;
 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
 
     /* Centering and entrance animation */
     opacity: 0;
