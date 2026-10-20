@@ -12,9 +12,11 @@
     text-align: center;
     color: white;
 
-    padding: 16px 28px;
+    padding: 0.25em 0.5em;
     border-radius: 10px;
     background: #D12025;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 
     /* Centering and entrance animation */
     opacity: 0;
@@ -31,7 +33,7 @@
 }
 
 .connection-status.is-visible {
-    opacity: 1;
+    opacity: 0.9;
     visibility: visible;
     transform: translate(-50%, -50%);
 }
