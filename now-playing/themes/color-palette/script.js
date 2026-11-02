@@ -91,6 +91,8 @@ async function ChangeTrack(mediaProps, accentColorPalette) {
             boxes[role].style.color = colorValue;
             labels[role].style.opacity = '';
         });
+
+        SetVisibility(true); // Show the overlay for a few seconds if autoHide is enabled
     }, 250);
 }
 
