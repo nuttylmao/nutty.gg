@@ -144,29 +144,6 @@ async function FetchBroadcasts() {
     runningActionId = response.args.runningActionId;
 }
 
-async function FetchKickInfo() {
-    // Fetch from Streamer.bot
-    const broadcasterInfo = await window.parent.sbClient.getBroadcaster();
-    
-    if (broadcasterInfo.platforms.kick) {
-        const userLogin = broadcasterInfo.platforms.kick.broadcasterLogin;
-
-        let kickData = {
-            platform: 'kick',
-            id: 'kick',
-            streamUrl: `https://www.kick.com/${userLogin.replaceAll('_', '-')}`,
-            dashboardUrl: 'https://dashboard.kick.com/stream',
-            userLogin: userLogin
-        }
-        AddBroadcast(kickData);
-    }
-    else {
-        const kickBroadcastDiv = document.getElementById('id-kick');
-        if (kickBroadcastDiv)
-            kickBroadcastDiv.remove();
-    }
-}
-
 async function AddBroadcast(data) {
     // Get a reference to the template
     const template = document.getElementById('broadcast-template');
@@ -197,16 +174,24 @@ async function AddBroadcast(data) {
     if (data.platform == 'kick')
     {
         let response = await fetch('https://kick.com/api/v1/channels/' + data.userLogin);
-        let response_data = await response.json();
-        
-        // The current title is only provided if the stream if currently live
-        if (response_data.livestream)
+
+        // Try alternate slug if the original returns an HTTP error
+        if (!response.ok && data.userLogin.includes('_'))
+        {
+            let slug = data.userLogin.replace(/_/g, '-');
+            response = await fetch('https://kick.com/api/v1/channels/' + slug);
+        }
+
+        let response_data = response.ok ? await response.json() : null;
+
+        // The current title is only provided if the stream is currently live
+        if (response_data?.livestream)
         {
             data.title = response_data.livestream.session_title;
             data.category = response_data.livestream.categories[0].name;
             kickWarningEl.style.display = 'none';
         }
-        else if (response_data.previous_livestreams.length > 0)
+        else if (response_data?.previous_livestreams?.length > 0)
         {
             data.title = response_data.previous_livestreams[0].session_title;
             data.category = response_data.previous_livestreams[0].categories[0].name;
@@ -615,12 +600,3 @@ ValidateUpdateAllDialog();
 ValidateTwitchDialog();
 ValidateKickDialog();
 ValidateYouTubeDialog();
-
-
-
-
-////////////////////////////
-// REFRESH BROADCAST LIST //
-////////////////////////////
-
-setInterval(FetchKickInfo, 5000);
