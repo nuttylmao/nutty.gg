@@ -173,6 +173,14 @@ switch (alignment)
 // STREAMER.BOT CLIENT //
 /////////////////////////
 
+const connectionStatus = new ConnectionStatus({
+    name: "Streamer.bot",
+	showDelay: 1000,
+    disconnectedMessage: "Connecting to Streamer.bot..."
+});
+
+connectionStatus.setConnected(false);
+
 const client = new StreamerbotClient({
 	host: sbServerAddress,
 	port: sbServerPort,
@@ -180,13 +188,13 @@ const client = new StreamerbotClient({
 	onConnect: (data) => {
 		console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
 		console.debug(data);
-		SetConnectionStatus(true);
+		connectionStatus.setConnected(true);
 		KickConnect();
 	},
 
 	onDisconnect: () => {
 		console.error(`Streamer.bot disconnected from ${sbServerAddress}:${sbServerPort}`)
-		SetConnectionStatus(false);
+		connectionStatus.setConnected(false);
 	}
 });
 
@@ -1813,29 +1821,4 @@ async function testWidget()
 		`O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA`
 		//``
 	);
-}
-
-
-///////////////////////////////////
-// STREAMER.BOT WEBSOCKET STATUS //
-///////////////////////////////////
-
-// This function sets the visibility of the Streamer.bot status label on the overlay
-function SetConnectionStatus(connected) {
-	let statusContainer = document.getElementById("statusContainer");
-	if (connected) {
-		statusContainer.style.background = "#2FB774";
-		statusContainer.innerText = "Connected!";
-		statusContainer.style.opacity = 1;
-		setTimeout(() => {
-			statusContainer.style.transition = "all 2s ease";
-			statusContainer.style.opacity = 0;
-		}, 10);
-	}
-	else {
-		statusContainer.style.background = "#D12025";
-		statusContainer.innerText = "Connecting...";
-		statusContainer.style.transition = "";
-		statusContainer.style.opacity = 1;
-	}
 }
