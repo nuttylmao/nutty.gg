@@ -1,0 +1,129 @@
+{
+	"settings": [
+		{
+			"id": "layout",
+			"label": "Layout",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "horizontal",
+					"label": "Horizontal"
+				},
+				{
+					"value": "vertical",
+					"label": "Vertical"
+				}
+			],
+			"defaultValue": "horizontal",
+			"group": "Appearance"
+		},
+		{
+			"id": "font",
+			"label": "Font",
+			"description": "",
+			"type": "font",
+			"defaultValue": "",
+			"group": "Appearance"
+		},
+		{
+			"id": "showPercentages",
+			"label": "Show Percentages",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Appearance"
+		},
+		{
+			"id": "showTimer",
+			"label": "Show Timer",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Appearance"
+		},
+		{
+			"id": "showQuestion",
+			"label": "Show Question",
+			"description": "",
+			"type": "checkbox",
+			"defaultValue": true,
+			"group": "Appearance"
+		},
+		{
+			"id": "hidePollAfter",
+			"label": "Hide Poll After (seconds)",
+			"description": "Automatically hide the poll after a specified number of seconds (0 to disable)",
+			"type": "number",
+			"min": 0,
+			"defaultValue": 15,
+			"group": "General"
+		},
+		{
+			"id": "hidePollOnStartup",
+			"label": "Hide Poll On Startup",
+			"description": "If enabled, the poll will remain hidden until you start a poll",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "minimumRole",
+			"label": "Permissions",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "4",
+					"label": "Broadcaster Only"
+				},
+				{
+					"value": "3",
+					"label": "Moderators & Broadcaster"
+				}
+			],
+			"defaultValue": "4",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "showPollCommand",
+			"label": "Show Poll",
+			"description": "",
+			"type": "text",
+			"defaultValue": "!poll on",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "hidePollCommand",
+			"label": "Hide Poll",
+			"description": "",
+			"type": "text",
+			"defaultValue": "!poll off",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "togglePollCommand",
+			"label": "Toggle Poll",
+			"description": "",
+			"type": "text",
+			"defaultValue": "!poll toggle",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "address",
+			"label": "Address",
+			"description": "Streamer.bot Websocket Server Address",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "Streamer.bot"
+		},
+		{
+			"id": "port",
+			"label": "Port",
+			"description": "Streamer.bot Websocket Server Port",
+			"type": "text",
+			"defaultValue": "8080",
+			"group": "Streamer.bot"
+		}
+	]
+}

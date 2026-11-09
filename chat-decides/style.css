@@ -1,0 +1,61 @@
+@font-face {
+	font-family: "GTA Art Deco";
+	src: url("./font/GTAArtDeco-Condensed-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+}
+
+html {
+	font-size: 24px;
+    font-family: "GTA Art Deco", sans-serif;
+	color: white;
+	text-transform: uppercase;
+}
+
+#poll-container {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	opacity: 0;
+	
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	
+	transition: all 0.5s ease;
+}
+
+#question-container {
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(0, 0, 0, 0.95) 15%,
+        rgba(0, 0, 0, 0.95) 85%,
+        transparent 100%
+    );
+	padding: 0.5em;
+}
+
+#question-container:not(:has(> *:not([style*="display: none"]))) {
+    display: none;
+}
+
+#timer-label {
+  	font-size: 2.5em;
+	font-weight: 900;
+}
+
+#question-label {
+	font-size: 1.5em;
+	font-weight: 900;
+}
+
+#response-results-list {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+	padding: 0% 7.5%;
+}

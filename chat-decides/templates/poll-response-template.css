@@ -1,0 +1,163 @@
+:root {
+    --winning-color: #3be47680;
+    --vote-bar-color: #FFFFFF;
+    --vote-bar-track-color: #0000004b;
+}
+
+.response-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    width: 100%;
+    flex-direction: row;
+    padding: 0.75em 1.5em;
+    border-radius: 0.5em;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.75);
+    
+    border: 1px solid transparent;
+    background:
+        linear-gradient(var(--theme-background), var(--theme-background)) padding-box,
+        linear-gradient(to right, var(--gradient-start), var(--gradient-end)) border-box;
+    
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    box-sizing: border-box;
+    
+    transition: all 0.25s ease,
+                --theme-background 0.25s ease,
+                --gradient-start 0.25s ease,
+                --gradient-end 0.25s ease;
+}
+
+.response-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    
+    transition: --theme-background 0.25s ease,
+                --gradient-start 0.25s ease,
+                --gradient-end 0.25s ease;
+}
+
+.response-except-just-the-shit-on-the-left-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    min-width: 0;
+}
+
+.response-title {
+    text-align: left;
+    font-size: 1.5em;
+    text-overflow: ellipsis;
+	font-weight: 600;
+}
+
+.response-votes {
+    font-size: 3.5em;
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    transition: --gradient-start 0.25s ease,
+                --gradient-end 0.25s ease;
+	font-weight: 900;
+}
+
+.response-bar-track {
+    background-color: var(--vote-bar-track-color);
+    border: 1px solid transparent;
+    background:
+        linear-gradient(var(--theme-background), var(--theme-background)) padding-box,
+        linear-gradient(to right, var(--gradient-start), var(--gradient-end)) border-box;
+    position: relative;
+    display: flex;
+    border-radius: 99999px;
+    overflow: hidden;
+    height: 0.75em;
+
+    box-shadow:
+        0 0 8px color-mix(in srgb, var(--gradient-start) 35%, transparent),
+        0 0 16px color-mix(in srgb, var(--gradient-end) 20%, transparent);
+
+    transition: --theme-background 0.25s ease,
+                --gradient-start 0.25s ease,
+                --gradient-end 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.response-bar-fill {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+        to right,
+        var(--gradient-start),
+        var(--gradient-end)
+    );
+    transition: width 0.5s ease;
+    z-index: 0;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Pink theme */
+.response-container[data-theme="pink"] {
+    --theme-background: #1C0D32;
+    --gradient-start: #FE83FB;
+    --gradient-end: #FE3CDF;
+    --tree-filter: brightness(0) saturate(100%) invert(48%) sepia(75%) saturate(1200%) hue-rotate(250deg);
+}
+
+/* Blue theme */
+.response-container[data-theme="blue"] {
+    --theme-background: #000A39;
+    --gradient-start: #CAF0FF;
+    --gradient-end: #0DADF6;
+    --tree-filter: brightness(0) saturate(100%) invert(60%) sepia(80%) saturate(1000%) hue-rotate(170deg);
+}
+
+/* Winner theme */
+.response-container[data-theme="winner"] {
+    --theme-background: #002E00;
+    --gradient-start: #A6FF9B;
+    --gradient-end: #00AA12;
+    --tree-filter: brightness(0) saturate(100%) invert(60%) sepia(80%) saturate(1000%) hue-rotate(170deg);
+}
+
+.background {
+    position: absolute;
+    width: 150%;
+    height: auto;
+    max-height: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.1;
+    filter: var(--tree-filter);
+}
+
+
+@property --theme-background {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #000;
+}
+
+@property --gradient-start {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #fff;
+}
+
+@property --gradient-end {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #000;
+}
