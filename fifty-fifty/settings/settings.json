@@ -1,0 +1,136 @@
+{
+	"settings": [
+		{
+			"id": "testSpin",
+			"label": "Test Spin",
+			"description": "",
+			"type": "button",
+			"callFunction": "Spin",
+			"group": ""
+		},
+		{
+			"id": "optionOneLabel",
+			"label": "Option 1",
+			"description": "The label for the first option.",
+			"type": "text",
+			"defaultValue": "Heads",
+			"group": "Options"
+		},
+		{
+			"id": "optionTwoLabel",
+			"label": "Option 2",
+			"description": "The label for the second option.",
+			"type": "text",
+			"defaultValue": "Tails",
+			"group": "Options"
+		},
+		{
+			"id": "layout",
+			"label": "Layout",
+			"description": "The arrangement of the two options.",
+			"type": "select",
+			"defaultValue": "horizontal",
+			"group": "Appearance",
+			"options": [
+				{
+					"value": "horizontal",
+					"label": "Horizontal"
+				},
+				{
+					"value": "vertical",
+					"label": "Vertical"
+				}
+			]
+		},
+		{
+			"id": "font",
+			"label": "Font",
+			"description": "",
+			"type": "font",
+			"defaultValue": "",
+			"group": "Appearance"
+		},
+		{
+			"id": "hideOverlayAfter",
+			"label": "Automatically Hide Overlay",
+			"description": "Automatically hide the overlay after spinning.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "hideOverlayOnStartup",
+			"label": "Hide Overlay On Startup",
+			"description": "When enabled, the overlay remains hidden until the first spin is triggered.",
+			"type": "checkbox",
+			"defaultValue": false,
+			"group": "General"
+		},
+		{
+			"id": "minimumRole",
+			"label": "Permissions",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": "4",
+					"label": "Broadcaster Only"
+				},
+				{
+					"value": "3",
+					"label": "Moderators & Broadcaster"
+				}
+			],
+			"defaultValue": "4",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "spinCommand",
+			"label": "Spin",
+			"description": "The chat command used to trigger a spin.",
+			"type": "text",
+			"defaultValue": "!spin",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "showOverlayCommand",
+			"label": "Show Overlay",
+			"description": "",
+			"type": "text",
+			"defaultValue": "!5050 on",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "hideOverlayCommand",
+			"label": "Hide Overlay",
+			"description": "",
+			"type": "text",
+			"defaultValue": "!5050 off",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "toggleOverlayCommand",
+			"label": "Toggle Overlay",
+			"description": "",
+			"type": "text",
+			"defaultValue": "!5050 toggle",
+			"group": "Chat Commands"
+		},
+		{
+			"id": "address",
+			"label": "Address",
+			"description": "Streamer.bot Websocket Server Address",
+			"type": "text",
+			"defaultValue": "127.0.0.1",
+			"group": "Streamer.bot"
+		},
+		{
+			"id": "port",
+			"label": "Port",
+			"description": "Streamer.bot Websocket Server Port",
+			"type": "text",
+			"defaultValue": "8080",
+			"group": "Streamer.bot"
+		}
+	]
+}

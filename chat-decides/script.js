@@ -301,8 +301,12 @@ function ChatMessage(data) {
 		return;
 	}
 
+	// Strip white space and unicode characters from the command
+	// Idk why Streamer.bot sometimes attaches unicode characters to the command, but this is a workaround for that
+	const command = data.text.replace(/[^\x20-\x7E]/g, '').trim();
+
 	// Chat commands
-	switch (data.text) {
+	switch (command) {
 		case showPollCommand:
 			SetVisibility(true);
 			break;
