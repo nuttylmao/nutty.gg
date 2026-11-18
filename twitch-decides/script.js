@@ -158,7 +158,8 @@ class Response {
 
 function PollCreated(data) {
 	// Set the question title
-	questionLabel.innerText = data.title;
+	if (data.title)
+		questionLabel.innerText = data.title;
 	
 	// Calculate total votes
 	const totalVotes = data.choices.reduce((sum, object) => {
@@ -418,7 +419,7 @@ function RunTestPoll() {
 
 		let data = {
 			"ends_at": ends.toISOString(),
-			"title": "Type /poll in chat to create a poll",
+			"title": "",
 			"choices": [
 				{
 					"id": "1",

@@ -59,3 +59,8 @@ html {
 	gap: 0.5em;
 	padding: 0% 7.5%;
 }
+
+img {
+	height: 1.5em;
+    vertical-align: middle;
+}
