@@ -1,0 +1,36 @@
+@font-face {
+	font-family: "GTA Art Deco";
+	src: url("./font/GTAArtDeco-Condensed-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+}
+
+html {
+	font-size: 24px;
+    font-family: "GTA Art Deco", sans-serif;
+	color: white;
+	text-transform: uppercase;
+}
+
+#fifty-fifty-container {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	opacity: 0;
+	
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	
+	transition: all 0.5s ease;
+}
+
+#options-list {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+	padding: 0% 7.5%;
+}
