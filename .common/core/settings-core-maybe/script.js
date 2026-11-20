@@ -1,0 +1,716 @@
+// Search paramaters
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const settingsJson = urlParams.get("settingsJson") || "";
+const widgetURL = urlParams.get("widgetURL") || "";
+const showUnmuteIndicator = GetBooleanParam("showUnmuteIndicator", false);
+const useStreamerBot = GetBooleanParam("usesStreamerBot", false);
+
+// Page elements
+const widgetUrlInputWrapper = document.getElementById('widgetUrlInputWrapper');
+const widgetUrlInput = document.getElementById('widgetUrlInput');
+const urlLabel = document.getElementById('urlLabel');
+const settingsPanel = document.getElementById('settingsPanel');
+const widgetPreview = document.getElementById('widgetPreview');
+const loadURLBox = document.getElementById('loadUrlBox');
+const loadDefaultsBox = document.getElementById('loadDefaultsWrapper');
+const loadSettingsBox = document.getElementById('loadSettingsWrapper');
+const unmuteLabel = document.getElementById('unmute-label');
+
+// Global variables
+let settingsData = '';
+let settingsMap = new Map();
+
+// Construct local storage key prefix so that each widget has their own unique settings
+const parts = widgetURL.replace(/\/+$/, '').split('/');
+const keyPrefix = parts[parts.length - 1];
+
+// Set visibility of the unmute indicator
+if (showUnmuteIndicator)
+	unmuteLabel.style.display = 'inline';
+
+// Set hint text for "Load URL" text input
+loadUrlBox.placeholder = `${widgetURL}?...`
+
+
+
+/////////////////////////////
+// LOAD FROM SETTINGS.JSON //
+/////////////////////////////
+
+function LoadJSON(settingsJson) {
+	fetch(settingsJson)
+		.then(response => response.json())
+		.then(data => {
+			settingsData = data;
+
+			// Clear the settings panel
+			settingsPanel.innerHTML = '';
+
+			const groupedSettings = {};
+
+			// Group settings by their 'group' property
+			data.settings.forEach(setting => {
+				if (!groupedSettings[setting.group]) {
+					groupedSettings[setting.group] = [];
+				}
+				groupedSettings[setting.group].push(setting);
+			});
+
+			// Render settings for each group
+			for (const groupName in groupedSettings) {
+				const groupDiv = document.createElement('div');
+				groupDiv.classList.add('setting-group');
+
+				const groupHeader = document.createElement('h2');
+				groupHeader.textContent = groupName;
+				groupDiv.appendChild(groupHeader);
+
+				groupedSettings[groupName].forEach(setting => {
+					const settingItem = document.createElement('div');
+					settingItem.classList.add('setting-item');
+					settingItem.id = `item-${setting.id}`;
+
+					// Indent settings that are dependent on other settings using the showIf property
+					if (setting.showIf) {
+						const depth = GetSettingDepth(setting, data.settings);
+						settingItem.style.marginLeft = `${depth * 20}px`;
+					}
+
+					const labelDescriptionDiv = document.createElement('div');
+
+					if (setting.label) {
+						const label = document.createElement('label');
+						label.textContent = setting.label;
+						labelDescriptionDiv.appendChild(label);
+					}
+
+					if (setting.description) {
+						const description = document.createElement('p');
+						description.innerHTML = setting.description;
+						labelDescriptionDiv.appendChild(description);
+					}
+
+					const settingItemContent = document.createElement('div');
+					settingItemContent.classList.add('setting-item-content');
+
+					let inputElement;
+					switch (setting.type) {
+						case 'text':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.autocomplete = 'new-password';
+							inputElement.placeholder = setting.placeholder ? setting.placeholder : '';
+							break;
+						case 'password':
+							inputElement = document.createElement('input');
+							inputElement.type = 'password';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.autocomplete = 'new-password';
+							break;
+						case 'checkbox':
+							const labelDiv = document.createElement('label');
+							labelDiv.classList.add('switch');
+							checkBoxElement = document.createElement('input');
+							checkBoxElement.type = 'checkbox';
+							checkBoxElement.id = setting.id;
+							checkBoxElement.checked = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							labelDiv.appendChild(checkBoxElement);
+
+							const slider = document.createElement('span');
+							slider.classList.add('slider');
+							slider.classList.add('round');
+							labelDiv.appendChild(slider);
+
+							// Add event listener to the switchDiv
+							labelDiv.addEventListener('click', () => {
+								checkBoxElement.checked = !checkBoxElement.checked;
+								UpdateSettingItemVisibility();
+							});
+							inputElement = labelDiv;
+							break;
+						case 'select':
+							inputElement = document.createElement('select');
+							inputElement.id = setting.id; //Added setting ID
+							setting.options.forEach(option => {
+								const optionElement = document.createElement('option');
+								optionElement.value = option.value;
+								optionElement.textContent = option.label;
+								if (option === setting.defaultValue) {
+									optionElement.selected = true;
+								}
+								inputElement.appendChild(optionElement);
+							});
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							break;
+						case 'color':
+							inputElement = document.createElement('input');
+							inputElement.type = 'color';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							break;
+						case 'number':
+							inputElement = document.createElement('input');
+							inputElement.type = 'number';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.min = setting.min;
+							inputElement.max = setting.max;
+							inputElement.step = setting.step;
+							break;
+						case 'sb-actions':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.placeholder = 'Type to search...';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.setAttribute('list', 'streamer-bot-actions');
+							inputElement.autocomplete = 'off';
+							break;
+						case 'font':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.placeholder = 'Type to search...';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.setAttribute('list', 'fonts');
+							inputElement.autocomplete = 'off';
+
+							// Trigger permission prompt and load fonts on first click/focus
+							inputElement.addEventListener('focus', async function loadOnce() {
+								// Remove listener so it only triggers once per session
+								inputElement.removeEventListener('focus', loadOnce);
+								inputElement.placeholder = 'Type to search...';
+								
+								await PopulateFontDatalist();
+							}, { once: true });
+							break;
+						case 'timezone':
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.placeholder = 'Type to search timezone...';
+							inputElement.id = setting.id;
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+							inputElement.setAttribute('list', 'timezones');
+							inputElement.autocomplete = 'off';
+
+							// Populate datalist on focus (runs once)
+							inputElement.addEventListener('focus', function loadOnce() {
+								inputElement.removeEventListener('focus', loadOnce);
+								PopulateTimezoneDatalist();
+							}, { once: true });
+							break;
+						case 'button':
+							inputElement = document.createElement('button');
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.textContent = setting.label;
+
+							inputElement.addEventListener('click', () => {
+								widgetPreview.contentWindow[setting.callFunction]();
+
+								const defaultBackgroundColor = "#2e2e2e";
+								const defaultTextColor = "white";
+
+								inputElement.style.transitionDuration = '0s'
+								inputElement.style.backgroundColor = "#2196f3"
+								inputElement.style.color = "#ffffff";
+
+								setTimeout(() => {
+									inputElement.style.transitionDuration = '0.2s'
+									inputElement.style.backgroundColor = defaultBackgroundColor;
+									inputElement.style.color = defaultTextColor;
+								}, 100);
+							});
+							break;
+						default:
+							inputElement = document.createElement('input');
+							inputElement.type = 'text';
+							inputElement.id = setting.id; //Added setting ID
+							inputElement.value = settingsMap.has(setting.id) ? settingsMap.get(setting.id) : setting.defaultValue;
+					}
+
+					// Save settings to settings map
+					if (!settingsMap.has(setting.id))
+						settingsMap.set(setting.id, setting.defaultValue);
+
+					// Refresh the preview when any setting changes
+					inputElement.addEventListener('input', function (event) {
+						const settingElement = document.getElementById(setting.id);
+						if (setting.type == 'checkbox')
+							settingsMap.set(setting.id, settingElement.checked);
+						else
+							settingsMap.set(setting.id, settingElement.value);
+
+						SaveSettingsToStorage();
+						RefreshWidgetPreview();
+						InterpolatePlaceholders();
+					});
+
+					settingItemContent.appendChild(inputElement);
+
+					if (setting.type == 'button') {
+						settingItem.style.display = 'block'
+						settingItem.appendChild(settingItemContent);
+					}
+					else {
+						settingItem.appendChild(labelDescriptionDiv);
+						settingItem.appendChild(settingItemContent);
+					}
+
+					groupDiv.appendChild(settingItem);
+				});
+
+				settingsPanel.appendChild(groupDiv);
+			}
+
+			function UpdateSettingItemVisibility() {
+				data.settings.forEach(setting => {
+					if (setting.showIf) {
+						const parentElement = document.getElementById(setting.showIf);
+						let shouldShow = true;
+
+						// Walk up the chain of showIf dependencies
+						let currentSetting = setting;
+						while (currentSetting.showIf) {
+							const parentInput = document.getElementById(currentSetting.showIf);
+							if (!parentInput || !parentInput.checked) {
+								shouldShow = false;
+								break;
+							}
+
+							// Find the parent setting object (to keep walking up)
+							currentSetting = data.settings.find(s => s.id === currentSetting.showIf) || {};
+						}
+
+						document.getElementById(`item-${setting.id}`).style.display = shouldShow ? 'flex' : 'none';
+					}
+				});
+			}
+
+			UpdateSettingItemVisibility();
+			RefreshWidgetPreview();
+			SaveSettingsToStorage();
+			InterpolatePlaceholders();
+		})
+		.catch(error => console.error('Error loading settings:', error));
+}
+
+function SaveSettingsToStorage() {
+	console.debug(settingsMap);
+	const settingsArray = Array.from(settingsMap.entries());
+	const settingsArrayString = JSON.stringify(settingsArray);
+	localStorage.setItem(`${keyPrefix}-settings`, settingsArrayString);
+}
+
+function LoadSettingsFromStorage() {
+	// Retrieve session rankings from local storage
+	const settingsMapString = localStorage.getItem(`${keyPrefix}-settings`);
+	if (settingsMapString) {
+		const settingsMapArray = JSON.parse(settingsMapString);
+		settingsMap = new Map(settingsMapArray);
+	}
+}
+
+function LoadDefaultSettings() {
+	localStorage.removeItem(`${keyPrefix}-settings`);
+	settingsMap = new Map();
+	LoadJSON(settingsJson);
+
+	loadDefaultsBox.style.visibility = 'hidden';
+	loadDefaultsBox.style.opacity = 0;
+}
+
+function RefreshWidgetPreview() {
+	const settings = {};
+	settingsData.settings.forEach(setting => {
+		if (setting.type === 'button') return; // Skip buttons
+
+		let inputElement = document.getElementById(setting.id);
+		if (!inputElement) return;
+
+		if (setting.type === 'checkbox') {
+			settings[setting.id] = inputElement.checked;
+		} else {
+			settings[setting.id] = inputElement.value;
+		}
+	});
+
+	// Generate parameter string
+	const paramString = Object.entries(settings)
+		.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+		.join('&');
+
+	console.debug('Parameter String:', paramString);
+
+	widgetUrlInput.value = widgetURL + "?" + paramString;
+	widgetPreview.src = widgetUrlInput.value;
+
+	UpdateStreamerBotConnection();
+}
+
+function UpdateStreamerBotConnection() {
+	// If Streamer.bot is not being used, exit early
+	if (!useStreamerBot)
+		return;
+	
+	let addressElement = document.getElementById('address');
+	let portElement = document.getElementById('port');
+
+	if (addressElement && portElement)
+		client.options.host = addressElement.value;
+
+	if (portElement)
+		client.options.port = portElement.value;
+
+	client.connect();
+}
+
+
+
+//////////////////
+// STREAMER.BOT //
+//////////////////
+
+// Connect to Streamer.bot and get list of actions
+if (useStreamerBot)
+{
+	let sbServerAddress = '127.0.0.1';
+	let sbServerPort = '8080';
+	let client = new StreamerbotClient({
+		host: sbServerAddress,
+		port: sbServerPort,
+
+		onConnect: (data) => {
+			console.log(`Streamer.bot successfully connected to ${sbServerAddress}:${sbServerPort}`)
+			console.debug(data);
+
+			// Get list of actions
+			GetSBActions();
+		},
+
+		onDisconnect: () => {
+			console.error(`Streamer.bot disconnected from ${sbServerAddress}:${sbServerPort}`)
+		}
+	});
+
+	async function GetSBActions() {
+		const response = await client.getActions();
+
+		console.debug(response);
+
+		const datalistElement = document.createElement('datalist');
+		datalistElement.id = 'streamer-bot-actions';
+
+		for (const action of response.actions) {
+			const option = document.createElement('option');
+			option.value = action.name;
+			datalistElement.appendChild(option);
+		}
+
+		document.body.appendChild(datalistElement);
+	}
+}
+
+async function PopulateFontDatalist() {
+    if (!('queryLocalFonts' in window)) {
+        console.warn("Local Font Access API is not supported in this browser. Font auto-suggestions will be disabled.");
+        return;
+    }
+
+    try {
+        // Request permission and fetch local fonts
+        const availableFonts = await window.queryLocalFonts();
+
+        // Extract unique font family names and sort them alphabetically
+        const fontFamilies = [...new Set(availableFonts.map(font => font.family))].sort();
+
+        // Create the datalist element
+        const datalistElement = document.createElement('datalist');
+        datalistElement.id = 'fonts';
+
+        // Append each font family as an option
+        fontFamilies.forEach(family => {
+            const option = document.createElement('option');
+            option.value = family;
+            datalistElement.appendChild(option);
+        });
+
+        document.body.appendChild(datalistElement);
+        console.debug(`Loaded ${fontFamilies.length} local fonts into auto-suggest.`);
+
+    } catch (err) {
+        console.error("Permission denied or error fetching local fonts:", err);
+    }
+}
+
+function PopulateTimezoneDatalist() {
+    try {
+        // Fetch all official IANA timezones natively from the browser
+        const timezones = Intl.supportedValuesOf('timeZone');
+
+        // Create the datalist element
+        const datalistElement = document.createElement('datalist');
+        datalistElement.id = 'timezones';
+
+        // Append each timezone as an option
+        timezones.forEach(tz => {
+            const option = document.createElement('option');
+            option.value = tz;
+            datalistElement.appendChild(option);
+        });
+
+        document.body.appendChild(datalistElement);
+        console.debug(`Loaded ${timezones.length} timezones into auto-suggest.`);
+
+    } catch (err) {
+        console.error("Error generating timezone suggestions:", err);
+    }
+}
+
+
+
+/////////////////////////
+// BUTTON CLICK EVENTS //
+/////////////////////////
+
+function CopyURLToClipboard() {
+	// Copy to clipboard
+	navigator.clipboard.writeText(widgetUrlInput.value);
+
+	// Create the "Copied!" message
+	const copiedMessage = document.createElement('span');
+	copiedMessage.textContent = 'Copied to clipboard!';
+	copiedMessage.style.textAlign = 'center';
+	copiedMessage.style.fontWeight = 'absolute';
+	copiedMessage.style.position = 'absolute';
+	copiedMessage.style.top = '50%';
+	copiedMessage.style.left = '50%';
+	copiedMessage.style.transform = 'translate(-50%, -50%)';
+	copiedMessage.style.backgroundColor = '#00dd63'; // Green with some transparency
+	copiedMessage.style.color = 'white';
+	copiedMessage.style.padding = '5px 10px';
+	copiedMessage.style.borderRadius = '5px';
+	copiedMessage.style.fontWeight = '500';
+	copiedMessage.style.zIndex = '2'; // Ensure it's above the input and label
+	copiedMessage.style.opacity = '0'; // Start with opacity 0 for fade-in
+	copiedMessage.style.transition = 'opacity 0.2s ease-in-out';
+
+	widgetUrlInputWrapper.appendChild(copiedMessage);
+
+	// Force a reflow to trigger the transition
+	void copiedMessage.offsetWidth;
+
+	// Fade in the message
+	copiedMessage.style.opacity = '1';
+
+	// Fade out and remove the message after 3 seconds
+	setTimeout(() => {
+		copiedMessage.style.opacity = '0';
+		setTimeout(() => {
+			widgetUrlInputWrapper.removeChild(copiedMessage);
+		}, 500); // Wait for the fade-out
+	}, 5000);
+}
+
+function CloseDefaultsPopup() {
+	loadDefaultsBox.style.visibility = 'hidden';
+	loadDefaultsBox.style.opacity = 0;
+};
+
+function CloseSettings() {
+	loadSettingsBox.style.visibility = 'hidden';
+	loadSettingsBox.style.opacity = 0;
+};
+
+function LoadSettings() {
+	const url = new URL(loadURLBox.value);
+
+	url.searchParams.forEach((value, key) => {
+
+		const inputElement = document.getElementById(key);
+		if (inputElement != null) {
+			if (inputElement.type == 'checkbox')
+				inputElement.checked = value.toLocaleLowerCase() == 'true';
+			else
+				inputElement.value = value;
+			inputElement.dispatchEvent(new Event('input')); // Triggers the page refresh
+		}
+	});
+
+	loadURLBox.value = '';
+
+	loadSettingsBox.style.visibility = 'hidden';
+	loadSettingsBox.style.opacity = 0;
+}
+
+function OpenMembershipPage() {
+	window.open("https://nutty.gg/collections/member-exclusive-widgets", '_blank').focus();
+}
+
+function OpenLoadDefaultsPopup() {
+	loadDefaultsBox.style.visibility = 'visible';
+	loadDefaultsBox.style.opacity = 1;
+}
+
+function OpenLoadSettingsPopup() {
+	loadSettingsBox.style.visibility = 'visible';
+	loadSettingsBox.style.opacity = 1;
+}
+
+
+
+//////////////////////
+// HELPER FUNCTIONS //
+//////////////////////
+
+// Handle first window interaction
+window.addEventListener('message', (event) => {
+	if (event.origin === new URL(widgetPreview.src).origin && event.data === 'iframe-interacted') {
+		iframeHasBeenInteractedWith = true;
+		console.log('Iframe has been interacted with!');
+		unmuteLabel.style.display = 'none';
+	}
+});
+
+function GetSettingDepth(setting, allSettings) {
+	let depth = 0;
+	let current = setting;
+
+	while (current.showIf) {
+		depth++;
+		current = allSettings.find(s => s.id === current.showIf) || {};
+	}
+
+	return depth;
+}
+
+function InterpolatePlaceholders() {
+	// Regex to match anything inside curly braces, e.g., {smtcBridgeAddress}
+	const tokenRegex = /\{([^}]+)\}/g;
+
+	// Iterate over all settings from the original JSON in memory
+	settingsData.settings.forEach(setting => {
+
+		// Only process settings that actually have a placeholder in their description
+		if (setting.description && setting.description.includes('{')) {
+
+			// Start with the original untouched description from the JSON
+			let dynamicHTML = setting.description;
+			let match;
+
+			// Reset regex state (required when reusing a global regex in a loop)
+			tokenRegex.lastIndex = 0;
+
+			// Find all {tokens} in the string
+			while ((match = tokenRegex.exec(setting.description)) !== null) {
+				const targetId = match[1]; // The exact text inside the braces
+				const targetInput = document.getElementById(targetId);
+
+				if (targetInput) {
+					// Get current value, or fallback to the JSON default if the box is empty
+					const fallback = settingsData.settings.find(s => s.id === targetId)?.defaultValue || '';
+					const currentValue = targetInput.value || fallback;
+
+					// Replace the token with the actual value in our temporary string
+					dynamicHTML = dynamicHTML.replace(match[0], currentValue);
+				}
+			}
+
+			// Find the specific <p> tag for this setting in the DOM and overwrite its HTML
+			const descriptionParagraph = document.querySelector(`#item-${setting.id} p`);
+			if (descriptionParagraph) {
+				descriptionParagraph.innerHTML = dynamicHTML;
+			}
+		}
+	});
+}
+
+
+
+
+// Load settings from local storage
+LoadSettingsFromStorage();
+
+// Load default settings
+LoadJSON(settingsJson);
+
+// Populate local fonts for auto-suggest
+PopulateFontDatalist();
+
+// Populate timezones for auto-suggest
+PopulateTimezoneDatalist();
+
+
+
+
+const subscribers = [
+    "InfernoMate", "EGHCO", "WreckitRy", "Fatty8", "musto",
+    "TheTrickster1973", "DesertIce", "Pack", "Pobkac", "jlee",
+    "Cinnamogsy", "CptnKenway", "FindthemissingLinkTV", "xxSpartan007", "benntheballtv",
+    "renegadeenigma", "Inspector Nester", "bellinissima", "TheMarshallPatrick", "Itsdajuxter",
+    "Telkiney", "dfaux", "WASTEDTTV", "TrappLegacy", "FateTrain",
+    "42deep", "Magno Shambho", "RampageAndRage", "OsianWildGoode", "MadSnaz",
+    "PregnantDino", "oConnerOG", "Isaac Nguyen", "zunbeta", "themarkgshow",
+    "TheGoodyGoods", "Van.", "PushPlayTheDJ", "Rinzz", "Magnolia",
+    "HellaRetro", "Khetzalgg", "Smiiiley94", "Luckycap", "marketspy",
+    "TwelvePack96", "Riddlerrr", "GamerD4ve", "konig", "Antoinersx",
+    "BigRickEnergyTV", "Mysterious_Celeste", "David", "md278xX", "xohannalynn",
+    "victorytoasterO", "OmegaRobot21", "7eer", "Murk Army", "na5ty",
+    "LadySOULdja", "Karudi", "unityinfusion", "Dastardly Dave", "Jordan Reams",
+    "Luis Morim", "Lee Patmore", "Fahad alnemari", "Ngozi Mai Ch. ã€° EN Vtuber", "Wim Prest",
+    "Lucas Thompson", "Domoclops", "Raymond Ross", "K", "BigChunks",
+    "pob kac", "Nicholas Hanley", "ZabaJaba", "Martin Wojcik", "8bit Jase",
+    "Casey Nelson", "sansokid", "Clifford A. Newton", "NooRoticX", "Adis Bak",
+    "Heinrich", "MD", "MiChElLsWe", "Yournewdadd", "Dark",
+    "Harvester", "Mason Wilkins", "gcharles", "Rogue Tactician", "Alex Maciel",
+    "Barnny Leiva", "mandy voesenek", "Osian Goode", "MD278X", "Addie Jaxx",
+    "brandon warden", "LordCriss", "WASDTEDTTV"
+];
+
+const bgWrapper = document.getElementById('sub-wall-bg');
+const mainWrapper = document.getElementById('widget-preview-wrapper');
+
+function generateWallOfSubs() {
+    if (!bgWrapper || !mainWrapper) return;
+    
+    bgWrapper.innerHTML = '';
+
+    const cellSize = 24;
+    const cols = Math.ceil(mainWrapper.clientWidth / cellSize);
+    const rows = Math.ceil(mainWrapper.clientHeight / cellSize);
+
+    bgWrapper.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    bgWrapper.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+
+    // Randomize the order of the array using sort and Math.random()
+    const shuffledSubs = [...subscribers].sort(() => Math.random() - 0.5);
+
+    let streamText = shuffledSubs.join("•") + "•";
+    let totalCells = cols * rows;
+    let fullStream = streamText.repeat(Math.ceil(totalCells / streamText.length));
+
+    let charIndex = 0;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const cell = document.createElement('div');
+            
+            if ((r + c) % 2 === 0) {
+                cell.className = 'grid-cell cell-pattern-1';
+            } else {
+                cell.className = 'grid-cell cell-pattern-2';
+            }
+            
+            cell.textContent = fullStream[charIndex] || " ";
+            charIndex++;
+
+            bgWrapper.appendChild(cell);
+        }
+    }
+}
+
+window.addEventListener('load', generateWallOfSubs);
+window.addEventListener('resize', generateWallOfSubs);
