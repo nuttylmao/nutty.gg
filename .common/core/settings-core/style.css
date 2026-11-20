@@ -47,6 +47,19 @@ body {
     background: var(--accent-color);
 }
 
+#elgatoButton {
+    background: linear-gradient(
+        135deg,
+        #3d3dcd 0%,
+        #a257ed 80%,
+        #7c14d6 100%
+    );
+}
+
+#elgatoButton {
+    display: none;
+}
+
 #settingsPanel {
     width: 600px;
     overflow-y: auto;

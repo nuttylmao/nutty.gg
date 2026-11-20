@@ -5,6 +5,7 @@ const settingsJson = urlParams.get("settingsJson") || "";
 const widgetURL = urlParams.get("widgetURL") || "";
 const showUnmuteIndicator = GetBooleanParam("showUnmuteIndicator", false);
 const useStreamerBot = GetBooleanParam("usesStreamerBot", false);
+const theme = urlParams.get("theme") || "";
 
 // Page elements
 const widgetUrlInputWrapper = document.getElementById('widgetUrlInputWrapper');
@@ -31,6 +32,14 @@ if (showUnmuteIndicator)
 
 // Set hint text for "Load URL" text input
 loadUrlBox.placeholder = `${widgetURL}?...`
+
+// Set up theme
+if (theme == 'elgato') {
+	document.getElementById('membershipsButton').style.display = 'none';
+	document.getElementById('elgatoButton').style.display = 'inline';
+
+	document.getElementById('logo').src = '/.common/resources/elgato.png';
+}
 
 
 
@@ -548,6 +557,10 @@ function LoadSettings() {
 
 function OpenMembershipPage() {
 	window.open("https://nutty.gg/collections/member-exclusive-widgets", '_blank').focus();
+}
+
+function OpenElgatoPage() {
+	window.open("https://elgato.sjv.io/oqZN09", '_blank').focus();
 }
 
 function OpenLoadDefaultsPopup() {

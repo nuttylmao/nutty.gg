@@ -14,10 +14,12 @@ settingsJSON = "?settingsJson=" + baseURL + "settings.json";
 
 const lastSlashIndex = baseURL.lastIndexOf("/");
 let widgetURL = "&widgetURL=" + baseURL.replace("/settings", "");
+let theme = "&theme=elgato";
 
 console.debug("Window Ref: " + window.location.href);
 console.debug("Base URL: " + baseURL);
 console.debug("Settings JSON: " + settingsJSON);
 console.debug("Widget URL: " + widgetURL);
+console.debug("Theme: " + theme);
 
-widgetContainer.src = settingsPageURL + settingsJSON + widgetURL;
+widgetContainer.src = settingsPageURL + settingsJSON + widgetURL + theme;
